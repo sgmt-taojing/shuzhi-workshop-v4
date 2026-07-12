@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="数智工坊企业后服务V4.0 — 文(文化宣传)影(短视频)商(甄选商城)城立品牌，撮合产业链，严选源头好货，赋能万家，让天下没有难做的生意">
+<meta name="keywords" content="数智工坊,企业后服务,品牌宣传,短视频营销,甄选商城,源头甄选,产业链撮合,马季粮油,亚麻籽油,宁夏好粮油">
+<meta name="author" content="数智工坊">
+<meta property="og:title" content="数智工坊 · 企业后服务 V4.0">
+<meta property="og:description" content="文影商城立品牌，撮合产业链，严选源头好货">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="zh_CN">
+<meta name="theme-color" content="#d4a017">
+<title>数智工坊 · 企业后服务 V4.0 | 文影商城 · 源头甄选 · 产业链撮合</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --oil:#d4a017;--oil-a:#b8860b;--oil-d:#5d4506;--oil-c:#fdf6e3;
+  --b:#2563eb;--bl:#6366f1;--ind:#7c3aed;
+  --bg:#f5f7fa;--c:#fff;--d:#0a1628;--d2:#1e3a5f;
+  --t:#1f2937;--m:#6b7280;--g:#059669;--o:#ea580c;--r:#ef4444;--p:#be185d;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;background:var(--bg);color:var(--t);line-height:1.7}
+
+/* 品牌色条 */
+.bb{height:6px;background:linear-gradient(90deg,var(--oil) 0%,var(--oil-a) 25%,var(--oil-d) 50%,var(--b) 75%,var(--ind) 100%);position:fixed;top:0;left:0;right:0;z-index:1001}
+
+/* Nav */
+.nav{position:fixed;top:6px;left:0;right:0;z-index:1000;background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-bottom:1px solid #e5e7eb;height:60px;display:flex;align-items:center;padding:0 20px}
+.nb{font-weight:800;font-size:16px;letter-spacing:1px;color:var(--d);margin-right:auto;display:flex;align-items:center;gap:8px}
+.n-logo{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--oil),var(--oil-a));display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:800;box-shadow:0 2px 8px rgba(212,160,23,.35)}
+.n-zh{font-size:15px;font-weight:800;color:var(--d);line-height:1.1}
+.n-en{font-size:7px;letter-spacing:2px;color:var(--oil-a);margin-top:1px}
+.nt{display:flex;gap:3px;background:#f3f4f6;border-radius:11px;padding:4px}
+.ntb{padding:8px 14px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;transition:all .25s;color:var(--m);border:none;background:transparent;white-space:nowrap}
+.ntb.act{background:linear-gradient(135deg,var(--b),var(--bl));color:#fff;font-weight:700;box-shadow:0 3px 10px rgba(37,99,235,.25)}
+.ntb:hover:not(.act){color:var(--t);background:rgba(0,0,0,.04)}
+.nv{font-size:10px;color:var(--m);margin-left:10px}
+.nv-tag{padding:3px 9px;border-radius:11px;font-size:9px;background:linear-gradient(135deg,#eff6ff,#dbeafe);color:var(--b);font-weight:700;border:1px solid #bfdbfe}
+
+/* Hero */
+.hero{background:linear-gradient(135deg,rgba(10,22,40,.93) 0%,rgba(30,58,95,.88) 50%,rgba(37,99,235,.85) 100%),radial-gradient(circle at 20% 30%,rgba(212,160,23,.18) 0%,transparent 50%),radial-gradient(circle at 80% 70%,rgba(124,58,237,.2) 0%,transparent 50%);color:#fff;padding:100px 24px 56px;text-align:center;margin-top:66px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60"><circle cx="30" cy="30" r="1" fill="%23ffffff" fill-opacity="0.08"/></svg>')}
+.ht{display:inline-block;padding:5px 16px;border:1px solid rgba(212,160,23,.4);border-radius:20px;font-size:10px;color:var(--oil);letter-spacing:3px;margin-bottom:12px;background:rgba(212,160,23,.1);font-weight:600;position:relative}
+.hero h1{font-size:clamp(26px,5vw,44px);font-weight:800;letter-spacing:5px;margin-bottom:8px;text-shadow:0 2px 12px rgba(0,0,0,.3);position:relative}
+.hero h1 .oil{color:var(--oil);text-shadow:0 0 24px rgba(212,160,23,.4)}
+.hs{font-size:clamp(12px,2vw,16px);font-weight:300;opacity:.85;max-width:780px;margin:0 auto;line-height:1.9;position:relative}
+.hm{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-top:24px;position:relative}
+.hm-i{text-align:center;padding:6px 14px}
+.hm-i:not(:last-child){border-right:1px solid rgba(255,255,255,.12)}
+.hm-n{font-size:22px;font-weight:700;color:var(--oil);font-family:Georgia,serif;text-shadow:0 0 14px rgba(212,160,23,.3)}
+.hm-l{font-size:9px;opacity:.55;letter-spacing:2px;margin-top:2px}
+
+/* Container */
+.c{max-width:1060px;margin:0 auto;padding:36px 20px}
+
+/* Card */
+.card{background:var(--c);border-radius:14px;padding:24px;box-shadow:0 2px 14px rgba(0,0,0,.04);border:1px solid #e5e7eb;margin-bottom:16px;transition:box-shadow .25s}
+.card:hover{box-shadow:0 6px 24px rgba(0,0,0,.06)}
+.ct{font-size:16px;font-weight:700;color:var(--d);margin-bottom:6px;letter-spacing:.5px;display:flex;align-items:center;gap:8px}
+.ct::before{content:'';width:4px;height:18px;background:linear-gradient(180deg,var(--b),var(--bl));border-radius:2px;flex-shrink:0}
+.ct-oil::before{background:linear-gradient(180deg,var(--oil),var(--oil-a))}
+.ct-g::before{background:linear-gradient(180deg,var(--g),#10b981)}
+.ct-i::before{background:linear-gradient(180deg,var(--ind),var(--bl))}
+.cx{font-size:13px;color:var(--m);line-height:1.85}
+
+/* Grid */
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.g4{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+
+/* Badge */
+.bd{display:inline-block;padding:3px 9px;border-radius:5px;font-size:10px;font-weight:700;margin:2px;letter-spacing:.5px}
+.b-b{background:#eff6ff;color:var(--b)}.b-g{background:#ecfdf5;color:#047857}.b-o{background:#fff7ed;color:#c2410c}
+.b-r{background:#fef2f2;color:#dc2626}.b-p{background:#fdf2f8;color:#be185d}.b-i{background:#f5f3ff;color:var(--ind)}
+.b-oil{background:linear-gradient(135deg,var(--oil-c),#fef3c7);color:var(--oil-d);border:1px solid rgba(212,160,23,.3)}
+
+/* Table */
+table{width:100%;border-collapse:collapse;background:var(--c);border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04);margin:10px 0}
+th{background:linear-gradient(135deg,var(--d),var(--d2));color:#dbeafe;padding:10px 12px;font-size:11px;text-align:left;font-weight:600;letter-spacing:1.5px}
+td{padding:9px 12px;font-size:12px;border-bottom:1px solid #f1f5f9}tr:last-child td{border-bottom:none}tr:hover td{background:#f8faff}
+.hl td{background:linear-gradient(90deg,#eff6ff,#dbeafe);font-weight:600;color:var(--d)}
+
+/* Flow */
+.flow{display:flex;gap:3px;align-items:center;flex-wrap:wrap;margin:14px 0}
+.fl{background:var(--d);color:#a5b4fc;padding:8px 14px;border-radius:8px;font-size:11px;font-weight:600;position:relative}
+.fl::after{content:'';position:absolute;right:-10px;top:50%;transform:translateY(-50%);width:0;height:0;border-left:6px solid var(--d);border-top:5px solid transparent;border-bottom:5px solid transparent}
+.fl:last-child::after{display:none}
+.fl-oil{background:linear-gradient(135deg,var(--oil),var(--oil-a));color:#fff}
+.fl-oil::after{border-left-color:var(--oil-a)}
+.fa{color:var(--b);font-size:16px;font-weight:700}
+
+/* Progress */
+.prog{display:flex;height:6px;background:#e5e7eb;border-radius:3px;overflow:hidden;margin-top:4px}
+.pb{height:100%;border-radius:3px}
+.pb-b{background:linear-gradient(90deg,var(--b),var(--bl))}
+.pb-oil{background:linear-gradient(90deg,var(--oil),var(--oil-a))}
+.pb-g{background:linear-gradient(90deg,var(--g),#10b981)}
+
+/* Panel */
+.pnl{display:none;animation:fadeUp .45s ease}
+.pnl.act{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* Dark Section */
+.dark-sec{background:linear-gradient(135deg,var(--d),var(--d2));color:#fff;border-radius:14px;padding:28px;position:relative;overflow:hidden;margin-bottom:16px}
+.dark-sec::after{content:'';position:absolute;top:-40%;right:-10%;width:280px;height:280px;background:radial-gradient(circle,rgba(212,160,23,.1) 0%,transparent 70%);border-radius:50%}
+
+/* 三维一体核心区 */
+.tri-core{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border-radius:14px;overflow:hidden;box-shadow:0 8px 28px rgba(0,0,0,.1);margin:18px 0}
+.tri-c{padding:28px 22px;text-align:center;position:relative;transition:transform .3s}
+.tri-c:hover{transform:translateY(-4px)}
+.tri-c:not(:last-child){border-right:1px solid rgba(255,255,255,.1)}
+.tri-1{background:linear-gradient(135deg,var(--oil),var(--oil-a))}
+.tri-2{background:linear-gradient(135deg,var(--b),var(--bl))}
+.tri-3{background:linear-gradient(135deg,var(--ind),#9333ea)}
+.tri-icon{font-size:36px;margin-bottom:10px;display:block}
+.tri-t{font-size:16px;font-weight:700;color:#fff;letter-spacing:2px;margin-bottom:5px;text-shadow:0 1px 3px rgba(0,0,0,.2)}
+.tri-d{font-size:11px;color:rgba(255,255,255,.85);line-height:1.7}
+.tri-link{position:absolute;top:50%;right:-14px;z-index:3;font-size:20px;color:#fff;background:rgba(255,255,255,.2);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.tri-c:last-child .tri-link{display:none}
+
+@media(max-width:700px){.tri-core{grid-template-columns:1fr}.tri-c:not(:last-child){border-right:none;border-bottom:1px solid rgba(255,255,255,.1)}.tri-link{display:none}}
+
+/* Video frame */
+.vf{position:relative;border-radius:14px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.3);height:300px;background:linear-gradient(135deg,var(--d),var(--d2),var(--b));display:flex;align-items:center;justify-content:center;cursor:pointer}
+.vp{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,var(--oil),var(--oil-a));display:flex;align-items:center;justify-content:center;position:relative;z-index:2;transition:all .3s;box-shadow:0 8px 24px rgba(212,160,23,.4)}
+.vp:hover{transform:scale(1.15);box-shadow:0 12px 32px rgba(212,160,23,.5)}
+.vp::after{content:'';width:0;height:0;border-style:solid;border-width:12px 0 12px 20px;border-color:transparent transparent transparent #fff;margin-left:4px}
+
+/* Gallery */
+.gal{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:16px}
+.gi{position:relative;border-radius:9px;overflow:hidden;height:130px;box-shadow:0 4px 12px rgba(0,0,0,.15);cursor:pointer;transition:transform .25s}
+.gi:hover{transform:scale(1.03)}
+.gi img{width:100%;height:100%;object-fit:cover}
+.gc{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(10,22,40,.9));padding:20px 8px 6px;color:#fff;font-size:10px;font-weight:500}
+
+/* Feature item */
+.fi{display:flex;gap:12px;padding:13px 0;border-bottom:1px solid #f3f4f6}.fi:last-child{border-bottom:none}
+.fi-i{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.fi-b{background:linear-gradient(135deg,#dbeafe,#bfdbfe);color:var(--b)}
+.fi-g{background:linear-gradient(135deg,#d1fae5,#a7f3d0);color:#047857}
+.fi-o{background:linear-gradient(135deg,#fed7aa,#fdba74);color:#c2410c}
+.fi-i2{background:linear-gradient(135deg,#ede9fe,#c4b5fd);color:var(--ind)}
+.fi-oil{background:linear-gradient(135deg,var(--oil-c),#fef3c7);color:var(--oil-d)}
+
+/* Product */
+.pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.pd{background:var(--c);border-radius:13px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.05);border:1px solid #e5e7eb;transition:all .25s}
+.pd:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.09)}
+.ph{height:105px;display:flex;align-items:center;justify-content:center;font-size:34px;position:relative}
+.ph-flax{background:linear-gradient(135deg,#dbeafe,#bfdbfe)}
+.ph-sun{background:linear-gradient(135deg,#fff7ed,#fef3c7)}
+.ph-gift{background:linear-gradient(135deg,#fef2f2,#fce7f3)}
+.ph-blend{background:linear-gradient(135deg,#dcfce7,#bbf7d0)}
+.ptag{position:absolute;top:6px;left:6px;padding:2px 8px;border-radius:4px;font-size:9px;font-weight:700;color:#fff}
+.pt-s{background:linear-gradient(135deg,var(--oil),var(--oil-a))}.pt-n{background:var(--g)}.pt-g{background:var(--r)}.pt-d{background:var(--o)}
+.pb2{padding:14px}.pn{font-size:13px;font-weight:700;color:var(--d);margin-bottom:2px}
+.ps{font-size:11px;color:var(--m);margin-bottom:8px;line-height:1.6}
+.pp{font-size:18px;font-weight:700;color:var(--oil-a);font-family:Georgia,serif}
+.pp small{font-size:10px;color:var(--m);font-weight:400;margin-left:2px}
+.pf{display:inline-block;padding:2px 7px;border-radius:4px;font-size:8px;font-weight:600;margin:2px}
+.pf-r{background:#eff6ff;color:var(--b)}.pf-b{background:#fef3c7;color:#92400e}.pf-g{background:#ecfdf5;color:#047857}.pf-o{background:#fff7ed;color:#c2410c}.pf-p{background:#fef2f2;color:#dc2626}.pf-c{background:#f0fdf4;color:#166534}
+
+/* FAQ */
+.faq{padding:12px 16px;border-bottom:1px solid #f1f5f9;cursor:pointer;transition:background .2s}
+.faq:hover{background:#f8faff}.faq:last-child{border-bottom:none}
+.faq-q{display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:var(--d)}
+.faq-a{font-size:12px;color:var(--m);line-height:1.85;margin-top:8px;padding-left:2px;display:none}
+.faq.open .faq-a{display:block}
+.faq-arr{color:var(--b);font-size:11px;transition:transform .25s;font-weight:700}.faq.open .faq-arr{transform:rotate(90deg);color:var(--oil-a)}
+
+/* 源头甄选专属 */
+.trace-chain{display:flex;align-items:center;gap:2px;flex-wrap:wrap;margin:16px 0}
+.tc-node{background:linear-gradient(135deg,var(--g),#10b981);color:#fff;padding:8px 14px;border-radius:8px;font-size:11px;font-weight:600;text-align:center;min-width:80px}
+.tc-node.oil{background:linear-gradient(135deg,var(--oil),var(--oil-a))}
+.tc-arrow{color:var(--g);font-size:14px;font-weight:700}
+
+/* 商城 mini */
+.mall-mini{background:linear-gradient(135deg,#faf5ff,#f5f3ff);border-radius:14px;padding:20px;border:1px solid rgba(124,58,237,.1)}
+.mall-row{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid rgba(124,58,237,.08)}
+.mall-row:last-child{border-bottom:none}
+.mall-thumb{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;background:linear-gradient(135deg,#ede9fe,#c4b5fd)}
+.mall-info{flex:1;min-width:0}
+.mall-name{font-size:13px;font-weight:600;color:var(--d)}
+.mall-desc{font-size:11px;color:var(--m)}
+.mall-price{font-size:15px;font-weight:700;color:var(--oil-a);font-family:Georgia,serif;white-space:nowrap}
+
+/* Footer */
+.ft{background:linear-gradient(135deg,var(--d),var(--d2));color:#a5b4fc;text-align:center;padding:28px 20px;margin-top:36px}
+.ft-tag{font-size:9px;letter-spacing:4px;color:var(--oil);margin-bottom:6px;opacity:.7}
+
+/* Data card */
+.dc{background:linear-gradient(135deg,var(--d),var(--d2));color:#fff;border-radius:14px;padding:22px;text-align:center;position:relative;overflow:hidden}
+.dc::after{content:'';position:absolute;bottom:-30%;right:-15%;width:180px;height:180px;background:radial-gradient(circle,rgba(212,160,23,.1) 0%,transparent 70%);border-radius:50%}
+.dn{font-size:30px;font-weight:700;color:var(--oil);font-family:Georgia,serif;text-shadow:0 0 16px rgba(212,160,23,.3)}
+.dl{font-size:10px;opacity:.6;letter-spacing:2px;margin-top:3px}
+
+/* Slogan */
+.slogan{text-align:center;padding:24px;background:linear-gradient(135deg,var(--oil-c),#fef3c7);border-radius:14px;border:2px dashed rgba(212,160,23,.3);margin:16px 0}
+.slogan-t{font-size:20px;font-weight:800;color:var(--oil-d);letter-spacing:3px}
+.slogan-s{font-size:12px;color:var(--oil-d);opacity:.7;margin-top:4px;letter-spacing:1px}
+
+@media(max-width:768px){.nt{display:none}.hm{gap:14px}.hm-i:not(:last-child){border-right:none}}
+@media print{.nav,.bb,.nt{display:none!important}.hero{padding:24px 20px;margin-top:0}.pnl{display:block!important;page-break-after:always}}
+</style>
+</head>
+<body>
+<div class="bb"></div>
+
+<nav class="nav">
+  <div class="nb">
+    <div class="n-logo">数</div>
+    <div><div class="n-zh">数智工坊</div><div class="n-en">SHUZHI · ENTERPRISE POST-SERVICE</div></div>
+  </div>
+  <div class="nt" id="navTabs" role="tablist" aria-label="数智工坊四大模块">
+    <button class="ntb act" type="button" data-tab="brand" role="tab" aria-selected="true" aria-controls="tab-brand">🏢 企业宣传</button>
+    <button class="ntb" type="button" data-tab="source" role="tab" aria-selected="false" aria-controls="tab-source">🌾 源头甄选</button>
+    <button class="ntb" type="button" data-tab="match" role="tab" aria-selected="false" aria-controls="tab-match">🤝 产业链撮合</button>
+    <button class="ntb" type="button" data-tab="product" role="tab" aria-selected="false" aria-controls="tab-product">📦 产品推广</button>
+  </div>
+  <div class="nv"><span class="nv-tag">V4.0</span></div>
+</nav>
+
+<section class="hero">
+  <div class="ht">ENTERPRISE POST-SERVICE · 四维一体</div>
+  <h1>数智<span class="oil">工坊</span></h1>
+  <div class="hs">
+    <strong>企业宣传三维一体</strong>：文字讲好故事 · 短视频传递价值 · 商城卖好产品<br>
+    <strong>源头甄选</strong>：从产地到餐桌，每一步可追溯<br>
+    <strong>产业链撮合</strong>：让天下没有难做的生意
+  </div>
+  <div class="hm">
+    <div class="hm-i"><div class="hm-n">3合一</div><div class="hm-l">宣传三维一体</div></div>
+    <div class="hm-i"><div class="hm-n">5步</div><div class="hm-l">源头甄选链</div></div>
+    <div class="hm-i"><div class="hm-n">200+</div><div class="hm-l">撮合服务商</div></div>
+    <div class="hm-i"><div class="hm-n">500+</div><div class="hm-l">入驻企业</div></div>
+    <div class="hm-i"><div class="hm-n">¥2.3亿</div><div class="hm-l">撮合交易额</div></div>
+  </div>
+</section>
+
+<div class="c">
+
+<!-- ========================== -->
+<!-- TAB 1: 企业宣传三维一体      -->
+<!-- ========================== -->
+<section class="pnl act" id="tab-brand" role="tabpanel">
+
+  <div class="slogan">
+    <div class="slogan-t">讲好企业的故事 · 卖好企业的产品</div>
+    <div class="slogan-s">文字 + 短视频 + 商城 = 企业形象宣传三维一体</div>
+  </div>
+
+  <!-- 三维一体核心展示 -->
+  <div class="tri-core">
+    <div class="tri-c tri-1">
+      <span class="tri-icon">📝</span>
+      <div class="tri-t">文字 · 品牌故事</div>
+      <div class="tri-d">企业简介 / 创始人故事<br>品牌历程 / 资质背书<br>专业内容 / 知识科普</div>
+      <div class="tri-link">→</div>
+    </div>
+    <div class="tri-c tri-2">
+      <span class="tri-icon">🎬</span>
+      <div class="tri-t">短视频 · 视觉冲击</div>
+      <div class="tri-d">企业纪录片 / 工艺流程<br>产地航拍 / 匠人特写<br>产品测评 / 客户证言</div>
+      <div class="tri-link">→</div>
+    </div>
+    <div class="tri-c tri-3">
+      <span class="tri-icon">🛒</span>
+      <div class="tri-t">商城 · 直接转化</div>
+      <div class="tri-d">产品详情页 / 一键下单<br>拼团团购 / 企业福利<br>限时秒杀 / 会员复购</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct ct-oil">三维一体如何运转</div>
+    <div class="cx" style="margin-bottom:14px">
+      <strong>文字</strong>负责建立信任 → <strong>短视频</strong>负责激发欲望 → <strong>商城</strong>负责完成转化。三者形成闭环：客户从"认识你"到"信任你"到"买你的东西"，全链路在我方平台完成。
+    </div>
+    <table>
+      <thead><tr><th>环节</th><th>载体</th><th>负责</th><th>产出物</th><th>转化目标</th></tr></thead>
+      <tbody>
+        <tr class="hl"><td><strong>讲故事</strong></td><td>文字内容</td><td>我方文案团队</td><td>品牌故事 / 企业画像 / 知识科普</td><td>建立认知和信任</td></tr>
+        <tr class="hl"><td><strong>传价值</strong></td><td>短视频/纪录片</td><td>我方视频团队</td><td>5min纪录片 / 60s短片 / 工艺展示</td><td>激发购买欲望</td></tr>
+        <tr class="hl"><td><strong>卖产品</strong></td><td>在线商城</td><td>我方运营团队</td><td>详情页 / 下单流程 / 售后体系</td><td>完成交易转化</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 企业画像 -->
+  <div class="dark-sec">
+    <div style="position:relative;z-index:2">
+      <div style="font-size:10px;letter-spacing:4px;color:var(--oil);margin-bottom:6px">ENTERPRISE PROFILE · 标杆案例</div>
+      <div style="font-size:20px;font-weight:700;letter-spacing:1.5px;margin-bottom:5px">宁夏马季食用油有限公司</div>
+      <div style="font-size:12px;opacity:.65;margin-bottom:14px">📍 宁夏石嘴山市平罗县 · 2013年成立 · 前身30余年家族油坊</div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:18px">
+        <span class="bd b-oil">宁夏好粮油</span><span class="bd b-b">清真认证</span><span class="bd b-g">SC许可</span><span class="bd b-o">ISO22000</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px">
+        <div style="text-align:center;padding:14px 8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px">
+          <div style="font-size:24px;font-weight:700;color:var(--oil);font-family:Georgia,serif">82</div>
+          <div style="font-size:9px;opacity:.55;letter-spacing:1.5px;margin-top:3px">信用评分</div>
+        </div>
+        <div style="text-align:center;padding:14px 8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px">
+          <div style="font-size:24px;font-weight:700;color:#6ee7b7;font-family:Georgia,serif">55%+</div>
+          <div style="font-size:9px;opacity:.55;letter-spacing:1.5px;margin-top:3px">α-亚麻酸</div>
+        </div>
+        <div style="text-align:center;padding:14px 8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px">
+          <div style="font-size:24px;font-weight:700;color:#fca5a5;font-family:Georgia,serif">30+</div>
+          <div style="font-size:9px;opacity:.55;letter-spacing:1.5px;margin-top:3px">年匠心</div>
+        </div>
+        <div style="text-align:center;padding:14px 8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px">
+          <div style="font-size:24px;font-weight:700;color:#a5b4fc;font-family:Georgia,serif">AA</div>
+          <div style="font-size:9px;opacity:.55;letter-spacing:1.5px;margin-top:3px">信用等级</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 文字：品牌故事 -->
+  <div class="card">
+    <div class="ct ct-oil">文字 · 品牌故事 — 一滴油的30年传承</div>
+    <div class="cx" style="font-size:13px;line-height:2.1;text-indent:2em;margin-bottom:14px">
+      30余年前，宁夏平原上的一口老油坊开始飘香。老师傅用木榨机，金黄色的油液缓缓滴落——这是马季粮油的前身。2013年正式公司化运营，从木榨到现代物理压榨，"好油不急，慢慢压"的信念从未改变。<strong style="color:var(--oil-a)">物理压榨，不加化学溶剂，不脱臭不脱色，α-亚麻酸含量≥55%。</strong>
+    </div>
+    <!-- 五维能力 -->
+    <div class="g3" style="margin-top:14px">
+      <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>产品质量</span><strong style="color:var(--oil-a)">92</strong></div><div class="prog"><div class="pb pb-oil" style="width:92%"></div></div></div>
+      <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>品牌影响</span><strong style="color:var(--oil-a)">78</strong></div><div class="prog"><div class="pb pb-oil" style="width:78%"></div></div></div>
+      <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>供应链</span><strong style="color:var(--oil-a)">85</strong></div><div class="prog"><div class="pb pb-oil" style="width:85%"></div></div></div>
+      <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>创新能力</span><strong style="color:var(--oil-a)">70</strong></div><div class="prog"><div class="pb pb-oil" style="width:70%"></div></div></div>
+      <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>社会责任</span><strong style="color:var(--oil-a)">88</strong></div><div class="prog"><div class="pb pb-oil" style="width:88%"></div></div></div>
+    </div>
+  </div>
+
+  <!-- 短视频 -->
+  <div class="card">
+    <div class="ct">短视频 · 一滴干净的油从宁夏花田到你的餐桌</div>
+    <div class="vf">
+      <div class="vp"></div>
+      <div style="position:absolute;bottom:20px;left:20px;right:20px;text-align:left;z-index:2">
+        <div style="font-size:10px;letter-spacing:3px;color:var(--oil);margin-bottom:3px;text-shadow:0 1px 3px rgba(0,0,0,.5)">DOCUMENTARY · 5min</div>
+        <div style="font-size:16px;font-weight:600;letter-spacing:1px;text-shadow:0 2px 6px rgba(0,0,0,.4)">一滴干净的油：从宁夏花田到你的餐桌</div>
+        <div style="font-size:10px;opacity:.7;margin-top:2px;text-shadow:0 1px 3px rgba(0,0,0,.5)">西部 · 黄河 · 贺兰山 · 北纬38° · 物理压榨 · 30年匠心</div>
+      </div>
+    </div>
+    <div class="g3" style="margin-top:14px">
+      <div style="padding:14px;background:linear-gradient(135deg,#f8faff,#eef2ff);border-radius:10px;text-align:center">
+        <div style="font-size:28px;margin-bottom:4px">📹</div>
+        <div style="font-size:12px;font-weight:700;color:var(--d)">品牌纪录片</div>
+        <div class="cx">5分钟完整版 · 30年传承故事</div>
+      </div>
+      <div style="padding:14px;background:linear-gradient(135deg,#f8faff,#eef2ff);border-radius:10px;text-align:center">
+        <div style="font-size:28px;margin-bottom:4px">⚙️</div>
+        <div style="font-size:12px;font-weight:700;color:var(--d)">工艺展示片</div>
+        <div class="cx">60秒短片 · 物理压榨全过程</div>
+      </div>
+      <div style="padding:14px;background:linear-gradient(135deg,#f8faff,#eef2ff);border-radius:10px;text-align:center">
+        <div style="font-size:28px;margin-bottom:4px">🌾</div>
+        <div style="font-size:12px;font-weight:700;color:var(--d)">产地航拍</div>
+        <div class="cx">宁夏花田 · 黄河平原 · 贺兰山</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 商城 -->
+  <div class="card">
+    <div class="ct ct-i">🛒 商城 · 在线转化</div>
+    <div class="cx" style="margin-bottom:14px">三维一体的最后一环：客户看完故事、看完视频，直接在商城下单。我方运营团队负责上架、详情页优化、活动策划、售后体系。</div>
+    <div class="mall-mini">
+      <div class="mall-row">
+        <div class="mall-thumb">🫙</div>
+        <div class="mall-info">
+          <div class="mall-name">马季亚麻籽油 5L</div>
+          <div class="mall-desc">α-亚麻酸≥55% · 物理压榨 · 宁夏好粮油</div>
+        </div>
+        <div class="mall-price">¥168</div>
+      </div>
+      <div class="mall-row">
+        <div class="mall-thumb">🧴</div>
+        <div class="mall-info">
+          <div class="mall-name">马季亚麻籽油 1.6L</div>
+          <div class="mall-desc">日常家用装 · 易保存 · 适合凉拌</div>
+        </div>
+        <div class="mall-price">¥68</div>
+      </div>
+      <div class="mall-row">
+        <div class="mall-thumb">🎁</div>
+        <div class="mall-info">
+          <div class="mall-name">亚麻籽油礼盒装</div>
+          <div class="mall-desc">1.6L×2瓶 · 送礼佳品 · 企业福利</div>
+        </div>
+        <div class="mall-price">¥198</div>
+      </div>
+      <div class="mall-row">
+        <div class="mall-thumb">🌻</div>
+        <div class="mall-info">
+          <div class="mall-name">马季葵花籽油 5L</div>
+          <div class="mall-desc">物理压榨 · 清香不腻 · 炒菜煎炸均可</div>
+        </div>
+        <div class="mall-price">¥128</div>
+      </div>
+      <div class="mall-row">
+        <div class="mall-thumb">🍶</div>
+        <div class="mall-info">
+          <div class="mall-name">马季调和油 5L</div>
+          <div class="mall-desc">科学配比 · 营养均衡 · 日常炒菜</div>
+        </div>
+        <div class="mall-price">¥108</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 知识问答 -->
+  <div class="card">
+    <div class="ct">知识问答 · 让客户了解→认可→选择→复购</div>
+    <div style="margin-top:10px;border:1px solid #f1f5f9;border-radius:10px;overflow:hidden">
+      <div class="faq" onclick="this.classList.toggle('open')">
+        <div class="faq-q"><span>亚麻籽油的核心卖点是什么？</span><span class="faq-arr">›</span></div>
+        <div class="faq-a">α-亚麻酸（Omega-3）含量≥55%，远超国标。物理压榨保留天然营养，不脱臭不脱色。适合心脑血管养护、孕妇、婴幼儿辅食。</div>
+      </div>
+      <div class="faq" onclick="this.classList.toggle('open')">
+        <div class="faq-q"><span>马季粮油的资质认证有哪些？</span><span class="faq-arr">›</span></div>
+        <div class="faq-a">宁夏好粮油（2021）、清真认证、SC食品生产许可、ISO22000食品安全管理体系。产品经国家粮食质量检验中心检测合格。</div>
+      </div>
+      <div class="faq" onclick="this.classList.toggle('open')">
+        <div class="faq-q"><span>如何保存？保质期多久？</span><span class="faq-arr">›</span></div>
+        <div class="faq-a">避光冷藏最佳，开封后3个月内食用完毕。未开封保质期18个月。不建议高温烹饪，凉拌或直接饮用为佳。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gallery -->
+  <div class="card">
+    <div class="ct">影像资料</div>
+    <div class="gal">
+      <div class="gi"><img src="assets/old-press.png" alt="老式压榨机"><div class="gc">老式木榨机</div></div>
+      <div class="gi"><img src="assets/old-craftsman.jpg" alt="传统手工"><div class="gc">匠人坚守</div></div>
+      <div class="gi"><img src="assets/old-workshop.jpeg" alt="老油坊"><div class="gc">老油坊烟火</div></div>
+      <div class="gi"><img src="assets/ningxia-yellow-river.jpg" alt="黄河宁夏"><div class="gc">黄河宁夏平原</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================== -->
+<!-- TAB 2: 源头甄选              -->
+<!-- ========================== -->
+<section class="pnl" id="tab-source" role="tabpanel">
+
+  <div class="slogan" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-color:rgba(5,150,105,.3)">
+    <div class="slogan-t" style="color:#065f46">🌾 从种子到餐桌 · 每一步都可追溯</div>
+    <div class="slogan-s" style="color:#065f46;opacity:.7">源头甄选 · 只为真正的好产品</div>
+  </div>
+
+  <!-- 溯源链 -->
+  <div class="card">
+    <div class="ct ct-g">源头甄选五步链路</div>
+    <div class="cx" style="margin-bottom:14px">不是什么产品都能上数智工坊。每件产品必须走完五步甄选链路，确保从种子到餐桌全程可追溯。</div>
+    <div class="trace-chain">
+      <div class="tc-node oil">1. 产地甄选</div><div class="tc-arrow">›</div>
+      <div class="tc-node oil">2. 实地考察</div><div class="tc-arrow">›</div>
+      <div class="tc-node">3. 品质检测</div><div class="tc-arrow">›</div>
+      <div class="tc-node">4. 资质审核</div><div class="tc-arrow">›</div>
+      <div class="tc-node">5. 上架溯源</div>
+    </div>
+    <div class="g3" style="margin-top:16px">
+      <div style="padding:16px;background:linear-gradient(135deg,var(--oil-c),#fef3c7);border-radius:10px;border-left:4px solid var(--oil)">
+        <div style="font-size:12px;font-weight:700;color:var(--oil-d);margin-bottom:4px">1. 产地甄选</div>
+        <div class="cx">精选核心产区：北纬38°黄金种植带、黄河冲积平原、富硒土壤。只选最优产地的最优原料。</div>
+      </div>
+      <div style="padding:16px;background:linear-gradient(135deg,var(--oil-c),#fef3c7);border-radius:10px;border-left:4px solid var(--oil)">
+        <div style="font-size:12px;font-weight:700;color:var(--oil-d);margin-bottom:4px">2. 实地考察</div>
+        <div class="cx">我方团队实地走访：种植基地/加工车间/仓储设施。核实产能、工艺、卫生条件。</div>
+      </div>
+      <div style="padding:16px;background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-radius:10px;border-left:4px solid var(--g)">
+        <div style="font-size:12px;font-weight:700;color:#065f46;margin-bottom:4px">3. 品质检测</div>
+        <div class="cx">第三方权威机构检测：营养成分/农残/重金属/酸价/过氧化值。检测报告全公开。</div>
+      </div>
+      <div style="padding:16px;background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-radius:10px;border-left:4px solid var(--g)">
+        <div style="font-size:12px;font-weight:700;color:#065f46;margin-bottom:4px">4. 资质审核</div>
+        <div class="cx">营业执照/生产许可证/清真认证/ISO体系认证。资质齐全方可上架，缺一不可。</div>
+      </div>
+      <div style="padding:16px;background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-radius:10px;border-left:4px solid var(--g)">
+        <div style="font-size:12px;font-weight:700;color:#065f46;margin-bottom:4px">5. 上架溯源</div>
+        <div class="cx">一物一码溯源系统：扫码可查产地/生产日期/检测报告/物流全程。持续监督。</div>
+      </div>
+      <div style="padding:16px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-radius:10px;border-left:4px solid var(--g)">
+        <div style="font-size:12px;font-weight:700;color:#065f46;margin-bottom:4px">★ 持续监督</div>
+        <div class="cx">不定期抽检 + 用户反馈机制。品质下滑自动下架，问题产品第一时间召回。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 马季粮油源头甄选档案 -->
+  <div class="card">
+    <div class="ct ct-oil">源头甄选标杆 · 马季粮油产地档案</div>
+    <table>
+      <thead><tr><th>甄选维度</th><th>马季粮油实际数据</th><th>甄选标准</th><th>结果</th></tr></thead>
+      <tbody>
+        <tr class="hl"><td>产地</td><td>宁夏平原 · 北纬38°黄金种植带</td><td>核心产区/原产地保护</td><td><span class="bd b-g">通过</span></td></tr>
+        <tr><td>土壤条件</td><td>黄河冲积平原 · 富硒土壤</td><td>无污染/重金属达标</td><td><span class="bd b-g">通过</span></td></tr>
+        <tr><td>原料品质</td><td>宁夏本地亚麻籽 · α-亚麻酸≥55%</td><td>营养成分≥国标</td><td><span class="bd b-g">通过</span></td></tr>
+        <tr><td>加工工艺</td><td>物理压榨 · 不加化学溶剂</td><td>无化学添加/物理工艺</td><td><span class="bd b-g">通过</span></td></tr>
+        <tr><td>资质认证</td><td>SC/清真/ISO22000/宁夏好粮油</td><td>资质齐全</td><td><span class="bd b-g">通过</span></td></tr>
+        <tr><td>溯源体系</td><td>批次号 + 生产日期 + 检测报告</td><td>一物一码可追溯</td><td><span class="bd b-o">待完善</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 溯源系统演示 -->
+  <div class="dark-sec">
+    <div style="position:relative;z-index:2">
+      <div style="font-size:10px;letter-spacing:4px;color:var(--oil);margin-bottom:6px">TRACEABILITY · 溯源系统</div>
+      <div style="font-size:18px;font-weight:700;letter-spacing:1px;margin-bottom:14px">一物一码 · 扫码知全程</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+        <div style="padding:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px">
+          <div style="font-size:11px;color:#6ee7b7;font-weight:700;margin-bottom:6px">📦 扫码查询</div>
+          <div style="font-size:12px;opacity:.8">扫描产品二维码 → 查看产地、原料、生产日期、检测报告、物流全程</div>
+        </div>
+        <div style="padding:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px">
+          <div style="font-size:11px;color:var(--oil);font-weight:700;margin-bottom:6px">🔬 检测报告</div>
+          <div style="font-size:12px;opacity:.8">第三方权威检测：营养成分/农残/重金属/酸价 全公开，不隐瞒</div>
+        </div>
+        <div style="padding:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px">
+          <div style="font-size:11px;color:#a5b4fc;font-weight:700;margin-bottom:6px">📍 产地直供</div>
+          <div style="font-size:12px;opacity:.8">从产地到餐桌去除中间环节：农户→工厂→平台→消费者</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 源头甄选品类扩展 -->
+  <div class="card">
+    <div class="ct ct-g">源头甄选品类规划</div>
+    <div class="cx" style="margin-bottom:14px">以马季粮油为标杆，逐步扩展至全品类源头直供。每个品类严选1-3家源头企业，宁缺毋滥。</div>
+    <table>
+      <thead><tr><th>品类</th><th>甄选标准</th><th>目标产地</th><th>阶段</th></tr></thead>
+      <tbody>
+        <tr class="hl"><td><strong>食用油</strong></td><td>物理压榨/无化学添加/α-亚麻酸≥55%</td><td>宁夏/内蒙/新疆</td><td><span class="bd b-g">已上架</span></td></tr>
+        <tr><td>有机杂粮</td><td>有机认证/无农残/非转基因</td><td>东北/陕北/宁夏</td><td><span class="bd b-o">甄选中</span></td></tr>
+        <tr><td>天然蜂蜜</td><td>无添加/无抗生素/波美度≥41</td><td>秦岭/长白山/云南</td><td><span class="bd b-o">甄选中</span></td></tr>
+        <tr><td>山珍菌菇</td><td>野生/无熏硫/无农残</td><td>云南/东北/湖北</td><td><span class="bd b-b">规划中</span></td></tr>
+        <tr><td>特色果蔬</td><td>地理标志/无农残/新鲜直供</td><td>各地原产地</td><td><span class="bd b-b">规划中</span></td></tr>
+        <tr><td>非遗手作</td><td>非遗传承/手工制作/原产地</td><td>全国非遗产区</td><td><span class="bd b-b">规划中</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="g4">
+    <div class="dc"><div class="dn">5步</div><div class="dl">甄选链路</div></div>
+    <div class="dc"><div class="dn">6项</div><div class="dl">检测指标</div></div>
+    <div class="dc"><div class="dn">100%</div><div class="dl">资质审核</div></div>
+    <div class="dc"><div class="dn">1物1码</div><div class="dl">全程溯源</div></div>
+  </div>
+</section>
+
+<!-- ========================== -->
+<!-- TAB 3: 产业链撮合            -->
+<!-- ========================== -->
+<section class="pnl" id="tab-match" role="tabpanel">
+
+  <div class="slogan" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border-color:rgba(37,99,235,.3)">
+    <div class="slogan-t" style="color:var(--d)">🤝 让天下没有难做的生意</div>
+    <div class="slogan-s" style="color:var(--d);opacity:.6">上下游撮合 · 信息透明 · 信任闭环</div>
+  </div>
+
+  <div class="card">
+    <div class="ct">产业链全景 · 上中下游一图看懂</div>
+    <div class="cx" style="margin-bottom:16px">数智工坊串联产业链全链条：从原料供应到终端消费，每个环节都可撮合、可追踪、可评价。</div>
+    <!-- 产业链流 -->
+    <div style="display:grid;grid-template-columns:1fr;gap:10px">
+      <div style="display:flex;gap:10px;align-items:stretch;flex-wrap:wrap">
+        <div style="flex:1;min-width:140px;padding:16px;background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-radius:10px;border-top:4px solid var(--g)">
+          <div style="font-size:11px;color:#047857;font-weight:700;letter-spacing:1px;margin-bottom:6px">UPSTREAM · 上游</div>
+          <div style="font-size:13px;font-weight:600;color:var(--d);margin-bottom:4px">原料供应</div>
+          <div class="cx" style="font-size:11px">种植基地 · 农户合作社 · 原料加工商</div>
+        </div>
+        <div style="display:flex;align-items:center;font-size:20px;color:var(--g);font-weight:700">→</div>
+        <div style="flex:1;min-width:140px;padding:16px;background:linear-gradient(135deg,var(--oil-c),#fef3c7);border-radius:10px;border-top:4px solid var(--oil)">
+          <div style="font-size:11px;color:var(--oil-d);font-weight:700;letter-spacing:1px;margin-bottom:6px">MIDSTREAM · 中游</div>
+          <div style="font-size:13px;font-weight:600;color:var(--d);margin-bottom:4px">生产加工</div>
+          <div class="cx" style="font-size:11px">食品工厂 · 包装设计 · 质量检测</div>
+        </div>
+        <div style="display:flex;align-items:center;font-size:20px;color:var(--oil-a);font-weight:700">→</div>
+        <div style="flex:1;min-width:140px;padding:16px;background:linear-gradient(135deg,#eff6ff,#dbeafe);border-radius:10px;border-top:4px solid var(--b)">
+          <div style="font-size:11px;color:var(--b);font-weight:700;letter-spacing:1px;margin-bottom:6px">PLATFORM · 平台</div>
+          <div style="font-size:13px;font-weight:600;color:var(--d);margin-bottom:4px">数智工坊</div>
+          <div class="cx" style="font-size:11px">展示 · 撮合 · 交易 · 溯源 · 运营</div>
+        </div>
+        <div style="display:flex;align-items:center;font-size:20px;color:var(--b);font-weight:700">→</div>
+        <div style="flex:1;min-width:140px;padding:16px;background:linear-gradient(135deg,#f5f3ff,#ede9fe);border-radius:10px;border-top:4px solid var(--ind)">
+          <div style="font-size:11px;color:var(--ind);font-weight:700;letter-spacing:1px;margin-bottom:6px">DOWNSTREAM · 下游</div>
+          <div style="font-size:13px;font-weight:600;color:var(--d);margin-bottom:4px">渠道消费</div>
+          <div class="cx" style="font-size:11px">电商 · 团购 · 企业福利 · 食堂 · 扶贫</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 撮合流程 -->
+  <div class="card">
+    <div class="ct">撮合全流程 · 六步闭环</div>
+    <div class="flow" style="justify-content:center">
+      <div class="fl">需求发布</div><div class="fa">›</div>
+      <div class="fl">AI智能匹配</div><div class="fa">›</div>
+      <div class="fl">方案对比</div><div class="fa">›</div>
+      <div class="fl">在线签约</div><div class="fa">›</div>
+      <div class="fl">履约跟踪</div><div class="fa">›</div>
+      <div class="fl">评价闭环</div>
+    </div>
+    <div class="g3" style="margin-top:16px">
+      <div class="fi">
+        <div class="fi-i fi-b">📋</div>
+        <div><div style="font-size:12px;font-weight:700;color:var(--d)">需求发布</div><div class="cx" style="font-size:11px">企业/渠道方发布采购或供应需求，系统自动分类打标</div></div>
+      </div>
+      <div class="fi">
+        <div class="fi-i fi-b">🔍</div>
+        <div><div style="font-size:12px;font-weight:700;color:var(--d)">AI智能匹配</div><div class="cx" style="font-size:11px">基于能力标签/历史数据/评分多维匹配最优方案</div></div>
+      </div>
+      <div class="fi">
+        <div class="fi-i fi-b">📊</div>
+        <div><div style="font-size:12px;font-weight:700;color:var(--d)">方案对比</div><div class="cx" style="font-size:11px">价格/周期/资质/案例/评分 五维横向对比</div></div>
+      </div>
+      <div class="fi">
+        <div class="fi-i fi-g">✍️</div>
+        <div><div style="font-size:12px;font-weight:700;color:var(--d)">在线签约</div><div class="cx" style="font-size:11px">电子合同+区块链存证，资金托管保障双方</div></div>
+      </div>
+      <div class="fi">
+        <div class="fi-i fi-g">🚀</div>
+        <div><div style="font-size:12px;font-weight:700;color:var(--d)">履约跟踪</div><div class="cx" style="font-size:11px">里程碑管理 · 实时进度可视 · 验收节点可控</div></div>
+      </div>
+      <div class="fi">
+        <div class="fi-i fi-g">⭐</div>
+        <div><div style="font-size:12px;font-weight:700;color:var(--d)">评价闭环</div><div class="cx" style="font-size:11px">双向评分 · 优质上浮 · 劣质净化</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 撮合案例 -->
+  <div class="card">
+    <div class="ct">撮合案例 · 马季粮油产业链</div>
+    <table>
+      <thead><tr><th>撮合方向</th><th>需求方</th><th>供应方</th><th>交易品类</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr class="hl"><td>原料→工厂</td><td>马季粮油</td><td>宁夏本地亚麻籽合作社</td><td>亚麻籽原料 500吨/年</td><td><span class="bd b-g">长期合作</span></td></tr>
+        <tr><td>工厂→平台</td><td>数智工坊</td><td>马季粮油</td><td>成品油上架 5款SKU</td><td><span class="bd b-g">已上架</span></td></tr>
+        <tr><td>平台→渠道</td><td>企业福利采购商</td><td>数智工坊</td><td>礼盒装 2000盒/季度</td><td><span class="bd b-b">洽谈中</span></td></tr>
+        <tr><td>平台→食堂</td><td>学校/企业食堂</td><td>数智工坊</td><td>5L装 月度配送</td><td><span class="bd b-o">待签约</span></td></tr>
+        <tr><td>平台→扶贫</td><td>政府帮扶单位</td><td>数智工坊</td><td>全系列 扶贫专区</td><td><span class="bd b-b">规划中</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 服务商生态 -->
+  <div class="card">
+    <div class="ct">平台服务商生态 · 6大品类200+服务商</div>
+    <div class="g3" style="margin-top:14px">
+      <div style="padding:16px;background:linear-gradient(135deg,#f8faff,#eef2ff);border-radius:10px;text-align:center">
+        <div style="font-size:28px;margin-bottom:4px">🏭</div>
+        <div style="font-size:12px;font-weight:700;color:var(--d)">数字化交付</div>
+        <div class="cx" style="font-size:11px">MES/WMS/ERP<br>物联网/智能工厂</div>
+      </div>
+      <div style="padding:16px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-radius:10px;text-align:center">
+        <div style="font-size:28px;margin-bottom:4px">💼</div>
+        <div style="font-size:12px;font-weight:700;color:var(--d)">企业服务</div>
+        <div class="cx" style="font-size:11px">资质/财税/法律<br>人力/管理咨询</div>
+      </div>
+      <div style="padding:16px;background:linear-gradient(135deg,#f5f3ff,#ede9fe);border-radius:10px;text-align:center">
+        <div style="font-size:28px;margin-bottom:4px">🌐</div>
+        <div style="font-size:12px;font-weight:700;color:var(--d)">电商代运营</div>
+        <div class="cx" style="font-size:11px">店铺运营/直播带货<br>内容营销/数据分析</div>
+      </div>
+      <div style="padding:16px;background:linear-gradient(135deg,#fff7ed,#fed7aa);border-radius:10px;text-align:center">
+        <div style="font-size:28px;margin-bottom:4px">📦</div>
+        <div style="font-size:12px;font-weight:700;color:var(--d)">供应链服务</div>
+        <div class="cx" style="font-size:11px">仓储/冷链/物流<br>供应链金融</div>
+      </div>
+      <div style="padding:16px;background:linear-gradient(135deg,var(--oil-c),#fef3c7);border-radius:10px;text-align:center">
+        <div style="font-size:28px;margin-bottom:4px">🏆</div>
+        <div style="font-size:12px;font-weight:700;color:var(--d)">品牌营销</div>
+        <div class="cx" style="font-size:11px">品牌设计/广告投放<br>内容创作/公关</div>
+      </div>
+      <div style="padding:16px;background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-radius:10px;text-align:center">
+        <div style="font-size:28px;margin-bottom:4px">🔬</div>
+        <div style="font-size:12px;font-weight:700;color:var(--d)">质检溯源</div>
+        <div class="cx" style="font-size:11px">第三方检测/溯源系统<br>认证/标准化</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="g4">
+    <div class="dc"><div class="dn">200+</div><div class="dl">认证服务商</div></div>
+    <div class="dc"><div class="dn">¥2.3亿</div><div class="dl">撮合交易额</div></div>
+    <div class="dc"><div class="dn">7天</div><div class="dl">平均撮合周期</div></div>
+    <div class="dc"><div class="dn">96.5%</div><div class="dl">客户满意度</div></div>
+  </div>
+</section>
+
+<!-- ========================== -->
+<!-- TAB 4: 产品推广              -->
+<!-- ========================== -->
+<section class="pnl" id="tab-product" role="tabpanel">
+
+  <div class="card">
+    <div class="ct">产品矩阵 · 马季粮油5款核心SKU</div>
+    <div class="pg" style="margin-top:14px">
+      <div class="pd">
+        <div class="ph ph-flax"><span style="position:relative;z-index:2">🫙</span><span class="ptag pt-s">明星</span></div>
+        <div class="pb2"><div class="pn">亚麻籽油 5L</div><div class="ps">α-亚麻酸≥55% · 物理压榨</div><div class="pp">¥168<small>/桶</small></div>
+          <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:7px"><span class="pf pf-r">零售</span><span class="pf pf-b">大宗</span><span class="pf pf-g">扶贫</span><span class="pf pf-o">团购</span></div>
+        </div>
+      </div>
+      <div class="pd">
+        <div class="ph ph-flax"><span style="position:relative;z-index:2">🧴</span><span class="ptag pt-n">热销</span></div>
+        <div class="pb2"><div class="pn">亚麻籽油 1.6L</div><div class="ps">日常家用装 · 易保存</div><div class="pp">¥68<small>/瓶</small></div>
+          <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:7px"><span class="pf pf-r">零售</span><span class="pf pf-b">大宗</span><span class="pf pf-o">团购</span><span class="pf pf-p">福利</span></div>
+        </div>
+      </div>
+      <div class="pd">
+        <div class="ph ph-sun"><span style="position:relative;z-index:2">🌻</span></div>
+        <div class="pb2"><div class="pn">葵花籽油 5L</div><div class="ps">物理压榨 · 清香不腻</div><div class="pp">¥128<small>/桶</small></div>
+          <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:7px"><span class="pf pf-r">零售</span><span class="pf pf-b">大宗</span><span class="pf pf-g">扶贫</span></div>
+        </div>
+      </div>
+      <div class="pd">
+        <div class="ph ph-gift"><span style="position:relative;z-index:2">🎁</span><span class="ptag pt-g">礼盒</span></div>
+        <div class="pb2"><div class="pn">亚麻籽油礼盒装</div><div class="ps">1.6L×2瓶 · 送礼佳品</div><div class="pp">¥198<small>/盒</small></div>
+          <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:7px"><span class="pf pf-b">大宗</span><span class="pf pf-p">福利</span></div>
+        </div>
+      </div>
+      <div class="pd">
+        <div class="ph ph-blend"><span style="position:relative;z-index:2">🍶</span><span class="ptag pt-d">日常</span></div>
+        <div class="pb2"><div class="pn">调和油 5L</div><div class="ps">科学配比 · 营养均衡</div><div class="pp">¥108<small>/桶</small></div>
+          <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:7px"><span class="pf pf-r">零售</span><span class="pf pf-b">大宗</span><span class="pf pf-c">食堂</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">6种营销形态 · 我方营销团队全案执行</div>
+    <table>
+      <thead><tr><th>营销形态</th><th>目标客户</th><th>推广方式</th><th>马季适用产品</th><th>我方执行</th></tr></thead>
+      <tbody>
+        <tr class="hl"><td><span class="bd b-r">零售</span></td><td>个人/家庭</td><td>电商平台+内容营销</td><td>全部产品</td><td>详情页/短视频/直播</td></tr>
+        <tr><td><span class="bd b-b">大宗采购</span></td><td>企业/批发商</td><td>定向推荐+谈判</td><td>5L装/礼盒</td><td>方案定制/报价/签约</td></tr>
+        <tr><td><span class="bd b-g">扶贫采购</span></td><td>政府/帮扶单位</td><td>扶贫专区+推荐</td><td>全系列</td><td>资质背书/溯源报告</td></tr>
+        <tr><td><span class="bd b-o">团购</span></td><td>社群/单位</td><td>拼团+团长推广</td><td>1.6L/5L装</td><td>社群运营/团长招募</td></tr>
+        <tr><td><span class="bd b-p">食堂</span></td><td>学校/企业食堂</td><td>定向招商+样品</td><td>5L调和/葵花</td><td>样品配送/采购对接</td></tr>
+        <tr><td><span class="bd b-i">企业福利</span></td><td>HR/行政</td><td>企业采购平台</td><td>礼盒装</td><td>企业页+采购+定制</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="ct ct-oil">三维一体 × 产品推广 = 全链路转化</div>
+    <div class="cx" style="margin-bottom:14px">产品推广不再是孤立的"卖货"，而是融入企业宣传三维一体：</div>
+    <div class="g3">
+      <div style="padding:16px;background:linear-gradient(135deg,var(--oil-c),#fef3c7);border-radius:10px;border-left:4px solid var(--oil)">
+        <div style="font-size:12px;font-weight:700;color:var(--oil-d);margin-bottom:4px">📝 文字赋能</div>
+        <div class="cx" style="font-size:11px">每款产品配品牌故事/营养成分科普/食用指南。让消费者不仅买产品，更买知识和信任。</div>
+      </div>
+      <div style="padding:16px;background:linear-gradient(135deg,#eff6ff,#dbeafe);border-radius:10px;border-left:4px solid var(--b)">
+        <div style="font-size:12px;font-weight:700;color:var(--b);margin-bottom:4px">🎬 视频赋能</div>
+        <div class="cx" style="font-size:11px">每款产品配60秒展示视频/使用场景短视频。抖音/视频号/小红书矩阵分发。</div>
+      </div>
+      <div style="padding:16px;background:linear-gradient(135deg,#f5f3ff,#ede9fe);border-radius:10px;border-left:4px solid var(--ind)">
+        <div style="font-size:12px;font-weight:700;color:var(--ind);margin-bottom:4px">🛒 商城赋能</div>
+        <div class="cx" style="font-size:11px">一键下单/拼团/秒杀/会员价。详情页优化，转化率持续提升。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<footer class="ft">
+  <div class="ft-tag">SHUZHI WORKSHOP · V4.0</div>
+  <p style="font-size:14px;font-weight:700;color:#fff">数智工坊 · 企业后服务</p>
+  <p style="font-size:11px;margin-top:5px">企业宣传三维一体 · 源头甄选 · 产业链撮合 · 让天下没有难做的生意</p>
+  <p style="font-size:10px;margin-top:8px;opacity:.5">售前演示专用 · 双击打开即可演示</p>
+</footer>
+
+<script>
+(function(){
+  var tabs=document.querySelectorAll('#navTabs .ntb');
+  var panels=document.querySelectorAll('.pnl');
+  function activate(name,btn){
+    panels.forEach(function(p){p.classList.toggle('act',p.id==='tab-'+name)});
+    tabs.forEach(function(t){t.classList.toggle('act',t===btn);t.setAttribute('aria-selected',t===btn?'true':'false')});
+    try{window.scrollTo({top:0,behavior:'smooth'})}catch(e){window.scrollTo(0,0)}
+  }
+  tabs.forEach(function(btn){
+    btn.addEventListener('click',function(e){e.preventDefault();activate(btn.getAttribute('data-tab'),btn)})
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.target.matches('#navTabs .ntb')){
+      var idx=[].indexOf.call(tabs,e.target);
+      if(e.key==='ArrowRight'&&idx<tabs.length-1){tabs[idx+1].focus();activate(tabs[idx+1].getAttribute('data-tab'),tabs[idx+1])}
+      if(e.key==='ArrowLeft'&&idx>0){tabs[idx-1].focus();activate(tabs[idx-1].getAttribute('data-tab'),tabs[idx-1])}
+    }
+  });
+  activate('brand',tabs[0]);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>数智工坊全系统检查报告</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--oil:#d4a017;--oil-a:#b8860b;--oil-d:#5d4506;--oil-c:#fdf6e3;--b:#2563eb;--bl:#6366f1;--ind:#7c3aed;--bg:#f5f7fa;--c:#fff;--d:#0a1628;--d2:#1e3a5f;--t:#1f2937;--m:#6b7280;--g:#059669;--o:#ea580c;--r:#ef4444}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;background:var(--bg);color:var(--t);line-height:1.7}
+.bb{height:6px;background:linear-gradient(90deg,var(--oil) 0%,var(--oil-a) 25%,var(--oil-d) 50%,var(--b) 75%,var(--ind) 100%);position:fixed;top:0;left:0;right:0;z-index:100}
+.wrap{max-width:960px;margin:0 auto;padding:36px 20px;padding-top:50px}
+h1{font-size:22px;font-weight:800;color:var(--d);letter-spacing:1px;margin-bottom:4px}
+h1 .oil{color:var(--oil-a)}
+.sub{font-size:12px;color:var(--m);margin-bottom:20px}
+.sec{background:var(--c);border-radius:14px;padding:22px;box-shadow:0 2px 14px rgba(0,0,0,.04);border:1px solid #e5e7eb;margin-bottom:14px}
+.st{font-size:15px;font-weight:700;color:var(--d);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.st::before{content:'';width:4px;height:16px;background:linear-gradient(180deg,var(--b),var(--bl));border-radius:2px;flex-shrink:0}
+.st.oil::before{background:linear-gradient(180deg,var(--oil),var(--oil-a))}
+.st.g::before{background:linear-gradient(180deg,var(--g),#10b981)}
+.st.r::before{background:linear-gradient(180deg,var(--r),#f87171)}
+table{width:100%;border-collapse:collapse;margin:6px 0;font-size:12px}
+th{background:linear-gradient(135deg,var(--d),var(--d2));color:#dbeafe;padding:8px 10px;text-align:left;font-size:10px;font-weight:600;letter-spacing:1px}
+td{padding:7px 10px;border-bottom:1px solid #f1f5f9}tr:last-child td{border-bottom:none}tr:hover td{background:#f8faff}
+.badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;margin:1px}
+.b-g{background:#ecfdf5;color:#047857}.b-b{background:#eff6ff;color:var(--b)}.b-o{background:#fff7ed;color:#c2410c}.b-r{background:#fef2f2;color:#dc2626}.b-i{background:#f5f3ff;color:var(--ind)}.b-oil{background:var(--oil-c);color:var(--oil-d);border:1px solid rgba(212,160,23,.3)}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;margin-top:10px}
+.metric{background:linear-gradient(135deg,var(--d),var(--d2));color:#fff;border-radius:10px;padding:14px;text-align:center}
+.mn{font-size:20px;font-weight:700;color:var(--oil);font-family:Georgia,serif}
+.ml{font-size:9px;opacity:.6;letter-spacing:1px;margin-top:2px}
+.alert{padding:10px 14px;border-radius:8px;font-size:11px;margin:6px 0}
+.alert-r{background:#fef2f2;border:1px solid #fecaca;color:#991b1b}
+.alert-o{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412}
+.alert-g{background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46}
+.alert-b{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af}
+code{background:#f3f4f6;padding:1px 5px;border-radius:3px;font-size:10px;color:var(--ind)}
+.ft{text-align:center;padding:20px;color:var(--m);font-size:10px}
+@media(max-width:768px){.metrics{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="bb"></div>
+<div class="wrap">
+
+<h1>数智工坊 · <span class="oil">全系统检查报告</span></h1>
+<div class="sub">2026-07-12 18:43 · 从后端服务到前端H5到演示版的完整盘点</div>
+
+<div class="metrics">
+<div class="metric"><div class="mn">3004</div><div class="metric-l">后端端口运行中</div></div>
+<div class="metric"><div class="mn">61</div><div class="metric-l">路由文件</div></div>
+<div class="metric"><div class="mn">128</div><div class="metric-l">数据库表</div></div>
+<div class="metric"><div class="mn">8/8</div><div class="metric-l">页面全部200</div></div>
+<div class="metric"><div class="mn">0</div><div class="metric-l">JS语法错误</div></div>
+<div class="metric"><div class="mn">5</div><div class="metric-l">API 404</div></div>
+</div>
+
+<div class="sec">
+<div class="st g">后端服务状态 <span class="badge b-g">运行中</span></div>
+<table>
+<thead><tr><th>检查项</th><th>结果</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>Node.js 进程</td><td><span class="badge b-g">✓</span></td><td>PID 9531, node server.js, 10:58AM 启动</td></tr>
+<tr><td>端口 3004</td><td><span class="badge b-g">✓</span></td><td>LISTEN 状态</td></tr>
+<tr><td>端口 8911（排盘）</td><td><span class="badge b-g">✓</span></td><td>Python 进程 PID 1533</td></tr>
+<tr><td>Express 框架</td><td><span class="badge b-g">✓</span></td><td>helmet + cors + rateLimit 安全中间件</td></tr>
+<tr><td>JS 语法检查</td><td><span class="badge b-g">✓</span></td><td>66 个文件全部通过，0 错误</td></tr>
+<tr><td>launchd 服务</td><td><span class="badge b-o">无</span></td><td>手动启动，未注册系统服务</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="sec">
+<div class="st">API 路由健康度 <span class="badge b-g">58/63 正常</span></div>
+<table>
+<thead><tr><th>API 端点</th><th>HTTP</th><th>状态</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>/api/products</td><td>200</td><td><span class="badge b-g">✓</span></td><td>16 条产品数据</td></tr>
+<tr><td>/api/articles</td><td>200</td><td><span class="badge b-g">✓</span></td><td>27 篇文章</td></tr>
+<tr><td>/api/clients</td><td>200</td><td><span class="badge b-g">✓</span></td><td>32 个客户</td></tr>
+<tr><td>/api/banners</td><td>200</td><td><span class="badge b-g">✓</span></td><td>0 条（空表）</td></tr>
+<tr><td>/api/bookings</td><td>200</td><td><span class="badge b-g">✓</span></td><td>0 条（空表）</td></tr>
+<tr><td>/api/faqs</td><td>404</td><td><span class="badge b-o">根路径无</span></td><td>有 /categories /list /hot 子路由，根路径未定义</td></tr>
+<tr><td>/api/partners</td><td>404</td><td><span class="badge b-o">根路径无</span></td><td>有 /register /info /dashboard，需认证</td></tr>
+<tr><td>/api/campaigns</td><td>404</td><td><span class="badge b-o">根路径无</span></td><td>有 /active /:id /calculate</td></tr>
+<tr><td>/api/assessments</td><td>404</td><td><span class="badge b-o">根路径无</span></td><td>有 /list 子路由</td></tr>
+<tr><td>/api/admin</td><td>404</td><td><span class="badge b-o">需认证</span></td><td>有 /login /me /dashboard，需 authCheck</td></tr>
+</tbody>
+</table>
+<div class="alert alert-b">5 个 API 返回 404 是<strong>正常行为</strong>——这些路由只有子路径（如 /api/faqs/list），没有定义根路径处理器。不是 bug。</div>
+</div>
+
+<div class="sec">
+<div class="st oil">前端页面状态 <span class="badge b-g">8/8 全部 200</span></div>
+<table>
+<thead><tr><th>页面</th><th>URL</th><th>HTTP</th><th>大小</th></tr></thead>
+<tbody>
+<tr><td>管理后台</td><td>/admin/</td><td><span class="badge b-g">200</span></td><td>573KB</td></tr>
+<tr><td>运营大屏</td><td>/screen</td><td><span class="badge b-g">200</span></td><td>41KB</td></tr>
+<tr><td>公众号H5首页</td><td>/h5/</td><td><span class="badge b-g">200</span></td><td>99KB</td></tr>
+<tr><td>员工工作台</td><td>/h5/work.html</td><td><span class="badge b-g">200</span></td><td>39KB</td></tr>
+<tr><td>代理商工作台</td><td>/h5/agent.html</td><td><span class="badge b-g">200</span></td><td>32KB</td></tr>
+<tr><td>企业管家H5</td><td>/h5/enterprise.html</td><td><span class="badge b-g">200</span></td><td>23KB</td></tr>
+<tr><td>政府监管看板</td><td>/h5/gov.html</td><td><span class="badge b-g">200</span></td><td>7KB</td></tr>
+<tr><td>验收打卡H5</td><td>/h5/checkin.html</td><td><span class="badge b-g">200</span></td><td>7KB</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="sec">
+<div class="st">数据库状态</div>
+<table>
+<thead><tr><th>表</th><th>数据量</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>products</td><td>16</td><td>产品库</td></tr>
+<tr><td>articles</td><td>27</td><td>文章/知识库</td></tr>
+<tr><td>faqs</td><td>30</td><td>FAQ问答</td></tr>
+<tr><td>clients</td><td>32</td><td>客户信息</td></tr>
+<tr><td>policies</td><td>99</td><td>政策追踪</td></tr>
+<tr><td>enterprise_profiles</td><td>33</td><td>企业画像</td></tr>
+<tr><td>system_config</td><td>32</td><td>系统配置项</td></tr>
+<tr><td>agents</td><td>4</td><td>代理商</td></tr>
+<tr><td>service_providers</td><td>5</td><td>服务商</td></tr>
+<tr><td>projects</td><td>6</td><td>项目管控</td></tr>
+<tr><td>orders</td><td>10</td><td>订单</td></tr>
+<tr><td>campaigns</td><td>3</td><td>营销活动</td></tr>
+<tr><td>banners</td><td>0</td><td><span class="badge b-o">空</span></td></tr>
+<tr><td>bookings</td><td>0</td><td><span class="badge b-o">空</span></td></tr>
+<tr><td>partners</td><td>1</td><td><span class="badge b-o">仅1条</span></td></tr>
+</tbody>
+</table>
+<div class="alert alert-o"><strong>dt-mall.db</strong> 大小: 1.9MB · 128 张表 · WAL 模式活跃（shm+wal 文件存在）</div>
+</div>
+
+<div class="sec">
+<div class="st oil">演示版状态 <span class="badge b-oil">V4.0 当前版</span></div>
+<table>
+<thead><tr><th>版本</th><th>文件</th><th>大小</th><th>状态</th></tr></thead>
+<tbody>
+<tr><td><strong>V4.0 在线版</strong></td><td>demos/v4-current/</td><td>55KB</td><td><span class="badge b-g">✓ 最新</span></td></tr>
+<tr><td><strong>V4.0 离线版</strong></td><td>demos/v4-current/</td><td>643KB</td><td><span class="badge b-g">✓ 最新</span></td></tr>
+<tr><td>V3.1 在线版</td><td>demos/v3-current/</td><td>44KB</td><td><span class="badge b-b">归档</span></td></tr>
+<tr><td>V3.1 离线版</td><td>demos/v3-current/</td><td>634KB</td><td><span class="badge b-b">归档</span></td></tr>
+<tr><td>根目录散落HTML</td><td>12个文件</td><td>~3.5MB</td><td><span class="badge b-o">待清理</span></td></tr>
+</tbody>
+</table>
+<div class="alert alert-o">根目录有 12 个旧版 HTML 文件散落（马季粮油综合Demo、服务撮合Demo 等），已归档到 demos/archive-v1/ 和 demos/archive-v2/，但原始文件仍在根目录。建议清理。</div>
+</div>
+
+<div class="sec">
+<div class="st r">需要处理的问题</div>
+<table>
+<thead><tr><th>#</th><th>问题</th><th>优先级</th><th>建议</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>GitHub 仓库未创建</td><td><span class="badge b-r">P0</span></td><td>需用户授权 gh auth login 后创建仓库并部署 Pages</td></tr>
+<tr><td>2</td><td>banners 表为空</td><td><span class="badge b-o">P2</span></td><td>H5首页 banner 无内容，需在管理后台添加</td></tr>
+<tr><td>3</td><td>bookings 表为空</td><td><span class="badge b-o">P2</span></td><td>预约功能无数据，可能是功能未上线</td></tr>
+<tr><td>4</td><td>partners 仅1条</td><td><span class="badge b-o">P2</span></td><td>代理商数据不足，需运营推广</td></tr>
+<tr><td>5</td><td>根目录12个散落HTML</td><td><span class="badge b-o">P2</span></td><td>已归档副本，原文件可清理</td></tr>
+<tr><td>6</td><td>未注册 launchd 服务</td><td><span class="badge b-b">P3</span></td><td>重启后需手动启动 node server.js</td></tr>
+<tr><td>7</td><td>微信支付为模拟模式</td><td><span class="badge b-b">P3</span></td><td>placeholder appid/key，需配置真实商户信息</td></tr>
+<tr><td>8</td><td>admin-web 有 .bak 文件</td><td><span class="badge b-b">P3</span></td><td>index.html.bak (328KB) 可清理</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="sec">
+<div class="st">部署排期（全系统）</div>
+<table>
+<thead><tr><th>阶段</th><th>内容</th><th>周期</th><th>状态</th></tr></thead>
+<tbody>
+<tr><td><strong>1. 设计完善</strong></td><td>V4.0 SEO+ARIA+键盘导航 + 系统页面审查</td><td>1天</td><td><span class="badge b-g">✓ 完成</span></td></tr>
+<tr><td><strong>2. 开发优化</strong></td><td>CSS精简、图片压缩、移动端适配、空表填充</td><td>1-2天</td><td><span class="badge b-o">待执行</span></td></tr>
+<tr><td><strong>3. 测试验证</strong></td><td>63 API + 8 页面 + V4.0 演示 + 三浏览器 + 移动端</td><td>1天</td><td><span class="badge b-o">待执行</span></td></tr>
+<tr><td><strong>4. GitHub部署</strong></td><td>创建仓库 + 推送 + Pages + 二维码</td><td>半天</td><td><span class="badge b-r">需用户授权</span></td></tr>
+<tr><td><strong>5. 移动端测试</strong></td><td>扫码访问 + 8页面触摸验证 + V4.0 Tab测试</td><td>半天</td><td><span class="badge b-o">待执行</span></td></tr>
+</tbody>
+</table>
+<div class="alert alert-r"><strong>⚠ 唯一阻断项：</strong>GitHub 部署需要你执行 <code>brew install gh</code> → <code>gh auth login</code> → 告诉我已完成。其余所有工作我都可以自动执行。</div>
+</div>
+
+<div class="sec">
+<div class="st g">系统总体评估</div>
+<div class="alert alert-g">
+<strong>后端服务：健康</strong> — 3004 端口运行中，61 个路由文件，128 张数据库表，66 个 JS 文件零语法错误，8 个前端页面全部 HTTP 200。核心数据：16 产品 / 27 文章 / 30 FAQ / 32 客户 / 99 政策 / 33 企业画像。
+</div>
+<div class="alert alert-b">
+<strong>演示版：V4.0 已就绪</strong> — 4 Tab（企业宣传/源头甄选/产业链撮合/产品推广），55KB 在线版 + 643KB 离线版，SEO+ARIA+键盘导航完备。
+</div>
+<div class="alert alert-o">
+<strong>待优化项：</strong>banners/bookings 空表、根目录散落 HTML 清理、微信支付真实配置、launchd 服务注册。
+</div>
+</div>
+
+<div class="ft">
+数智工坊 · 全系统检查报告 · 2026-07-12 18:43<br>
+后端 3004 · 排盘 8911 · 8页面 · 61路由 · 128表 · V4.0演示版
+</div>
+
+</div>
+</body>
+</html>
