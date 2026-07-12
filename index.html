@@ -3,43 +3,52 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="数智工坊全功能导航 - 文影商城·源头甄选·产业链撮合">
+<meta name="theme-color" content="#d4a017">
 <title>数智工坊 · 全功能导航</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--oil:#d4a017;--oil-a:#b8860b;--b:#2563eb;--bl:#6366f1;--ind:#7c3aed;--bg:#f5f7fa;--c:#fff;--d:#0a1628;--d2:#1e3a5f;--t:#1f2937;--m:#6b7280;--g:#059669;--o:#ea580c;--r:#ef4444}
-body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;background:var(--bg);color:var(--t);line-height:1.6}
+:root{--oil:#d4a017;--oil-a:#b8860b;--oil-d:#5d4506;--oil-c:#fdf6e3;--b:#2563eb;--bl:#6366f1;--ind:#7c3aed;--bg:#f5f7fa;--c:#fff;--d:#0a1628;--d2:#1e3a5f;--t:#1f2937;--m:#6b7280;--g:#059669;--o:#ea580c;--r:#ef4444}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue',sans-serif;background:var(--bg);color:var(--t);line-height:1.6}
 .bb{height:5px;background:linear-gradient(90deg,var(--oil),var(--oil-a),var(--b),var(--ind));position:fixed;top:0;left:0;right:0;z-index:100}
-.wrap{max-width:900px;margin:0 auto;padding:40px 20px}
-.hero{text-align:center;padding:40px 0 30px}
-.hero h1{font-size:28px;font-weight:800;color:var(--d);letter-spacing:2px;margin-bottom:6px}
+.wrap{max-width:860px;margin:0 auto;padding:36px 16px}
+.hero{text-align:center;padding:30px 0 24px}
+.hero h1{font-size:26px;font-weight:800;color:var(--d);letter-spacing:2px;margin-bottom:4px}
 .hero h1 .oil{color:var(--oil-a)}
-.hero p{font-size:13px;color:var(--m)}
-.sec{background:var(--c);border-radius:14px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.04);border:1px solid #e5e7eb;margin-bottom:14px}
-.sec-t{font-size:15px;font-weight:700;color:var(--d);margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.sec-t::before{content:'';width:4px;height:16px;background:linear-gradient(180deg,var(--b),var(--bl));border-radius:2px}
+.hero p{font-size:12px;color:var(--m)}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px}
+.metric{background:linear-gradient(135deg,var(--d),var(--d2));color:#fff;border-radius:10px;padding:12px 8px;text-align:center}
+.mn{font-size:18px;font-weight:700;color:var(--oil);font-family:Georgia,serif}
+.ml{font-size:9px;opacity:.6;letter-spacing:1px;margin-top:2px}
+.sec{background:var(--c);border-radius:14px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,.04);border:1px solid #e5e7eb;margin-bottom:12px}
+.sec-t{font-size:14px;font-weight:700;color:var(--d);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.sec-t::before{content:'';width:4px;height:15px;background:linear-gradient(180deg,var(--b),var(--bl));border-radius:2px;flex-shrink:0}
 .sec-t.oil::before{background:linear-gradient(180deg,var(--oil),var(--oil-a))}
 .sec-t.g::before{background:linear-gradient(180deg,var(--g),#10b981)}
 .sec-t.i::before{background:linear-gradient(180deg,var(--ind),var(--bl))}
 .sec-t.o::before{background:linear-gradient(180deg,var(--o),#f97316)}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
-.card{display:block;padding:14px;background:linear-gradient(135deg,#f8faff,#f0f4ff);border-radius:10px;text-decoration:none;color:var(--t);border:1px solid #e5e7eb;transition:all .2s}
-.card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(37,99,235,.1);border-color:#bfdbfe}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.card{display:block;padding:12px;border-radius:10px;text-decoration:none;color:var(--t);border:1px solid #e5e7eb;transition:all .2s}
+.card:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.08)}
 .card-oil{background:linear-gradient(135deg,#fdf6e3,#fef3c7);border-color:rgba(212,160,23,.2)}
-.card-oil:hover{box-shadow:0 4px 12px rgba(212,160,23,.15);border-color:rgba(212,160,23,.4)}
-.card-g{background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-color:rgba(5,150,105,.15)}
-.card-o{background:linear-gradient(135deg,#fff7ed,#fed7aa);border-color:rgba(234,88,12,.15)}
-.card-i{background:linear-gradient(135deg,#f5f3ff,#ede9fe);border-color:rgba(124,58,237,.15)}
-.card-title{font-size:13px;font-weight:700;color:var(--d);margin-bottom:2px}
-.card-desc{font-size:11px;color:var(--m)}
-.badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:9px;font-weight:700;margin-left:4px}
-.b-ok{background:#ecfdf5;color:#047857}.b-warn{background:#fff7ed;color:#c2410c}.b-info{background:#eff6ff;color:var(--b)}
-.note{font-size:11px;color:var(--m);padding:8px 12px;background:#f9fafb;border-radius:8px;margin-top:8px}
-.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;margin-bottom:14px}
-.metric{background:linear-gradient(135deg,var(--d),var(--d2));color:#fff;border-radius:10px;padding:12px;text-align:center}
-.mn{font-size:18px;font-weight:700;color:var(--oil);font-family:Georgia,serif}
-.ml{font-size:9px;opacity:.6;letter-spacing:1px}
-.ft{text-align:center;padding:20px;color:var(--m);font-size:10px}
-@media(max-width:600px){.grid{grid-template-columns:1fr 1fr}.hero h1{font-size:22px}}
+.card-oil:hover{border-color:rgba(212,160,23,.4)}
+.card-b{background:linear-gradient(135deg,#f8faff,#f0f4ff);border-color:rgba(37,99,235,.1)}
+.card-b:hover{border-color:rgba(37,99,235,.3)}
+.card-g{background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-color:rgba(5,150,105,.1)}
+.card-g:hover{border-color:rgba(5,150,105,.3)}
+.card-i{background:linear-gradient(135deg,#f5f3ff,#ede9fe);border-color:rgba(124,58,237,.1)}
+.card-i:hover{border-color:rgba(124,58,237,.3)}
+.card-o{background:linear-gradient(135deg,#fff7ed,#fed7aa);border-color:rgba(234,88,12,.1)}
+.card-o:hover{border-color:rgba(234,88,12,.3)}
+.ct{font-size:13px;font-weight:700;color:var(--d);margin-bottom:1px}
+.cd{font-size:11px;color:var(--m)}
+.badge{display:inline-block;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700;vertical-align:middle;margin-left:4px}
+.b-ok{background:#ecfdf5;color:#047857}
+.note{font-size:11px;color:var(--m);padding:8px 10px;background:#f9fafb;border-radius:8px;margin-top:8px;line-height:1.5}
+.note code{background:#e5e7eb;padding:1px 5px;border-radius:3px;font-size:10px}
+.ft{text-align:center;padding:16px 0;color:var(--m);font-size:10px;line-height:1.8}
+.ft a{color:var(--b);text-decoration:none}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}.hero h1{font-size:22px}.wrap{padding:24px 12px}}
 </style>
 </head>
 <body>
@@ -47,113 +56,89 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;backg
 <div class="wrap">
 
 <div class="hero">
-<h1>数智<span class="oil">工坊</span> · 全功能导航</h1>
+<h1>数智<span class="oil">工坊</span></h1>
 <p>文影商城 · 源头甄选 · 产业链撮合 · 让天下没有难做的生意</p>
 </div>
 
 <div class="metrics">
-<div class="metric"><div class="mn">9</div><div class="ml">静态页面</div></div>
-<div class="metric"><div class="mn">4</div><div class="ml">演示版Tab</div></div>
+<div class="metric"><div class="mn">12</div><div class="ml">在线页面</div></div>
+<div class="metric"><div class="mn">4</div><div class="ml">演示Tab</div></div>
 <div class="metric"><div class="mn">12</div><div class="ml">历史版本</div></div>
-<div class="metric"><div class="mn">3</div><div class="ml">报告文档</div></div>
+<div class="metric"><div class="mn">61</div><div class="ml">API路由</div></div>
 </div>
 
 <div class="sec">
-<div class="sec-t oil">V4.0 演示版（当前版本）</div>
+<div class="sec-t oil">V4.0 演示版</div>
 <div class="grid">
-<a class="card card-oil" href="index.html"><div class="card-title">演示版在线版</div><div class="card-desc">4Tab: 企业宣传/源头甄选/产业链撮合/产品推广</div></a>
-<a class="card card-oil" href="v4.0-数智工坊_离线版.html"><div class="card-title">演示版离线版</div><div class="card-desc">647KB, 图片内联, 双击即开</div></a>
+<a class="card card-oil" href="v4.0-数智工坊_在线版.html"><div class="ct">在线演示版<span class="badge b-ok">推荐</span></div><div class="cd">4Tab: 企业宣传/源头甄选/撮合/产品</div></a>
+<a class="card card-oil" href="v4.0-数智工坊_离线版.html"><div class="ct">离线演示版</div><div class="cd">647KB, 图片内联, 双击即开</div></a>
 </div>
 </div>
 
 <div class="sec">
 <div class="sec-t">管理后台 & 大屏</div>
 <div class="grid">
-<a class="card" href="admin.html"><div class="card-title">管理后台</div><div class="card-desc">58功能模块: 仪表盘/CRM/订单/产品/合同</div></a>
-<a class="card" href="screen.html"><div class="card-title">运营大屏</div><div class="card-desc">数据可视化大屏展示</div></a>
+<a class="card card-b" href="admin.html"><div class="ct">管理后台</div><div class="cd">58功能模块: 仪表盘/CRM/订单</div></a>
+<a class="card card-b" href="screen.html"><div class="ct">运营大屏</div><div class="cd">数据可视化展示</div></a>
 </div>
-<div class="note">注: 管理后台和大屏的API数据需要本地后端服务(localhost:3004)运行。静态预览可看UI和功能布局。</div>
+<div class="note">外网为演示模式，API数据需本地后端 <code>node server.js</code></div>
 </div>
 
 <div class="sec">
-<div class="sec-t g">H5 端（6个角色页面）</div>
+<div class="sec-t g">H5 端（6个角色）</div>
 <div class="grid">
-<a class="card card-g" href="h5/index.html"><div class="card-title">H5公众号首页</div><div class="card-desc">产品/文章/政策/FAQ/团购</div></a>
-<a class="card card-g" href="h5/work.html"><div class="card-title">员工工作台</div><div class="card-desc">日报/项目/客户跟进</div></a>
-<a class="card card-g" href="h5/agent.html"><div class="card-title">代理商工作台</div><div class="card-desc">线索/佣金/产品推送</div></a>
-<a class="card card-g" href="h5/enterprise.html"><div class="card-title">企业管家H5</div><div class="card-desc">企业画像/工单/诊断</div></a>
-<a class="card card-g" href="h5/gov.html"><div class="card-title">政府监管看板</div><div class="card-desc">政策追踪/企业监管</div></a>
-<a class="card card-g" href="h5/checkin.html"><div class="card-title">验收打卡H5</div><div class="card-desc">项目验收/位置打卡</div></a>
+<a class="card card-g" href="h5/index.html"><div class="ct">公众号首页</div><div class="cd">产品/文章/政策/FAQ</div></a>
+<a class="card card-g" href="h5/work.html"><div class="ct">员工工作台</div><div class="cd">日报/项目/客户跟进</div></a>
+<a class="card card-g" href="h5/agent.html"><div class="ct">代理商工作台</div><div class="cd">线索/佣金/产品推送</div></a>
+<a class="card card-g" href="h5/enterprise.html"><div class="ct">企业管家</div><div class="cd">企业画像/工单/诊断</div></a>
+<a class="card card-g" href="h5/gov.html"><div class="ct">政府监管</div><div class="cd">政策追踪/企业监管</div></a>
+<a class="card card-g" href="h5/checkin.html"><div class="ct">验收打卡</div><div class="cd">项目验收/位置打卡</div></a>
 </div>
 </div>
 
 <div class="sec">
 <div class="sec-t i">移动端</div>
 <div class="grid">
-<a class="card card-i" href="mobile/index.html"><div class="card-title">移动端门户</div><div class="card-desc">84KB, 移动端入口页</div></a>
+<a class="card card-i" href="mobile/index.html"><div class="ct">移动端门户</div><div class="cd">84KB, 移动端入口</div></a>
 </div>
 </div>
 
 <div class="sec">
-<div class="sec-t o">历史版本归档</div>
+<div class="sec-t o">历史版本</div>
 <div class="grid">
-<a class="card card-o" href="archive/v1.1-马季粮油企业形象宣传.html"><div class="card-title">V1.1 企业形象宣传</div><div class="card-desc">初版演示</div></a>
-<a class="card card-o" href="archive/v1.2-服务撮合Demo.html"><div class="card-title">V1.2 服务撮合Demo</div><div class="card-desc">撮合功能初版</div></a>
-<a class="card card-o" href="archive/v1.3-马季粮油综合Demo.html"><div class="card-title">V1.3 综合Demo</div><div class="card-desc">综合演示版</div></a>
-<a class="card card-o" href="archive/v2.0-马季粮油离线初版.html"><div class="card-title">V2.0 离线初版</div><div class="card-desc">首版离线包</div></a>
-<a class="card card-o" href="archive/v2.1-马季粮油三维一体_在线版.html"><div class="card-title">V2.1 三维一体在线</div><div class="card-desc">文字+视频+商城</div></a>
-<a class="card card-o" href="archive/v2.1-马季粮油三维一体_离线版.html"><div class="card-title">V2.1 三维一体离线</div><div class="card-desc">离线版</div></a>
-<a class="card card-o" href="archive/v3.0-数智工坊_在线版.html"><div class="card-title">V3.0 在线版</div><div class="card-desc">数智工坊标准版</div></a>
-<a class="card card-o" href="archive/v3.1-数智工坊_在线版.html"><div class="card-title">V3.1 在线版</div><div class="card-desc">JS修复+品牌色+视觉升级</div></a>
+<a class="card card-o" href="archive/v3.1-数智工坊_在线版.html"><div class="ct">V3.1 在线版</div><div class="cd">JS修复+品牌色</div></a>
+<a class="card card-o" href="archive/v3.0-数智工坊_在线版.html"><div class="ct">V3.0 在线版</div><div class="cd">数智工坊标准版</div></a>
+<a class="card card-o" href="archive/v2.1-马季粮油三维一体_在线版.html"><div class="ct">V2.1 三维一体</div><div class="cd">文字+视频+商城</div></a>
+<a class="card card-o" href="archive/v2.0-马季粮油离线初版.html"><div class="ct">V2.0 离线初版</div><div class="cd">首版离线包</div></a>
 </div>
 </div>
 
 <div class="sec">
-<div class="sec-t o">策划案 & 方案文档</div>
+<div class="sec-t o">策划案 & 文档</div>
 <div class="grid">
-<a class="card card-o" href="legacy/企业IP打造与文旅结合规划方案.html"><div class="card-title">企业IP与文旅规划</div><div class="card-desc">IP打造+文旅结合方案</div></a>
-<a class="card card-o" href="legacy/数造工坊产品到文旅完整策划案.html"><div class="card-title">产品到文旅策划案</div><div class="card-desc">完整链路策划</div></a>
-<a class="card card-o" href="legacy/数造工坊全链路策划案V2.html"><div class="card-title">全链路策划案V2</div><div class="card-desc">V2升级版</div></a>
-<a class="card card-o" href="legacy/服务撮合Demo.html"><div class="card-title">服务撮合Demo</div><div class="card-desc">撮合服务演示</div></a>
-<a class="card card-o" href="legacy/马季粮油企业形象宣传.html"><div class="card-title">马季粮油形象宣传</div><div class="card-desc">企业宣传页</div></a>
-<a class="card card-o" href="legacy/马季粮油综合Demo.html"><div class="card-title">马季粮油综合Demo</div><div class="card-desc">综合演示</div></a>
-<a class="card card-o" href="legacy/马季粮油离线版.html"><div class="card-title">马季粮油离线版</div><div class="card-desc">1.8MB离线包</div></a>
-<a class="card card-o" href="legacy/数智工坊_企业后服务演示.html"><div class="card-title">企业后服务演示</div><div class="card-desc">36KB在线版</div></a>
-<a class="card card-o" href="legacy/数智工坊_企业后服务_离线版.html"><div class="card-title">企业后服务离线</div><div class="card-desc">631KB离线版</div></a>
-<a class="card card-o" href="legacy/马季粮油_企业后服务三维一体演示.html"><div class="card-title">三维一体演示</div><div class="card-desc">文字+视频+商城</div></a>
-<a class="card card-o" href="legacy/马季粮油_企业后服务_离线版.html"><div class="card-title">三维一体离线</div><div class="card-desc">631KB离线</div></a>
-<a class="card card-o" href="legacy/深度优化方案.html"><div class="card-title">深度优化方案</div><div class="card-desc">系统优化方案</div></a>
+<a class="card card-o" href="legacy/企业IP打造与文旅结合规划方案.html"><div class="ct">企业IP与文旅规划</div><div class="cd">IP打造+文旅方案</div></a>
+<a class="card card-o" href="legacy/数造工坊产品到文旅完整策划案.html"><div class="ct">产品到文旅策划</div><div class="cd">完整链路策划</div></a>
+<a class="card card-o" href="legacy/马季粮油综合Demo.html"><div class="ct">马季粮油综合Demo</div><div class="cd">综合演示</div></a>
+<a class="card card-o" href="legacy/马季粮油离线版.html"><div class="ct">马季粮油离线版</div><div class="cd">1.8MB离线包</div></a>
 </div>
 </div>
 
 <div class="sec">
 <div class="sec-t">报告 & 文档</div>
 <div class="grid">
-<a class="card" href="全功能访问地址.html"><div class="card-title">全功能访问地址</div><div class="card-desc">完整测试地址清单</div></a>
-<a class="card" href="全系统检查报告.html"><div class="card-title">全系统检查报告</div><div class="card-desc">后端+前端+数据库+API盘点</div></a>
-<a class="card" href="V4.0-项目计划.html"><div class="card-title">V4.0项目计划</div><div class="card-desc">五阶段排期+技术规格</div></a>
+<a class="card card-b" href="全功能访问地址.html"><div class="ct">全功能访问地址</div><div class="cd">完整测试地址清单</div></a>
+<a class="card card-b" href="全系统检查报告.html"><div class="ct">全系统检查报告</div><div class="cd">后端+前端+API盘点</div></a>
 </div>
 </div>
 
 <div class="sec">
 <div class="sec-t oil">本地服务（需后端运行）</div>
-<div class="note">
-<strong>以下功能需要本地后端服务 localhost:3004 运行：</strong><br>
-• 管理后台API数据交互 • H5页面动态数据 • 订单/支付/合同 • AI诊断 • 消息推送<br>
-启动方式: <code>cd dt-mall/backend && node server.js</code>
-</div>
-<div class="grid" style="margin-top:10px">
-<a class="card" href="http://localhost:3004/admin/"><div class="card-title">本地管理后台</div><div class="card-desc">localhost:3004/admin/</div></a>
-<a class="card" href="http://localhost:3004/h5/"><div class="card-title">本地H5首页</div><div class="card-desc">localhost:3004/h5/</div></a>
-<a class="card" href="http://localhost:3004/screen"><div class="card-title">本地运营大屏</div><div class="card-desc">localhost:3004/screen</div></a>
-<a class="card" href="http://localhost:3004/mobile/"><div class="card-title">本地移动门户</div><div class="card-desc">localhost:3004/mobile/</div></a>
-</div>
+<div class="note">以下功能需本地后端 <code>localhost:3004</code> 运行：API数据交互、订单/支付/合同、AI诊断、消息推送。启动方式: <code>cd dt-mall/backend && node server.js</code></div>
 </div>
 
 <div class="ft">
-数智工坊 · 全功能导航 · 2026-07-12<br>
-9个页面 · 12个历史版本 · 3份报告 · 4个Tab演示版<br>
-GitHub: github.com/sgmt-taojing/shuzhi-workshop-v4
+数智工坊 · 全功能导航 · 2026-07-13<br>
+<a href="https://github.com/sgmt-taojing/shuzhi-workshop-v4">GitHub 仓库</a> · 12页面 · 61API · 128表
 </div>
 
 </div>
