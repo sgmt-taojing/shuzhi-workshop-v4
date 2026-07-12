@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>数造工坊 · 员工工作台</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#2563eb;--primary-dark:#1d4ed8;--bg:#f0f2f5;--card:#fff;--border:#e5e7eb;--text:#1f2937;--text2:#6b7280;--success:#22c55e;--warning:#f59e0b;--danger:#ef4444;--info:#3b82f6}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px;-webkit-tap-highlight-color:transparent;padding-bottom:60px}
+a{color:inherit;text-decoration:none}
+.hidden{display:none!important}
+.loading{text-align:center;padding:40px;color:#9ca3af;font-size:13px}
+.empty{text-align:center;padding:40px;color:#9ca3af;font-size:13px}
+
+.header{background:linear-gradient(135deg,#0f172a,#1e3a5f);color:#fff;padding:48px 20px 20px;position:sticky;top:0;z-index:100}
+.header-row{display:flex;justify-content:space-between;align-items:center}
+.header-title{font-size:18px;font-weight:700}
+.header-sub{font-size:12px;opacity:.7;margin-top:2px}
+.header-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:18px}
+
+.tabs{display:flex;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:90px;z-index:99;overflow-x:auto}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:12px 14px;font-size:13px;color:var(--text2);white-space:nowrap;position:relative;cursor:pointer}
+.tab.active{color:var(--primary);font-weight:600}
+.tab.active::after{content:'';position:absolute;bottom:0;left:20%;right:20%;height:2px;background:var(--primary);border-radius:1px}
+.tab .badge{display:inline-block;background:var(--danger);color:#fff;font-size:10px;padding:1px 5px;border-radius:8px;margin-left:2px;vertical-align:top}
+
+.page{display:none;min-height:50vh}
+.page.active{display:block}
+
+/* Stats */
+.stats{display:flex;gap:8px;padding:12px;overflow-x:auto}
+.stats::-webkit-scrollbar{display:none}
+.stat{flex-shrink:0;background:#fff;border-radius:10px;padding:12px 16px;text-align:center;min-width:80px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.stat-num{font-size:20px;font-weight:700;color:var(--primary)}
+.stat-label{font-size:10px;color:var(--text2);margin-top:2px}
+
+/* Project Card */
+.proj-card{background:#fff;margin:10px 12px;border-radius:12px;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.04);cursor:pointer;transition:transform .15s}
+.proj-card:active{transform:scale(.98)}
+.proj-header{display:flex;justify-content:space-between;align-items:start;margin-bottom:8px}
+.proj-name{font-size:15px;font-weight:600;flex:1;margin-right:8px}
+.proj-status{font-size:11px;padding:2px 8px;border-radius:3px;white-space:nowrap;font-weight:600}
+.st-active{background:#fef3c7;color:#92400e}
+.st-planning{background:#dbeafe;color:#1e40af}
+.st-paused{background:#f3f4f6;color:#6b7280}
+.st-completed{background:#d1fae5;color:#059669}
+.st-cancelled{background:#fee2e2;color:#dc2626}
+.proj-client{font-size:12px;color:var(--text2);margin-bottom:6px}
+.proj-progress{margin:8px 0}
+.proj-progress-bar{height:6px;background:#e5e7eb;border-radius:3px;overflow:hidden}
+.proj-progress-fill{height:100%;border-radius:3px;transition:width .3s}
+.proj-progress-text{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-top:3px}
+.proj-meta{display:flex;gap:12px;font-size:11px;color:var(--text2);margin-top:8px;padding-top:8px;border-top:1px solid #f3f4f6}
+.proj-meta-item{display:flex;align-items:center;gap:3px}
+
+/* Milestone */
+.ms-list{padding:0 12px}
+.ms-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #f3f4f6}
+.ms-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.ms-dot.done{background:var(--success)}
+.ms-dot.in_progress{background:var(--warning)}
+.ms-dot.pending{background:#d1d5db}
+.ms-dot.skipped{background:var(--danger)}
+.ms-info{flex:1}
+.ms-title{font-size:13px;font-weight:600}
+.ms-date{font-size:11px;color:var(--text2);margin-top:2px}
+.ms-status{font-size:11px;font-weight:600;margin-top:2px}
+
+/* Report */
+.rpt-card{background:#fff;margin:10px 12px;border-radius:10px;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.rpt-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.rpt-author{font-size:13px;font-weight:600}
+.rpt-date{font-size:11px;color:var(--text2)}
+.rpt-content{font-size:13px;color:var(--text);line-height:1.5;margin-bottom:6px}
+.rpt-issues{font-size:12px;color:var(--danger);margin-top:6px;padding:6px 8px;background:#fef2f2;border-radius:6px}
+.rpt-plan{font-size:12px;color:var(--info);margin-top:6px;padding:6px 8px;background:#eff6ff;border-radius:6px}
+.rpt-status{font-size:11px;font-weight:600;display:inline-block;padding:2px 8px;border-radius:3px;margin-top:6px}
+
+/* Approval */
+.appr-card{background:#fff;margin:10px 12px;border-radius:10px;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.appr-type{font-size:11px;padding:2px 8px;border-radius:3px;font-weight:600;display:inline-block;margin-bottom:6px}
+.appr-type.budget{background:#dbeafe;color:#1e40af}
+.appr-type.change{background:#f3e8ff;color:#6b21a8}
+.appr-type.timeline{background:#fef3c7;color:#92400e}
+.appr-type.scope{background:#d1fae5;color:#059669}
+.appr-type.other{background:#f3f4f6;color:#6b7280}
+.appr-title{font-size:14px;font-weight:600;margin-bottom:6px}
+.appr-content{font-size:12px;color:var(--text2);margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.appr-footer{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--text2)}
+.appr-status{font-size:11px;font-weight:600;padding:2px 8px;border-radius:3px}
+.appr-status.pending{background:#fef3c7;color:#92400e}
+.appr-status.approved{background:#d1fae5;color:#059669}
+.appr-status.rejected{background:#fee2e2;color:#dc2626}
+
+/* Schedule */
+.sched-day{margin:12px}
+.sched-day-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.sched-day-num{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.sched-day-label{font-size:12px;color:var(--text2)}
+.sched-item{background:#fff;border-radius:8px;padding:10px;margin-bottom:6px;margin-left:40px;border-left:3px solid var(--primary);box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.sched-item-title{font-size:13px;font-weight:600}
+.sched-item-meta{font-size:11px;color:var(--text2);margin-top:3px}
+
+/* Notification */
+.notif-card{background:#fff;margin:10px 12px;border-radius:10px;padding:14px;display:flex;gap:10px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.notif-icon{font-size:22px;flex-shrink:0}
+.notif-body{flex:1}
+.notif-title{font-size:13px;font-weight:600}
+.notif-desc{font-size:12px;color:var(--text2);margin-top:3px;line-height:1.5}
+.notif-time{font-size:11px;color:#9ca3af;margin-top:4px}
+.notif-dot{width:8px;height:8px;background:var(--danger);border-radius:50%;flex-shrink:0;margin-top:6px}
+
+/* Bottom Nav */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;border-top:1px solid var(--border);z-index:100;box-shadow:0 -2px 8px rgba(0,0,0,.04)}
+.nav-item{flex:1;text-align:center;padding:8px 0;cursor:pointer;color:var(--text2);transition:color .2s}
+.nav-item.active{color:var(--primary)}
+.nav-icon{font-size:20px}
+.nav-label{font-size:10px;margin-top:2px}
+
+/* Detail Overlay */
+.overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#fff;z-index:1000;overflow-y:auto;display:none}
+.overlay.active{display:block}
+.overlay-header{position:sticky;top:0;background:#fff;padding:14px 16px;display:flex;align-items:center;border-bottom:1px solid var(--border);z-index:10}
+.back-btn{font-size:22px;cursor:pointer;margin-right:12px}
+.overlay-title{font-size:16px;font-weight:600}
+.overlay-content{padding:16px}
+.sec{margin-bottom:20px}
+.sec-title{font-size:14px;font-weight:600;margin-bottom:10px;padding-left:8px;border-left:3px solid var(--primary)}
+.sec-text{font-size:13px;line-height:1.7;color:var(--text)}
+
+/* Form */
+.form-group{margin-bottom:14px}
+.form-label{font-size:12px;color:var(--text2);margin-bottom:4px;display:block}
+.form-input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px}
+.form-textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;min-height:80px;resize:vertical}
+.form-select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:#fff}
+.btn{display:block;width:100%;padding:12px;border:none;border-radius:24px;font-size:14px;font-weight:600;text-align:center;cursor:pointer}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-outline{background:#fff;color:var(--primary);border:1px solid var(--primary)}
+.btn-success{background:var(--success);color:#fff}
+.btn-danger{background:var(--danger);color:#fff}
+
+/* Toast */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.75);color:#fff;padding:8px 20px;border-radius:20px;font-size:13px;z-index:9999;pointer-events:none}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-row">
+    <div>
+      <div class="header-title">🏭 数造工坊 · 员工工作台</div>
+      <div class="header-sub" id="todayDate"></div>
+    </div>
+    <div class="header-avatar">👤</div>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs" id="tabs">
+  <div class="tab active" data-page="dashboard">📊 工作台</div>
+  <div class="tab" data-page="projects">📁 项目</div>
+  <div class="tab" data-page="reports">📝 日报</div>
+  <div class="tab" data-page="approvals">✅ 审批 <span class="badge" id="apprBadge"></span></div>
+  <div class="tab" data-page="schedule">📅 日程</div>
+  <div class="tab" data-page="notifications">🔔 消息</div>
+</div>
+
+<!-- Pages -->
+<div id="page-dashboard" class="page active"></div>
+<div id="page-projects" class="page"></div>
+<div id="page-reports" class="page"></div>
+<div id="page-approvals" class="page"></div>
+<div id="page-schedule" class="page"></div>
+<div id="page-notifications" class="page"></div>
+
+<!-- Overlay -->
+<div class="overlay" id="overlay">
+  <div class="overlay-header">
+    <span class="back-btn" onclick="closeOverlay()">‹</span>
+    <span class="overlay-title" id="overlayTitle">详情</span>
+  </div>
+  <div class="overlay-content" id="overlayContent"></div>
+  <div style="padding:0 16px 20px" id="overlayAction"></div>
+</div>
+
+<!-- Bottom Nav -->
+<div class="bottom-nav">
+  <div class="nav-item active" data-nav="dashboard"><div class="nav-icon">📊</div><div class="nav-label">工作台</div></div>
+  <div class="nav-item" data-nav="projects"><div class="nav-icon">📁</div><div class="nav-label">项目</div></div>
+  <div class="nav-item" data-nav="reports"><div class="nav-icon">📝</div><div class="nav-label">日报</div></div>
+  <div class="nav-item" data-nav="approvals"><div class="nav-icon">✅</div><div class="nav-label">审批</div></div>
+  <div class="nav-item" data-nav="notifications"><div class="nav-icon">🔔</div><div class="nav-label">消息</div></div>
+</div>
+
+<script>
+const API = window.location.origin + '/api';
+async function api(path, opts) {
+  const r = await fetch(API + path, opts ? { ...opts, headers: { 'Content-Type': 'application/json' } } : {});
+  return r.json();
+}
+function $(s) { return document.querySelector(s); }
+function $$(s) { return document.querySelectorAll(s); }
+
+// Date
+$('#todayDate').textContent = new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
+
+// Tabs & Nav
+$$('.tab').forEach(t => t.addEventListener('click', () => switchPage(t.dataset.page)));
+$$('.nav-item').forEach(t => t.addEventListener('click', () => switchPage(t.dataset.nav)));
+
+function switchPage(page) {
+  $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.page === page));
+  $$('.nav-item').forEach(t => t.classList.toggle('active', t.dataset.nav === page));
+  $$('.page').forEach(p => p.classList.toggle('active', p.id === 'page-' + page));
+  window.scrollTo(0, 0);
+  if (page === 'dashboard') loadDashboard();
+  else if (page === 'projects') loadProjects();
+  else if (page === 'reports') loadReports();
+  else if (page === 'approvals') loadApprovals();
+  else if (page === 'schedule') loadSchedule();
+  else if (page === 'notifications') loadNotifications();
+}
+
+function openOverlay(title, content, actionHtml) {
+  $('#overlayTitle').textContent = title;
+  $('#overlayContent').innerHTML = content;
+  $('#overlayAction').innerHTML = actionHtml || '';
+  $('#overlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeOverlay() {
+  $('#overlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+function toast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2000);
+}
+
+// ==================== 工作台 ====================
+async function loadDashboard() {
+  const el = $('#page-dashboard');
+  el.innerHTML = '<div class="loading">加载中...</div>';
+  try {
+    const [stats, projects, approvals] = await Promise.all([
+      api('/projects/stats/overview').catch(() => ({})),
+      api('/projects?page=1&limit=5').catch(() => ({list:[]})),
+      api('/services/stats/overview').catch(() => ({}))
+    ]);
+    const projList = projects.list || projects || [];
+    const activeProjects = projList.filter(p => p.status === 'active' || p.status === 'planning');
+
+    el.innerHTML = `
+      <div class="stats">
+        <div class="stat"><div class="stat-num">${stats.total || 0}</div><div class="stat-label">总项目</div></div>
+        <div class="stat"><div class="stat-num" style="color:#f59e0b">${(stats.byStatus||{}).active || 0}</div><div class="stat-label">执行中</div></div>
+        <div class="stat"><div class="stat-num" style="color:#06b6d4">${(stats.byStatus||{}).planning || 0}</div><div class="stat-label">立项中</div></div>
+        <div class="stat"><div class="stat-num" style="color:#22c55e">${(stats.byStatus||{}).completed || 0}</div><div class="stat-label">已完成</div></div>
+      </div>
+
+      <div style="padding:0 12px;margin-bottom:10px">
+        <div style="font-size:15px;font-weight:600;margin-bottom:10px">🚀 进行中的项目</div>
+      </div>
+      ${activeProjects.map(p => {
+        const stMap = {active:'st-active',planning:'st-planning',paused:'st-paused',completed:'st-completed',cancelled:'st-cancelled'};
+        const stLabel = {active:'执行中',planning:'立项中',paused:'已暂停',completed:'已完成',cancelled:'已取消'};
+        const progColor = (p.progress||0) >= 75 ? '#22c55e' : (p.progress||0) >= 50 ? '#f59e0b' : '#3b82f6';
+        return `<div class="proj-card" onclick="showProjectDetail(${p.id})">
+          <div class="proj-header">
+            <div class="proj-name">${p.name}</div>
+            <span class="proj-status ${stMap[p.status]||''}">${stLabel[p.status]||p.status}</span>
+          </div>
+          <div class="proj-client">📋 ${p.client_name || '-'} · 👤 ${p.manager || '-'}</div>
+          <div class="proj-progress">
+            <div class="proj-progress-bar"><div class="proj-progress-fill" style="width:${p.progress||0}%;background:${progColor}"></div></div>
+            <div class="proj-progress-text"><span>${p.phase_label || p.phase || ''}</span><span>${p.progress||0}%</span></div>
+          </div>
+        </div>`;
+      }).join('') || '<div class="empty">暂无进行中项目</div>'}
+
+      <div style="padding:0 12px;margin:16px 0 10px">
+        <div style="font-size:15px;font-weight:600;margin-bottom:10px">⚡ 快捷操作</div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;padding:0 12px">
+        <div style="flex:1;min-width:45%;background:linear-gradient(135deg,#eff6ff,#dbeafe);border-radius:10px;padding:14px;cursor:pointer" onclick="switchPage('reports');setTimeout(()=>openReportForm(),100)">
+          <div style="font-size:22px">📝</div><div style="font-size:13px;font-weight:600;margin-top:4px">提交日报</div>
+        </div>
+        <div style="flex:1;min-width:45%;background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-radius:10px;padding:14px;cursor:pointer" onclick="switchPage('schedule')">
+          <div style="font-size:22px">📅</div><div style="font-size:13px;font-weight:600;margin-top:4px">查看日程</div>
+        </div>
+        <div style="flex:1;min-width:45%;background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:10px;padding:14px;cursor:pointer" onclick="switchPage('approvals')">
+          <div style="font-size:22px">✅</div><div style="font-size:13px;font-weight:600;margin-top:4px">待审审批</div>
+        </div>
+        <div style="flex:1;min-width:45%;background:linear-gradient(135deg,#f3e8ff,#e9d5ff);border-radius:10px;padding:14px;cursor:pointer" onclick="switchPage('projects')">
+          <div style="font-size:22px">📁</div><div style="font-size:13px;font-weight:600;margin-top:4px">全部项目</div>
+        </div>
+      </div>
+    `;
+  } catch(e) {
+    el.innerHTML = '<div class="empty">加载失败</div>';
+  }
+}
+
+// ==================== 项目 ====================
+async function loadProjects() {
+  const el = $('#page-projects');
+  el.innerHTML = '<div class="loading">加载中...</div>';
+  try {
+    const data = await api('/projects?page=1&limit=50');
+    const rows = data.list || data || [];
+    const stMap = {active:'st-active',planning:'st-planning',paused:'st-paused',completed:'st-completed',cancelled:'st-cancelled'};
+    const stLabel = {active:'执行中',planning:'立项中',paused:'已暂停',completed:'已完成',cancelled:'已取消'};
+    const phLabel = {initiation:'启动',planning:'规划',execution:'执行',monitoring:'监控',closing:'收尾'};
+    el.innerHTML = rows.length ? rows.map(p => {
+      const progColor = (p.progress||0) >= 75 ? '#22c55e' : (p.progress||0) >= 50 ? '#f59e0b' : '#3b82f6';
+      return `<div class="proj-card" onclick="showProjectDetail(${p.id})">
+        <div class="proj-header">
+          <div class="proj-name">${p.name}</div>
+          <span class="proj-status ${stMap[p.status]||''}">${stLabel[p.status]||p.status}</span>
+        </div>
+        <div class="proj-client">📋 ${p.client_name || '-'} · 👤 ${p.manager || '-'}</div>
+        <div class="proj-progress">
+          <div class="proj-progress-bar"><div class="proj-progress-fill" style="width:${p.progress||0}%;background:${progColor}"></div></div>
+          <div class="proj-progress-text"><span>${phLabel[p.phase]||p.phase||''}</span><span>${p.progress||0}%</span></div>
+        </div>
+        <div class="proj-meta">
+          <span class="proj-meta-item">💰 ¥${(p.budget||0).toLocaleString()}</span>
+          <span class="proj-meta-item">👥 ${p.team_size||0}人</span>
+          <span class="proj-meta-item">📅 ${p.start_date||'?'}</span>
+        </div>
+      </div>`;
+    }).join('') : '<div class="empty">暂无项目</div>';
+  } catch(e) { el.innerHTML = '<div class="empty">加载失败</div>'; }
+}
+
+async function showProjectDetail(id) {
+  openOverlay('项目详情', '<div class="loading">加载中...</div>');
+  try {
+    const p = await api('/projects/' + id);
+    const phLabel = {initiation:'启动',planning:'规划',execution:'执行',monitoring:'监控',closing:'收尾'};
+    const stLabel = {active:'执行中',planning:'立项中',paused:'已暂停',completed:'已完成',cancelled:'已取消'};
+    const milestones = p.milestones || [];
+    const msStLabel = {done:'已完成',in_progress:'进行中',pending:'待开始',skipped:'已跳过'};
+    const msStColor = {done:'var(--success)',in_progress:'var(--warning)',pending:'#d1d5db',skipped:'var(--danger)'};
+
+    $('#overlayContent').innerHTML = `
+      <div class="sec">
+        <h2 style="font-size:18px;margin-bottom:8px">${p.name}</h2>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px">${p.code || ''} · ${stLabel[p.status]||p.status} · ${phLabel[p.phase]||p.phase}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+          ${p.tags ? p.tags.map(t => '<span style="background:#e0e7ff;color:#4338ca;padding:2px 8px;border-radius:4px;font-size:11px">'+t+'</span>').join('') : ''}
+        </div>
+      </div>
+      <div class="sec">
+        <div class="sec-title">基本信息</div>
+        <div class="sec-text">
+          客户：${p.client_name || '-'}（${p.client_contact || ''} ${p.client_phone || ''}）<br>
+          经理：${p.manager || '-'} ${p.manager_phone || ''}<br>
+          团队：${p.team_size || 0}人<br>
+          周期：${p.start_date || '?'} ~ ${p.end_date || '?'}<br>
+          预算：¥${(p.budget||0).toLocaleString()} / 已用 ¥${(p.spent||0).toLocaleString()}
+        </div>
+      </div>
+      <div class="sec">
+        <div class="sec-title">进度</div>
+        <div style="background:#e5e7eb;height:8px;border-radius:4px;overflow:hidden"><div style="width:${p.progress||0}%;height:100%;background:${(p.progress||0)>=75?'#22c55e':(p.progress||0)>=50?'#f59e0b':'#3b82f6'};transition:width .3s"></div></div>
+        <div style="text-align:right;font-size:12px;margin-top:4px;font-weight:600">${p.progress||0}%</div>
+      </div>
+      ${p.description ? `<div class="sec"><div class="sec-title">项目描述</div><div class="sec-text">${p.description}</div></div>` : ''}
+      <div class="sec">
+        <div class="sec-title">里程碑（${milestones.length}）</div>
+        <div class="ms-list">
+          ${milestones.length ? milestones.map(m => `
+            <div class="ms-item">
+              <div class="ms-dot" style="background:${msStColor[m.status]||'#d1d5db'}"></div>
+              <div class="ms-info">
+                <div class="ms-title">${m.title}</div>
+                <div class="ms-date">计划：${m.planned_date || '-'} ${m.actual_date ? '· 实际：'+m.actual_date : ''}</div>
+                <div class="ms-status" style="color:${msStColor[m.status]||'#999'}">${msStLabel[m.status]||m.status}</div>
+              </div>
+            </div>
+          `).join('') : '<div class="empty" style="padding:20px">暂无里程碑</div>'}
+        </div>
+      </div>
+      ${p.members && p.members.length ? `<div class="sec"><div class="sec-title">团队成员（${p.members.length}）</div>${p.members.map(m => '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f3f4f6"><div style="width:32px;height:32px;border-radius:50%;background:#e0e7ff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:#4338ca">'+(m.name||'?').charAt(0)+'</div><div><div style="font-size:13px;font-weight:600">'+m.name+'</div><div style="font-size:11px;color:#6b7280">'+({manager:'项目经理',developer:'开发',designer:'设计',tester:'测试',other:'其他'}[m.role]||m.role)+' · '+(m.responsibility||'')+'</div></div></div>').join('')}</div>` : ''}
+    `;
+    $('#overlayAction').innerHTML = `<button class="btn btn-primary" onclick="closeOverlay();switchPage('reports');setTimeout(()=>openReportForm(${id}),100)">📝 提交该项目日报</button>`;
+  } catch(e) {
+    $('#overlayContent').innerHTML = '<div class="empty">加载失败</div>';
+  }
+}
+
+// ==================== 日报 ====================
+async function loadReports() {
+  const el = $('#page-reports');
+  el.innerHTML = '<div class="loading">加载中...</div>';
+  try {
+    const projData = await api('/projects?page=1&limit=50');
+    const projects = projData.list || projData || [];
+    let allReports = [];
+    for (const p of projects) {
+      try {
+        const rptData = await api('/projects/' + p.id + '/reports');
+        const rpts = rptData.list || rptData || [];
+        rpts.forEach(r => allReports.push({ ...r, project_name: p.name, project_id: p.id }));
+      } catch(e) {}
+    }
+    allReports.sort((a, b) => (b.report_date || '').localeCompare(a.report_date || ''));
+    const stLabel = {pending:'待审核',approved:'已通过',rejected:'已驳回'};
+    const stColor = {pending:'#f59e0b',approved:'#22c55e',rejected:'#ef4444'};
+
+    el.innerHTML = `
+      <div style="padding:12px"><button class="btn btn-primary" onclick="openReportForm()">+ 提交日报</button></div>
+      ${allReports.length ? allReports.map(r => `
+        <div class="rpt-card" onclick="showReportDetail(${r.project_id}, ${r.id})">
+          <div class="rpt-header">
+            <span class="rpt-author">${r.member_name || '-'}</span>
+            <span class="rpt-date">${r.report_date || '-'}</span>
+          </div>
+          <div style="font-size:11px;color:#6b7280;margin-bottom:6px">📁 ${r.project_name}</div>
+          <div class="rpt-content">${(r.content || '').slice(0, 100)}${r.content && r.content.length > 100 ? '...' : ''}</div>
+          ${r.issues ? `<div class="rpt-issues">⚠ ${r.issues.slice(0,60)}</div>` : ''}
+          ${r.plan ? `<div class="rpt-plan">📋 ${r.plan.slice(0,60)}</div>` : ''}
+          <span class="rpt-status" style="background:${stColor[r.status]||'#999'}20;color:${stColor[r.status]||'#999'}">${stLabel[r.status]||r.status} · ${r.progress||0}%</span>
+        </div>
+      `).join('') : '<div class="empty">暂无日报</div>'}
+    `;
+  } catch(e) { el.innerHTML = '<div class="empty">加载失败</div>'; }
+}
+
+async function showReportDetail(projId, rptId) {
+  openOverlay('日报详情', '<div class="loading">加载中...</div>');
+  try {
+    const data = await api('/projects/' + projId + '/reports');
+    const rpts = data.list || data || [];
+    const r = rpts.find(x => x.id === rptId);
+    if (!r) { $('#overlayContent').innerHTML = '<div class="empty">未找到日报</div>'; return; }
+    const stLabel = {pending:'待审核',approved:'已通过',rejected:'已驳回'};
+    const stColor = {pending:'#f59e0b',approved:'#22c55e',rejected:'#ef4444'};
+    $('#overlayContent').innerHTML = `
+      <div class="sec">
+        <h2 style="font-size:16px;margin-bottom:6px">${r.member_name} 的日报</h2>
+        <div style="font-size:12px;color:var(--text2)">📅 ${r.report_date} · 进度 ${r.progress||0}%</div>
+      </div>
+      <div class="sec"><div class="sec-title">今日工作</div><div class="sec-text">${r.content || '-'}</div></div>
+      ${r.issues ? `<div class="sec"><div class="sec-title">遇到问题</div><div class="sec-text" style="color:#dc2626">${r.issues}</div></div>` : ''}
+      ${r.plan ? `<div class="sec"><div class="sec-title">明日计划</div><div class="sec-text" style="color:#2563eb">${r.plan}</div></div>` : ''}
+      <div class="sec"><div class="sec-title">审核状态</div><span class="rpt-status" style="background:${stColor[r.status]||'#999'}20;color:${stColor[r.status]||'#999'};font-size:13px;padding:4px 12px">${stLabel[r.status]||r.status}</span>
+      ${r.review_comment ? '<div style="margin-top:8px;font-size:13px;color:var(--text2)">审核意见：'+r.review_comment+'</div>' : ''}
+      </div>
+    `;
+    $('#overlayAction').innerHTML = '';
+  } catch(e) { $('#overlayContent').innerHTML = '<div class="empty">加载失败</div>'; }
+}
+
+async function openReportForm(projId) {
+  const projData = await api('/projects?page=1&limit=50');
+  const projects = projData.list || projData || [];
+  openOverlay('提交日报', `
+    <div class="form-group">
+      <label class="form-label">选择项目</label>
+      <select class="form-select" id="rpt-proj">
+        ${projects.map(p => '<option value="'+p.id+'" '+(projId===p.id?'selected':'')+'>'+p.name+'</option>').join('')}
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">提交人</label>
+      <input class="form-input" id="rpt-name" placeholder="您的姓名">
+    </div>
+    <div class="form-group">
+      <label class="form-label">日期</label>
+      <input class="form-input" type="date" id="rpt-date" value="${new Date().toISOString().slice(0,10)}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">今日工作内容</label>
+      <textarea class="form-textarea" id="rpt-content" placeholder="今天做了什么..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">进度(%)</label>
+      <input class="form-input" type="number" id="rpt-progress" value="0" min="0" max="100">
+    </div>
+    <div class="form-group">
+      <label class="form-label">遇到问题</label>
+      <textarea class="form-textarea" id="rpt-issues" placeholder="遇到了什么问题（选填）"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">明日计划</label>
+      <textarea class="form-textarea" id="rpt-plan" placeholder="明天打算做什么（选填）"></textarea>
+    </div>
+    <button class="btn btn-primary" onclick="submitReport()">提交日报</button>
+  `);
+}
+
+async function submitReport() {
+  const projId = $('#rpt-proj').value;
+  const body = {
+    member_name: $('#rpt-name').value.trim(),
+    report_date: $('#rpt-date').value,
+    content: $('#rpt-content').value.trim(),
+    progress: parseInt($('#rpt-progress').value) || 0,
+    issues: $('#rpt-issues').value.trim(),
+    plan: $('#rpt-plan').value.trim()
+  };
+  if (!body.content) { toast('请输入工作内容'); return; }
+  try {
+    await api('/projects/' + projId + '/reports', { method: 'POST', body: JSON.stringify(body) });
+    toast('日报提交成功');
+    closeOverlay();
+    loadReports();
+  } catch(e) { toast('提交失败'); }
+}
+
+// ==================== 审批 ====================
+async function loadApprovals() {
+  const el = $('#page-approvals');
+  el.innerHTML = '<div class="loading">加载中...</div>';
+  try {
+    const projData = await api('/projects?page=1&limit=50');
+    const projects = projData.list || projData || [];
+    let allApprs = [];
+    for (const p of projects) {
+      try {
+        const data = await api('/projects/' + p.id + '/approvals');
+        const aps = data.list || data || [];
+        aps.forEach(a => allApprs.push({ ...a, project_name: p.name, project_id: p.id }));
+      } catch(e) {}
+    }
+    allApprs.sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+
+    const pendingCount = allApprs.filter(a => a.status === 'pending').length;
+    const badge = $('#apprBadge');
+    badge.textContent = pendingCount > 0 ? pendingCount : '';
+    badge.style.display = pendingCount > 0 ? '' : 'none';
+
+    const typeLabel = {budget:'预算审批',timeline:'周期审批',scope:'范围审批',change:'变更审批',other:'其他审批'};
+    const typeClass = {budget:'budget',timeline:'timeline',scope:'scope',change:'change',other:'other'};
+    const stLabel = {pending:'待审批',approved:'已批准',rejected:'已驳回'};
+    const stClass = {pending:'pending',approved:'approved',rejected:'rejected'};
+
+    el.innerHTML = allApprs.length ? allApprs.map(a => `
+      <div class="appr-card" onclick="showApprovalDetail(${a.project_id}, ${a.id})">
+        <span class="appr-type ${typeClass[a.type]||'other'}">${typeLabel[a.type]||a.type}</span>
+        <div class="appr-title">${a.title}</div>
+        <div class="appr-content">${a.content || ''}</div>
+        <div class="appr-footer">
+          <span>📁 ${a.project_name} · 👤 ${a.requester || '-'}</span>
+          <span class="appr-status ${stClass[a.status]||''}">${stLabel[a.status]||a.status}</span>
+        </div>
+      </div>
+    `).join('') : '<div class="empty">暂无审批记录</div>';
+  } catch(e) { el.innerHTML = '<div class="empty">加载失败</div>'; }
+}
+
+async function showApprovalDetail(projId, apprId) {
+  openOverlay('审批详情', '<div class="loading">加载中...</div>');
+  try {
+    const data = await api('/projects/' + projId + '/approvals');
+    const aps = data.list || data || [];
+    const a = aps.find(x => x.id === apprId);
+    if (!a) { $('#overlayContent').innerHTML = '<div class="empty">未找到审批</div>'; return; }
+    const typeLabel = {budget:'预算审批',timeline:'周期审批',scope:'范围审批',change:'变更审批',other:'其他审批'};
+    const stLabel = {pending:'待审批',approved:'已批准',rejected:'已驳回'};
+    $('#overlayContent').innerHTML = `
+      <div class="sec">
+        <h2 style="font-size:16px;margin-bottom:8px">${a.title}</h2>
+        <div style="font-size:12px;color:var(--text2)">${typeLabel[a.type]||a.type} · ${stLabel[a.status]||a.status}</div>
+      </div>
+      <div class="sec"><div class="sec-title">审批内容</div><div class="sec-text">${a.content || '-'}</div></div>
+      <div class="sec"><div class="sec-title">申请信息</div><div class="sec-text">申请人：${a.requester || '-'}<br>申请时间：${(a.created_at||'').slice(0,16).replace('T',' ')}</div></div>
+      ${a.status !== 'pending' ? `<div class="sec"><div class="sec-title">审批结果</div><div class="sec-text">审批人：${a.approver || '-'}<br>审批时间：${(a.approved_at||'').slice(0,16).replace('T',' ')}<br>审批意见：${a.approver_comment || '-'}</div></div>` : ''}
+    `;
+    if (a.status === 'pending') {
+      $('#overlayAction').innerHTML = `
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-success" style="flex:1" onclick="processApproval(${projId}, ${apprId}, 'approved')">批准</button>
+          <button class="btn btn-danger" style="flex:1" onclick="processApproval(${projId}, ${apprId}, 'rejected')">驳回</button>
+        </div>
+      `;
+    } else {
+      $('#overlayAction').innerHTML = '';
+    }
+  } catch(e) { $('#overlayContent').innerHTML = '<div class="empty">加载失败</div>'; }
+}
+
+async function processApproval(projId, apprId, status) {
+  const comment = prompt(status === 'approved' ? '审批意见（选填）：' : '驳回原因：') || '';
+  const approver = prompt('审批人姓名：') || '';
+  try {
+    await api('/projects/' + projId + '/approvals/' + apprId, {
+      method: 'PUT',
+      body: JSON.stringify({ status, approver, approver_comment: comment })
+    });
+    toast(status === 'approved' ? '已批准' : '已驳回');
+    closeOverlay();
+    loadApprovals();
+  } catch(e) { toast('操作失败'); }
+}
+
+// ==================== 日程 ====================
+async function loadSchedule() {
+  const el = $('#page-schedule');
+  el.innerHTML = '<div class="loading">加载中...</div>';
+  try {
+    const projData = await api('/projects?page=1&limit=50');
+    const projects = projData.list || projData || [];
+    let events = [];
+    for (const p of projects) {
+      try {
+        const msData = await api('/projects/' + p.id + '/milestones');
+        const mss = msData.list || msData || [];
+        mss.forEach(m => {
+          if (m.planned_date) events.push({ date: m.planned_date, title: m.title, project: p.name, status: m.status });
+        });
+      } catch(e) {}
+    }
+    events.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+    const grouped = {};
+    events.forEach(e => { if (!grouped[e.date]) grouped[e.date] = []; grouped[e.date].push(e); });
+    const dates = Object.keys(grouped).sort();
+    const msStColor = {done:'#22c55e',in_progress:'#f59e0b',pending:'#9ca3af',skipped:'#ef4444'};
+
+    el.innerHTML = dates.length ? dates.map(date => {
+      const d = new Date(date);
+      const isToday = date === new Date().toISOString().slice(0, 10);
+      const isPast = d < new Date(new Date().toDateString());
+      const dayColor = isToday ? '#3b82f6' : isPast ? '#d1d5db' : '#f9fafb';
+      const txtColor = isToday ? '#fff' : isPast ? '#9ca3af' : '#333';
+      return `<div class="sched-day">
+        <div class="sched-day-header">
+          <div class="sched-day-num" style="background:${dayColor};color:${txtColor}">${d.getDate()}</div>
+          <div class="sched-day-label">${isToday ? '今天' : ['日','一','二','三','四','五','六'][d.getDay()] + '周'} · ${d.getMonth()+1}月</div>
+        </div>
+        ${grouped[date].map(e => `
+          <div class="sched-item" style="border-left-color:${msStColor[e.status]||'#3b82f6'}">
+            <div class="sched-item-title">${e.title}</div>
+            <div class="sched-item-meta">📁 ${e.project}</div>
+          </div>
+        `).join('')}
+      </div>`;
+    }).join('') : '<div class="empty">暂无日程安排</div>';
+  } catch(e) { el.innerHTML = '<div class="empty">加载失败</div>'; }
+}
+
+// ==================== 消息通知 ====================
+async function loadNotifications() {
+  const el = $('#page-notifications');
+  el.innerHTML = '<div class="loading">加载中...</div>';
+  try {
+    const data = await api('/notifications?page=1&limit=50');
+    const rows = data.list || data || [];
+    const typeIcon = {order:'🛒',system:'🔧',policy:'📜',project:'📁',approval:'✅',refund:'💰',marketing:'📢'};
+
+    if (rows.length === 0) {
+      // Fallback with mock data
+      const mock = [
+        {type:'approval',title:'项目变更审批待处理',content:'智慧工厂数字化转型项目的新增设备预警功能变更审批待您处理',created_at:new Date().toISOString(),read:false},
+        {type:'project',title:'里程碑即将到期',content:'核心模块开发里程碑计划日期为7月15日，请关注进度',created_at:new Date(Date.now()-3600000).toISOString(),read:false},
+        {type:'policy',title:'新政策推送',content:'山东省工信厅发布《2026年数字化转型专项资金申报指南》，请及时查看',created_at:new Date(Date.now()-86400000).toISOString(),read:true},
+        {type:'system',title:'日报审核提醒',content:'您有2份日报待审核，请及时处理',created_at:new Date(Date.now()-43200000).toISOString(),read:false}
+      ];
+      el.innerHTML = mock.map(n => `
+        <div class="notif-card" style="${n.read?'opacity:0.6':''}">
+          <div class="notif-icon">${typeIcon[n.type]||'📬'}</div>
+          <div class="notif-body">
+            <div class="notif-title">${n.title}</div>
+            <div class="notif-desc">${n.content}</div>
+            <div class="notif-time">${new Date(n.created_at).toLocaleString('zh-CN')}</div>
+          </div>
+          ${!n.read?'<div class="notif-dot"></div>':''}
+        </div>
+      `).join('');
+      return;
+    }
+
+    el.innerHTML = rows.map(n => `
+      <div class="notif-card" style="${n.read?'opacity:0.6':''}">
+        <div class="notif-icon">${typeIcon[n.type]||'📬'}</div>
+        <div class="notif-body">
+          <div class="notif-title">${n.title || '通知'}</div>
+          <div class="notif-desc">${n.content || ''}</div>
+          <div class="notif-time">${(n.created_at||'').slice(0,16).replace('T',' ')}</div>
+        </div>
+        ${!n.read?'<div class="notif-dot"></div>':''}
+      </div>
+    `).join('');
+  } catch(e) {
+    el.innerHTML = '<div class="empty">加载失败</div>';
+  }
+}
+
+// Init
+loadDashboard();
+</script>
+</body>
+</html>

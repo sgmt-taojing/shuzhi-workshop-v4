@@ -1,0 +1,1873 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#2563eb">
+<title>数造工坊·工作台</title>
+<style>
+/* ========== Reset & Base ========== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  font-size:14px;line-height:1.6;color:#1a1a1a;background:#f5f7fa;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  overflow-x:hidden;min-height:100vh;
+}
+a{color:inherit;text-decoration:none}
+ul,ol{list-style:none}
+input,textarea,select,button{font:inherit;color:inherit;border:none;outline:none;background:none}
+button{cursor:pointer;-webkit-appearance:none;appearance:none}
+img{max-width:100%;display:block}
+
+/* ========== CSS Variables ========== */
+:root{
+  --primary:#2563eb;
+  --primary-light:#3b82f6;
+  --primary-dark:#1d4ed8;
+  --primary-bg:#eff6ff;
+  --success:#16a34a;
+  --success-bg:#dcfce7;
+  --warning:#f59e0b;
+  --warning-bg:#fef3c7;
+  --danger:#dc2626;
+  --danger-bg:#fee2e2;
+  --info:#0891b2;
+  --info-bg:#cffafe;
+  --gray-50:#f9fafb;
+  --gray-100:#f3f4f6;
+  --gray-200:#e5e7eb;
+  --gray-300:#d1d5db;
+  --gray-400:#9ca3af;
+  --gray-500:#6b7280;
+  --gray-600:#4b5563;
+  --gray-700:#374151;
+  --gray-800:#1f2937;
+  --gray-900:#111827;
+  --bg:#f5f7fa;
+  --card-bg:#fff;
+  --radius:12px;
+  --radius-sm:8px;
+  --radius-lg:16px;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.06);
+  --shadow-lg:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.05);
+  --tabbar-h:56px;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+
+/* ========== Scrollbar Hide ========== */
+::-webkit-scrollbar{width:0;height:0;display:none}
+.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
+.no-scrollbar::-webkit-scrollbar{display:none}
+
+/* ========== App Shell ========== */
+#app{min-height:100vh;padding-bottom:calc(var(--tabbar-h) + var(--safe-bottom));position:relative}
+
+/* ========== Top Header ========== */
+.app-header{
+  position:sticky;top:0;z-index:100;
+  background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);
+  color:#fff;padding:calc(var(--safe-top) + 12px) 16px 12px;
+  box-shadow:0 2px 8px rgba(37,99,235,.25);
+  transition:transform .3s ease;
+}
+.app-header .header-row{display:flex;align-items:center;justify-content:space-between}
+.app-header .header-title{font-size:18px;font-weight:700;letter-spacing:.5px}
+.app-header .header-sub{font-size:12px;opacity:.85;margin-top:2px}
+.app-header .header-icon{width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:20px;opacity:.9}
+
+/* Back header for detail pages */
+.back-header{
+  position:sticky;top:0;z-index:100;
+  background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);
+  color:#fff;padding:calc(var(--safe-top) + 10px) 12px 10px;
+  display:flex;align-items:center;gap:8px;
+  box-shadow:0 2px 8px rgba(37,99,235,.25);
+}
+.back-header .back-btn{font-size:22px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.back-header .back-title{font-size:16px;font-weight:600;flex:1}
+
+/* ========== Page System ========== */
+.page{display:none;animation:pageIn .3s ease;min-height:calc(100vh - var(--tabbar-h))}
+.page.active{display:block}
+@keyframes pageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ========== Cards ========== */
+.card{
+  background:var(--card-bg);border-radius:var(--radius);
+  box-shadow:var(--shadow);margin:12px 16px;padding:16px;
+  transition:box-shadow .2s;
+}
+.card:active{box-shadow:var(--shadow-md)}
+.card-title{font-size:15px;font-weight:600;color:var(--gray-800);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.card-title .more{font-size:12px;color:var(--gray-400);font-weight:400}
+
+/* ========== Dashboard ========== */
+.dash-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px;margin-top:12px}
+.stat-card{
+  background:#fff;border-radius:var(--radius);padding:16px 14px;
+  box-shadow:var(--shadow);text-align:center;position:relative;overflow:hidden;
+  transition:transform .15s;
+}
+.stat-card:active{transform:scale(.97)}
+.stat-card .stat-icon{font-size:28px;margin-bottom:6px}
+.stat-card .stat-num{font-size:28px;font-weight:700;color:var(--gray-900);line-height:1.2}
+.stat-card .stat-label{font-size:12px;color:var(--gray-500);margin-top:4px}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:3px 3px 0 0}
+.stat-card.s-blue::before{background:var(--primary)}
+.stat-card.s-green::before{background:var(--success)}
+.stat-card.s-orange::before{background:var(--warning)}
+.stat-card.s-purple::before{background:#8b5cf6}
+
+.quick-actions{display:flex;gap:12px;padding:0 16px;margin-top:14px}
+.quick-btn{
+  flex:1;background:#fff;border-radius:var(--radius);padding:14px 8px;
+  text-align:center;box-shadow:var(--shadow);transition:transform .15s;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+}
+.quick-btn:active{transform:scale(.96)}
+.quick-btn .qa-icon{font-size:24px}
+.quick-btn .qa-text{font-size:12px;color:var(--gray-600);font-weight:500}
+
+/* Progress items */
+.progress-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-100)}
+.progress-item:last-child{border-bottom:none}
+.progress-item .pi-info{flex:1;min-width:0}
+.progress-item .pi-name{font-size:14px;font-weight:500;color:var(--gray-800);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.progress-item .pi-sub{font-size:12px;color:var(--gray-400);margin-top:2px}
+.progress-bar{width:80px;height:6px;background:var(--gray-100);border-radius:3px;overflow:hidden;flex-shrink:0}
+.progress-bar .bar-fill{height:100%;border-radius:3px;transition:width .6s ease}
+.progress-item .pi-pct{font-size:12px;font-weight:600;color:var(--gray-600);width:36px;text-align:right;flex-shrink:0}
+
+/* Activity feed */
+.activity-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--gray-100)}
+.activity-item:last-child{border-bottom:none}
+.activity-item .ai-dot{width:8px;height:8px;border-radius:50%;background:var(--primary);flex-shrink:0;margin-top:6px}
+.activity-item .ai-content{flex:1}
+.activity-item .ai-text{font-size:13px;color:var(--gray-700);line-height:1.5}
+.activity-item .ai-time{font-size:11px;color:var(--gray-400);margin-top:2px}
+
+/* ========== List Pages ========== */
+.filter-bar{
+  display:flex;gap:8px;padding:12px 16px;overflow-x:auto;
+  background:#fff;position:sticky;top:0;z-index:10;
+  border-bottom:1px solid var(--gray-100);
+}
+.filter-bar .filter-btn{
+  padding:6px 16px;border-radius:20px;font-size:13px;font-weight:500;
+  color:var(--gray-500);background:var(--gray-100);white-space:nowrap;
+  transition:all .2s;flex-shrink:0;
+}
+.filter-bar .filter-btn.active{background:var(--primary);color:#fff}
+
+.list-card{
+  background:#fff;border-radius:var(--radius);margin:10px 16px;
+  padding:14px 16px;box-shadow:var(--shadow);
+  transition:transform .12s,box-shadow .2s;cursor:pointer;
+}
+.list-card:active{transform:scale(.98);box-shadow:var(--shadow-md)}
+.list-card .lc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.list-card .lc-title{font-size:15px;font-weight:600;color:var(--gray-800);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list-card .lc-body{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--gray-500)}
+.list-card .lc-body span{display:inline-flex;align-items:center;gap:3px}
+.list-card .lc-footer{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+
+/* Tags */
+.tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500;line-height:1.5}
+.tag-blue{background:var(--primary-bg);color:var(--primary)}
+.tag-green{background:var(--success-bg);color:var(--success)}
+.tag-orange{background:var(--warning-bg);color:var(--warning)}
+.tag-red{background:var(--danger-bg);color:var(--danger)}
+.tag-cyan{background:var(--info-bg);color:var(--info)}
+.tag-gray{background:var(--gray-100);color:var(--gray-500)}
+.tag-purple{background:#ede9fe;color:#7c3aed}
+
+/* Priority indicators */
+.pri-high{color:var(--danger)}
+.pri-mid{color:var(--warning)}
+.pri-low{color:var(--gray-400)}
+
+/* ========== FAB ========== */
+.fab{
+  position:fixed;right:18px;bottom:calc(var(--tabbar-h) + var(--safe-bottom) + 18px);
+  width:52px;height:52px;border-radius:50%;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:#fff;font-size:26px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 12px rgba(37,99,235,.4);z-index:50;
+  transition:transform .15s;
+}
+.fab:active{transform:scale(.9) rotate(90deg)}
+
+/* ========== Detail Pages ========== */
+.detail-section{margin:12px 16px}
+.detail-section .ds-title{font-size:14px;font-weight:600;color:var(--gray-500);margin-bottom:8px;padding:0 4px}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--gray-100)}
+.info-row:last-child{border-bottom:none}
+.info-row .ir-label{font-size:13px;color:var(--gray-400);flex-shrink:0}
+.info-row .ir-value{font-size:14px;color:var(--gray-800);font-weight:500;text-align:right}
+
+/* ========== Forms ========== */
+.form-group{margin:12px 16px}
+.form-label{display:block;font-size:13px;font-weight:500;color:var(--gray-600);margin-bottom:6px}
+.form-input,.form-select,.form-textarea{
+  width:100%;padding:10px 14px;border:1.5px solid var(--gray-200);
+  border-radius:var(--radius-sm);font-size:14px;background:#fff;
+  transition:border-color .2s;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--primary)}
+.form-textarea{resize:vertical;min-height:80px}
+.form-select{-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L2 4h8z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+
+.form-actions{display:flex;gap:12px;padding:16px;margin-top:8px}
+.btn{
+  flex:1;padding:12px 20px;border-radius:var(--radius-sm);font-size:15px;
+  font-weight:600;text-align:center;transition:all .15s;min-height:44px;
+  display:flex;align-items:center;justify-content:center;
+}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:active{background:var(--primary-dark)}
+.btn-outline{background:#fff;color:var(--primary);border:1.5px solid var(--primary)}
+.btn-outline:active{background:var(--primary-bg)}
+.btn-danger{background:var(--danger);color:#fff}
+
+/* ========== Knowledge Base ========== */
+.kb-search{padding:12px 16px;background:#fff;position:sticky;top:0;z-index:10;border-bottom:1px solid var(--gray-100)}
+.kb-search .search-box{
+  display:flex;align-items:center;gap:8px;background:var(--gray-100);
+  border-radius:20px;padding:8px 14px;
+}
+.kb-search .search-box input{flex:1;background:none;font-size:13px}
+.kb-search .search-box .search-icon{font-size:16px;color:var(--gray-400)}
+
+.kb-cats{display:flex;gap:8px;padding:8px 16px;overflow-x:auto;background:#fff;border-bottom:1px solid var(--gray-100)}
+.kb-cats .cat-btn{
+  padding:5px 14px;border-radius:16px;font-size:12px;font-weight:500;
+  color:var(--gray-500);background:var(--gray-100);white-space:nowrap;flex-shrink:0;
+  transition:all .2s;
+}
+.kb-cats .cat-btn.active{background:var(--primary);color:#fff}
+
+/* ========== Modal ========== */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;
+  display:none;align-items:flex-end;justify-content:center;
+  animation:fadeIn .2s ease;
+}
+.modal-overlay.show{display:flex}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{
+  background:#fff;width:100%;max-width:500px;border-radius:var(--radius-lg) var(--radius-lg) 0 0;
+  max-height:85vh;overflow-y:auto;padding:20px 16px calc(var(--safe-bottom) + 20px);
+  animation:modalUp .3s ease;
+}
+@keyframes modalUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal .modal-handle{width:36px;height:4px;background:var(--gray-300);border-radius:2px;margin:0 auto 16px}
+.modal .modal-title{font-size:17px;font-weight:700;margin-bottom:14px;text-align:center}
+.modal .modal-body{font-size:14px;line-height:1.7;color:var(--gray-700)}
+.modal .modal-body h1,.modal .modal-body h2,.modal .modal-body h3{margin:14px 0 8px;font-weight:600}
+.modal .modal-body p{margin:8px 0}
+.modal .modal-body code{background:var(--gray-100);padding:2px 6px;border-radius:4px;font-size:12px}
+.modal .modal-body ul,.modal .modal-body ol{padding-left:20px;margin:8px 0}
+.modal .modal-close{
+  position:sticky;top:0;float:right;width:32px;height:32px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;color:var(--gray-400);background:#fff;border-radius:50%;
+}
+
+/* ========== Toast ========== */
+.toast{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  background:rgba(0,0,0,.75);color:#fff;padding:10px 20px;border-radius:8px;
+  font-size:13px;z-index:999;pointer-events:none;opacity:0;
+  transition:opacity .25s;max-width:80%;text-align:center;
+}
+.toast.show{opacity:1}
+
+/* ========== Loading ========== */
+.loading-mask{
+  position:fixed;inset:0;background:rgba(255,255,255,.6);z-index:150;
+  display:none;align-items:center;justify-content:center;
+}
+.loading-mask.show{display:flex}
+.spinner{
+  width:32px;height:32px;border:3px solid var(--gray-200);
+  border-top-color:var(--primary);border-radius:50%;
+  animation:spin .7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.inline-loading{text-align:center;padding:24px;color:var(--gray-400);font-size:13px}
+.empty-state{text-align:center;padding:40px 20px;color:var(--gray-400)}
+.empty-state .es-icon{font-size:48px;margin-bottom:12px;opacity:.5}
+.empty-state .es-text{font-size:14px}
+
+/* ========== Pull to Refresh ========== */
+.ptr-hint{
+  text-align:center;padding:8px;font-size:12px;color:var(--gray-400);
+  transition:height .2s,opacity .2s;overflow:hidden;height:0;opacity:0;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.ptr-hint.show{height:36px;opacity:1}
+.ptr-hint .ptr-arrow{display:inline-block;transition:transform .2s}
+.ptr-hint .ptr-arrow.rotate{transform:rotate(180deg)}
+
+/* ========== TabBar ========== */
+.tabbar{
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:#fff;border-top:1px solid var(--gray-200);
+  display:flex;padding-bottom:var(--safe-bottom);
+  box-shadow:0 -2px 12px rgba(0,0,0,.06);
+}
+.tabbar .tab-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;padding:8px 0;height:var(--tabbar-h);color:var(--gray-400);
+  transition:color .2s;position:relative;
+}
+.tabbar .tab-item.active{color:var(--primary)}
+.tabbar .tab-item .tab-icon{font-size:22px;line-height:1}
+.tabbar .tab-item .tab-text{font-size:10px;font-weight:500}
+.tabbar .tab-item .tab-badge{
+  position:absolute;top:4px;right:50%;transform:translateX(14px);
+  background:var(--danger);color:#fff;font-size:9px;
+  min-width:16px;height:16px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;padding:0 4px;
+}
+
+/* ========== Profile ========== */
+.profile-header{
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:#fff;padding:calc(var(--safe-top) + 24px) 16px 24px;text-align:center;
+}
+.profile-avatar{
+  width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.25);
+  display:flex;align-items:center;justify-content:center;font-size:28px;
+  margin:0 auto 10px;border:2px solid rgba(255,255,255,.4);
+}
+.profile-name{font-size:18px;font-weight:700}
+.profile-role{font-size:13px;opacity:.8;margin-top:2px}
+
+/* ========== Finance ========== */
+.finance-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--gray-100)}
+.finance-row:last-child{border-bottom:none}
+.finance-row .fr-amount{font-size:15px;font-weight:600}
+.finance-row .fr-amount.income{color:var(--success)}
+.finance-row .fr-amount.expense{color:var(--danger)}
+
+/* ========== Responsive ========== */
+@media(min-width:600px){
+  .dash-stats{grid-template-columns:repeat(4,1fr)}
+  .quick-actions{max-width:600px;margin-left:auto;margin-right:auto}
+}
+
+/* ========== Utility ========== */
+.hidden{display:none!important}
+.text-center{text-align:center}
+.text-right{text-align:right}
+.mt-8{margin-top:8px}
+.mt-12{margin-top:12px}
+.mt-16{margin-top:16px}
+.mb-8{margin-bottom:8px}
+.mb-12{margin-bottom:12px}
+.flex{display:flex}
+.flex-1{flex:1}
+.gap-8{gap:8px}
+.gap-12{gap:12px}
+.items-center{align-items:center}
+.justify-between{justify-content:space-between}
+.text-sm{font-size:13px}
+.text-xs{font-size:12px}
+.text-gray{color:var(--gray-400)}
+.text-primary{color:var(--primary)}
+.font-bold{font-weight:700}
+.font-semibold{font-weight:600}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<!-- Loading Mask -->
+<div class="loading-mask" id="loadingMask"><div class="spinner"></div></div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalContent">
+    <div class="modal-handle"></div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+/* ==========================================================
+ * 数造工坊·移动工作台
+ * 单文件 SPA — 微信公众号内嵌 H5
+ * ========================================================== */
+
+/* ========== Config ========== */
+const API_BASE = (function(){
+  // 自动适配：本地开发用 localhost:3004，部署时用同源
+  const o = window.location.origin;
+  if (o.includes('localhost') || o.includes('127.0.0.1')) {
+    return 'http://localhost:3004/api';
+  }
+  return o.replace(':8888','').replace(':3003',':3004') + '/api';
+})();
+
+const CACHE_TTL = 60 * 1000; // 60秒缓存
+
+/* ========== Utils ========== */
+const $ = (sel, parent=document) => parent.querySelector(sel);
+const $$ = (sel, parent=document) => Array.from(parent.querySelectorAll(sel));
+
+function toast(msg, dur=2000){
+  const el = $('#toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(()=>el.classList.remove('show'), dur);
+}
+
+function showLoading(show=true){
+  $('#loadingMask').classList.toggle('show', show);
+}
+
+function formatDate(d){
+  const dt = new Date(d);
+  const m = String(dt.getMonth()+1).padStart(2,'0');
+  const day = String(dt.getDate()).padStart(2,'0');
+  return `${dt.getFullYear()}-${m}-${day}`;
+}
+
+function formatDateShort(d){
+  const dt = new Date(d);
+  const m = String(dt.getMonth()+1).padStart(2,'0');
+  const day = String(dt.getDate()).padStart(2,'0');
+  return `${m}/${day}`;
+}
+
+function relativeTime(d){
+  const diff = Date.now() - new Date(d).getTime();
+  const min = Math.floor(diff/60000);
+  if (min < 1) return '刚刚';
+  if (min < 60) return min + '分钟前';
+  const hr = Math.floor(min/60);
+  if (hr < 24) return hr + '小时前';
+  const day = Math.floor(hr/24);
+  if (day < 30) return day + '天前';
+  return formatDateShort(d);
+}
+
+function formatMoney(n){
+  if (n == null) return '—';
+  if (n >= 10000) return '¥' + (n/10000).toFixed(1) + '万';
+  return '¥' + Number(n).toLocaleString();
+}
+
+/* ========== Cache ========== */
+const _cache = {};
+async function cachedFetch(key, url, opts){
+  const now = Date.now();
+  if (_cache[key] && (now - _cache[key].ts < CACHE_TTL)) {
+    return _cache[key].data;
+  }
+  try {
+    const resp = await fetch(url, opts);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    _cache[key] = { data, ts: now };
+    return data;
+  } catch(e) {
+    // Return cached even if expired, as fallback
+    if (_cache[key]) return _cache[key].data;
+    throw e;
+  }
+}
+
+/* ========== API ========== */
+const API = {
+  async get(path, params){
+    let url = API_BASE + path;
+    if (params) {
+      const qs = new URLSearchParams(params).toString();
+      url += '?' + qs;
+    }
+    return cachedFetch(path, url);
+  },
+  async post(path, body){
+    const url = API_BASE + path;
+    const resp = await fetch(url, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(body)
+    });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    return resp.json();
+  },
+  async put(path, body){
+    const url = API_BASE + path;
+    const resp = await fetch(url, {
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(body)
+    });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    return resp.json();
+  }
+};
+
+/* ========== Mock Data (fallback) ========== */
+const MOCK = {
+  stats: { projects: 12, clients: 28, leads: 8, team: 15 },
+  projects: [
+    { id:1, name:'龙湖天街数字化平台', client:'龙湖集团', priority:'high', progress:75, status:'进行中', deadline:'2025-03-15' },
+    { id:2, name:'万达小程序商城', client:'万达商业', priority:'mid', progress:45, status:'进行中', deadline:'2025-04-01' },
+    { id:3, name:'华润ERP系统集成', client:'华润置地', priority:'high', progress:90, status:'进行中', deadline:'2025-02-28' },
+    { id:4, name:'金茂数据中台', client:'金茂集团', priority:'low', progress:30, status:'进行中', deadline:'2025-05-10' },
+    { id:5, name:'融创CRM系统', client:'融创中国', priority:'mid', progress:100, status:'已完成', deadline:'2025-01-20' },
+  ],
+  customers: [
+    { id:1, name:'龙湖集团', industry:'地产', status:'已签约', contact:'张经理', phone:'138****8888', email:'zhang@longhu.com', address:'重庆市渝中区', created_at:'2024-10-15' },
+    { id:2, name:'万达商业', industry:'商业地产', status:'跟进中', contact:'李总监', phone:'139****6666', email:'li@wanda.cn', address:'北京市朝阳区', created_at:'2024-11-20' },
+    { id:3, name:'华润置地', industry:'地产', status:'已签约', contact:'王总', phone:'137****9999', email:'wang@crland.com', address:'深圳市福田区', created_at:'2024-09-08' },
+    { id:4, name:'金茂集团', industry:'地产', status:'跟进中', contact:'赵经理', phone:'136****5555', email:'zhao@jinmao.com', address:'上海市浦东新区', created_at:'2024-12-01' },
+    { id:5, name:'融创中国', industry:'地产', status:'已签约', contact:'孙总', phone:'135****7777', email:'sun@sunac.com', address:'天津市南开区', created_at:'2024-08-15' },
+  ],
+  leads: [
+    { id:1, company:'保利发展', level:'A', amount:500000, status:'商务谈判', contact:'陈总', phone:'138****1111', source:'转介绍', created_at:'2025-01-10' },
+    { id:2, company:'招商蛇口', level:'B', amount:300000, status:'需求确认', contact:'刘总', phone:'139****2222', source:'展会', created_at:'2025-01-15' },
+    { id:3, company:'中海地产', level:'A', amount:800000, status:'方案呈现', contact:'周总', phone:'137****3333', source:'官网', created_at:'2025-01-08' },
+    { id:4, company:'绿城中国', level:'C', amount:150000, status:'初步接触', contact:'吴经理', phone:'136****4444', source:'广告', created_at:'2025-01-20' },
+  ],
+  reports: [
+    { id:1, author:'张三', date:'2025-01-22', project:'龙湖天街数字化平台', progress:75, status:'通过', issue:'接口联调延迟', solution:'协调对方技术加班', plan:'完成支付模块测试' },
+    { id:2, author:'李四', date:'2025-01-22', project:'万达小程序商城', progress:45, status:'待审核', issue:'UI设计稿未确认', solution:'已约客户明天确认', plan:'开始首页开发' },
+    { id:3, author:'王五', date:'2025-01-21', project:'华润ERP系统集成', progress:90, status:'通过', issue:'数据迁移量大', solution:'分批迁移', plan:'完成最终验收' },
+  ],
+  knowledge: [
+    { id:1, title:'数字化转型政策补贴申请指南', category:'政策', summary:'2025年数字化转型专项补贴政策解读...', content:'# 数字化转型政策补贴申请指南\n\n## 一、政策背景\n2025年国家持续推进企业数字化转型...\n\n## 二、补贴范围\n- 云计算基础设施\n- 数据中台建设\n- 智能化应用\n\n## 三、申请流程\n1. 企业注册认证\n2. 提交转型方案\n3. 专家评审\n4. 资金拨付', updated_at:'2025-01-15' },
+    { id:2, title:'标准项目交付流程SOP', category:'流程', summary:'从立项到验收的标准流程...', content:'# 标准项目交付流程SOP\n\n## 1. 立项阶段\n- 需求确认\n- 合同签订\n- 团队组建\n\n## 2. 执行阶段\n- 周报制度\n- 里程碑验收\n- 风险管理\n\n## 3. 交付阶段\n- 用户验收测试\n- 培训交付\n- 售后支持', updated_at:'2025-01-10' },
+    { id:3, title:'客户常见问题FAQ', category:'FAQ', summary:'高频客户问题及标准回答...', content:'# 客户常见问题FAQ\n\n**Q: 项目周期一般多长？**\nA: 根据项目复杂度，通常3-6个月。\n\n**Q: 付款方式是怎样的？**\nA: 一般采用3-4-3分期付款。\n\n**Q: 提供哪些售后支持？**\nA: 包含1年免费维护 + 7×24应急响应。', updated_at:'2025-01-12' },
+    { id:4, title:'2025标准报价模块表', category:'报价', summary:'各模块标准报价区间...', content:'# 2025标准报价模块表\n\n| 模块 | 基础版 | 标准版 | 旗舰版 |\n|------|--------|--------|--------|\n| 官网 | 3万 | 8万 | 15万 |\n| 小程序 | 5万 | 12万 | 25万 |\n| 数据中台 | 15万 | 30万 | 60万 |\n| ERP集成 | 10万 | 25万 | 50万 |', updated_at:'2025-01-08' },
+    { id:5, title:'数造工坊产品矩阵', category:'产品', summary:'全产品线介绍...', content:'# 数造工坊产品矩阵\n\n## A面 - 服务产品\n- 数字化咨询\n- 系统开发\n- 数据中台\n\n## B面 - 客户产品\n- 已交付项目展示\n- 产品买卖撮合\n\n## C面 - 内部工具\n- CRM工作台\n- 项目管理系统', updated_at:'2025-01-05' },
+    { id:6, title:'大客户销售方法论', category:'销售', summary:'B2B大客户销售实战...', content:'# 大客户销售方法论\n\n## 一、客户画像\n- 年营收10亿+\n- 有IT预算\n- 决策链清晰\n\n## 二、销售漏斗\n1. 线索获取\n2. 需求挖掘\n3. 方案呈现\n4. 商务谈判\n5. 签约交付\n\n## 三、关键技巧\n- 找到决策人\n- 痛点导向\n- 方案差异化\n- 创造紧迫感', updated_at:'2025-01-18' },
+  ],
+  activities: [
+    { text:'龙湖集团项目完成第三阶段验收', time:'2025-01-22 14:30' },
+    { text:'万达商业新增需求确认会议', time:'2025-01-22 10:15' },
+    { text:'华润置地尾款到账 ¥15万', time:'2025-01-21 16:00' },
+    { text:'保利发展商机进入商务谈判阶段', time:'2025-01-21 09:30' },
+  ],
+  finance: [
+    { id:1, type:'income', title:'龙湖天街-二期款', amount:150000, date:'2025-01-20', status:'已到账' },
+    { id:2, type:'income', title:'华润ERP-尾款', amount:80000, date:'2025-01-18', status:'已到账' },
+    { id:3, type:'expense', title:'外包设计费', amount:25000, date:'2025-01-15', status:'已支付' },
+    { id:4, type:'income', title:'万达小程序-首付款', amount:120000, date:'2025-01-12', status:'已到账' },
+  ],
+  employees: [
+    { id:1, name:'张三', role:'项目经理', dept:'交付部', phone:'138****8888' },
+    { id:2, name:'李四', role:'前端工程师', dept:'技术部', phone:'139****6666' },
+    { id:3, name:'王五', role:'后端工程师', dept:'技术部', phone:'137****9999' },
+    { id:4, name:'赵六', role:'UI设计师', dept:'设计部', phone:'136****5555' },
+    { id:5, name:'孙七', role:'销售经理', dept:'商务部', phone:'135****7777' },
+  ],
+};
+
+/* ========== Simple Markdown Renderer ========== */
+function renderMarkdown(md){
+  if(!md) return '';
+  let html = md
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+    .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/`(.+?)`/g, '<code>$1</code>')
+    .replace(/^\| (.+)$/gm, function(line){
+      if (line.includes('---')) return '';
+      const cells = line.split('|').map(c=>c.trim()).filter(Boolean);
+      return '<div style="display:flex;gap:1px;background:#e5e7eb;margin:1px 0;border-radius:4px;overflow:hidden">' +
+        cells.map(c=>`<div style="flex:1;padding:6px 8px;background:#fff;font-size:13px">${c}</div>`).join('') +
+        '</div>';
+    })
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
+    .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/^(?!<[hul])(.+)$/gm, '<p>$1</p>');
+  return html;
+}
+
+/* ========== Router ========== */
+const routes = {};
+function route(path, handler){ routes[path] = handler; }
+
+function navigate(path){
+  if (window.location.hash !== '#' + path) {
+    window.location.hash = path;
+  } else {
+    render(path);
+  }
+}
+
+window.addEventListener('hashchange', () => {
+  const path = window.location.hash.slice(1) || '/dashboard';
+  render(path);
+});
+
+function render(path){
+  path = path || window.location.hash.slice(1) || '/dashboard';
+  const parts = path.split('/');
+  const base = '/' + (parts[1] || 'dashboard');
+  const param = parts[2] ? decodeURIComponent(parts[2]) : null;
+
+  const handler = routes[base] || routes['/dashboard'];
+  handler(param);
+}
+
+/* ========== Data Fetch with Fallback ========== */
+async function fetchWithFallback(apiPath, mockKey, params){
+  try {
+    const data = await API.get(apiPath, params);
+    return data;
+  } catch(e) {
+    console.warn('[API fallback]', apiPath, e.message);
+    return MOCK[mockKey] || [];
+  }
+}
+
+/* ========== Pages ========== */
+
+// --- Dashboard ---
+route('/dashboard', async function(){
+  const app = $('#app');
+  app.innerHTML = `
+    <div class="app-header">
+      <div class="header-row">
+        <div>
+          <div class="header-title">数造工坊</div>
+          <div class="header-sub" id="dashDate">${new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'})}</div>
+        </div>
+        <div class="header-icon" onclick="navigate('/profile')">👤</div>
+      </div>
+    </div>
+    <div class="ptr-hint" id="ptrHint"><span class="ptr-arrow">↓</span><span id="ptrText">下拉刷新</span></div>
+
+    <div class="page active" id="page-dashboard">
+      <div class="dash-stats">
+        <div class="stat-card s-blue" onclick="navigate('/projects')">
+          <div class="stat-icon">📁</div>
+          <div class="stat-num" id="statProjects">—</div>
+          <div class="stat-label">进行中项目</div>
+        </div>
+        <div class="stat-card s-green" onclick="navigate('/customers')">
+          <div class="stat-icon">👥</div>
+          <div class="stat-num" id="statClients">—</div>
+          <div class="stat-label">签约客户</div>
+        </div>
+        <div class="stat-card s-orange" onclick="navigate('/leads')">
+          <div class="stat-icon">💼</div>
+          <div class="stat-num" id="statLeads">—</div>
+          <div class="stat-label">跟进商机</div>
+        </div>
+        <div class="stat-card s-purple" onclick="navigate('/profile')">
+          <div class="stat-icon">🙋</div>
+          <div class="stat-num" id="statTeam">—</div>
+          <div class="stat-label">团队人数</div>
+        </div>
+      </div>
+
+      <div class="quick-actions">
+        <div class="quick-btn" onclick="navigate('/reports/new')">
+          <div class="qa-icon">📝</div>
+          <div class="qa-text">提交日报</div>
+        </div>
+        <div class="quick-btn" onclick="navigate('/kb')">
+          <div class="qa-icon">📚</div>
+          <div class="qa-text">知识库</div>
+        </div>
+        <div class="quick-btn" onclick="navigate('/leads')">
+          <div class="qa-icon">💼</div>
+          <div class="qa-text">商机</div>
+        </div>
+        <div class="quick-btn" onclick="navigate('/finance')">
+          <div class="qa-icon">💰</div>
+          <div class="qa-text">财务</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">最近项目进度 <span class="more" onclick="navigate('/projects')">查看全部 ›</span></div>
+        <div id="dashProjects"><div class="inline-loading">加载中...</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">客户动态</div>
+        <div id="dashActivity"></div>
+      </div>
+    </div>
+    ${renderTabBar('dashboard')}
+  `;
+
+  // Load stats
+  try {
+    const stats = await fetchWithFallback('/crm/stats', 'stats').catch(()=>MOCK.stats);
+    if (stats && typeof stats === 'object') {
+      $('#statProjects').textContent = stats.projects ?? MOCK.stats.projects;
+      $('#statClients').textContent = stats.clients ?? MOCK.stats.clients;
+      $('#statLeads').textContent = stats.leads ?? MOCK.stats.leads;
+      $('#statTeam').textContent = stats.team ?? MOCK.stats.team;
+    } else {
+      throw new Error('invalid');
+    }
+  } catch {
+    $('#statProjects').textContent = MOCK.stats.projects;
+    $('#statClients').textContent = MOCK.stats.clients;
+    $('#statLeads').textContent = MOCK.stats.leads;
+    $('#statTeam').textContent = MOCK.stats.team;
+  }
+
+  // Load projects
+  try {
+    let projects = await fetchWithFallback('/crm/projects', 'projects');
+    if (!Array.isArray(projects)) projects = MOCK.projects;
+    const ongoing = projects.filter(p => p.status === '进行中').slice(0, 4);
+    $('#dashProjects').innerHTML = ongoing.map(p => {
+      const pct = p.progress || 0;
+      const color = pct >= 80 ? 'var(--success)' : pct >= 50 ? 'var(--primary)' : 'var(--warning)';
+      return `<div class="progress-item" onclick="navigate('/projects/${p.id}')">
+        <div class="pi-info">
+          <div class="pi-name">${p.name||'未命名'}</div>
+          <div class="pi-sub">${p.client||''} · ${p.status||''}</div>
+        </div>
+        <div class="progress-bar"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div>
+        <div class="pi-pct">${pct}%</div>
+      </div>`;
+    }).join('') || '<div class="empty-state"><div class="es-icon">📂</div><div class="es-text">暂无进行中项目</div></div>';
+  } catch {
+    $('#dashProjects').innerHTML = '<div class="empty-state"><div class="es-icon">📂</div><div class="es-text">暂无数据</div></div>';
+  }
+
+  // Load activities
+  try {
+    let acts = await fetchWithFallback('/crm/activities', 'activities');
+    if (!Array.isArray(acts)) acts = MOCK.activities;
+    $('#dashActivity').innerHTML = acts.slice(0, 5).map(a => `
+      <div class="activity-item">
+        <div class="ai-dot"></div>
+        <div class="ai-content">
+          <div class="ai-text">${a.text||a.title||''}</div>
+          <div class="ai-time">${relativeTime(a.time||a.created_at||Date.now())}</div>
+        </div>
+      </div>
+    `).join('') || '<div class="empty-state"><div class="es-text">暂无动态</div></div>';
+  } catch {
+    $('#dashActivity').innerHTML = MOCK.activities.map(a => `
+      <div class="activity-item">
+        <div class="ai-dot"></div>
+        <div class="ai-content">
+          <div class="ai-text">${a.text}</div>
+          <div class="ai-time">${relativeTime(a.time)}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+});
+
+// --- Customers List ---
+route('/customers', async function(filter){
+  const app = $('#app');
+  const activeFilter = filter || 'all';
+  app.innerHTML = `
+    <div class="app-header">
+      <div class="header-row">
+        <div class="header-title">客户管理</div>
+      </div>
+    </div>
+    <div class="filter-bar">
+      <button class="filter-btn ${activeFilter==='all'?'active':''}" onclick="navigate('/customers/all')">全部</button>
+      <button class="filter-btn ${activeFilter==='跟进中'?'active':''}" onclick="navigate('/customers/跟进中')">跟进中</button>
+      <button class="filter-btn ${activeFilter==='已签约'?'active':''}" onclick="navigate('/customers/已签约')">已签约</button>
+    </div>
+    <div class="page active" id="page-customers">
+      <div id="customerList"><div class="inline-loading">加载中...</div></div>
+    </div>
+    <div class="fab" onclick="toast('新增客户功能开发中...')">+</div>
+    ${renderTabBar('customers')}
+  `;
+
+  try {
+    let customers = await fetchWithFallback('/crm/customers', 'customers');
+    if (!Array.isArray(customers)) customers = MOCK.customers;
+    if (activeFilter !== 'all') {
+      customers = customers.filter(c => c.status === activeFilter);
+    }
+    if (!customers.length) {
+      $('#customerList').innerHTML = '<div class="empty-state"><div class="es-icon">👥</div><div class="es-text">暂无客户</div></div>';
+      return;
+    }
+    $('#customerList').innerHTML = customers.map(c => {
+      const tagClass = c.status === '已签约' ? 'tag-green' : c.status === '跟进中' ? 'tag-orange' : 'tag-gray';
+      return `<div class="list-card" onclick="navigate('/customers/detail/${c.id}')">
+        <div class="lc-header">
+          <div class="lc-title">${c.name}</div>
+          <span class="tag ${tagClass}">${c.status}</span>
+        </div>
+        <div class="lc-body">
+          <span>🏭 ${c.industry||'—'}</span>
+          <span>👤 ${c.contact||'—'}</span>
+          <span>📞 ${c.phone||'—'}</span>
+        </div>
+      </div>`;
+    }).join('');
+  } catch {
+    $('#customerList').innerHTML = '<div class="empty-state"><div class="es-icon">👥</div><div class="es-text">加载失败，请稍后重试</div></div>';
+  }
+});
+
+// --- Customer Detail ---
+route('/customers/detail', async function(id){
+  const app = $('#app');
+  app.innerHTML = `
+    <div class="back-header">
+      <div class="back-btn" onclick="navigate('/customers')">‹</div>
+      <div class="back-title">客户详情</div>
+    </div>
+    <div class="page active" id="page-customer-detail">
+      <div class="inline-loading">加载中...</div>
+    </div>
+  `;
+
+  try {
+    let customer = null;
+    try {
+      const data = await API.get('/crm/customers/' + id);
+      customer = data;
+    } catch {
+      customer = MOCK.customers.find(c => c.id == id) || MOCK.customers[0];
+    }
+
+    // Fetch related projects
+    let projects = [];
+    try {
+      projects = await fetchWithFallback('/crm/projects', 'projects');
+      projects = (Array.isArray(projects) ? projects : MOCK.projects).filter(p => p.client === customer.name);
+    } catch {
+      projects = MOCK.projects.filter(p => p.client === customer.name);
+    }
+
+    // Fetch related finance
+    let finance = [];
+    try {
+      const allFin = await fetchWithFallback('/crm/finance', 'finance');
+      finance = (Array.isArray(allFin) ? allFin : MOCK.finance).filter(f => f.title && f.title.includes(customer.name));
+    } catch {
+      finance = [];
+    }
+
+    $('#page-customer-detail').innerHTML = `
+      <div class="card">
+        <div class="card-title">基本信息</div>
+        <div class="info-row"><span class="ir-label">公司名称</span><span class="ir-value">${customer.name}</span></div>
+        <div class="info-row"><span class="ir-label">所属行业</span><span class="ir-value">${customer.industry||'—'}</span></div>
+        <div class="info-row"><span class="ir-label">客户状态</span><span class="ir-value"><span class="tag ${customer.status==='已签约'?'tag-green':'tag-orange'}">${customer.status||'—'}</span></span></div>
+        <div class="info-row"><span class="ir-label">联系人</span><span class="ir-value">${customer.contact||'—'}</span></div>
+        <div class="info-row"><span class="ir-label">电话</span><span class="ir-value">${customer.phone||'—'}</span></div>
+        <div class="info-row"><span class="ir-label">邮箱</span><span class="ir-value">${customer.email||'—'}</span></div>
+        <div class="info-row"><span class="ir-label">地址</span><span class="ir-value">${customer.address||'—'}</span></div>
+        <div class="info-row"><span class="ir-label">创建时间</span><span class="ir-value">${customer.created_at?formatDate(customer.created_at):'—'}</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">关联项目 (${projects.length})</div>
+        ${projects.length ? projects.map(p => `
+          <div class="progress-item" onclick="navigate('/projects/${p.id}')">
+            <div class="pi-info">
+              <div class="pi-name">${p.name}</div>
+              <div class="pi-sub">${p.status} · 截止 ${formatDateShort(p.deadline||'')}</div>
+            </div>
+            <div class="progress-bar"><div class="bar-fill" style="width:${p.progress||0}%;background:var(--primary)"></div></div>
+            <div class="pi-pct">${p.progress||0}%</div>
+          </div>
+        `).join('') : '<div class="empty-state"><div class="es-text">暂无关联项目</div></div>'}
+      </div>
+
+      <div class="card">
+        <div class="card-title">财务记录 (${finance.length})</div>
+        ${finance.length ? finance.map(f => `
+          <div class="finance-row">
+            <div>
+              <div style="font-size:14px;font-weight:500">${f.title}</div>
+              <div style="font-size:12px;color:var(--gray-400)">${formatDate(f.date)} · ${f.status}</div>
+            </div>
+            <div class="fr-amount ${f.type==='income'?'income':'expense'}">${f.type==='income'?'+':'-'}${formatMoney(f.amount)}</div>
+          </div>
+        `).join('') : '<div class="empty-state"><div class="es-text">暂无财务记录</div></div>'}
+      </div>
+    `;
+  } catch {
+    $('#page-customer-detail').innerHTML = '<div class="empty-state"><div class="es-icon">😕</div><div class="es-text">加载失败</div></div>';
+  }
+});
+
+// --- Projects List ---
+route('/projects', async function(filter){
+  const app = $('#app');
+  const activeFilter = filter || 'all';
+  app.innerHTML = `
+    <div class="app-header">
+      <div class="header-row"><div class="header-title">项目管理</div></div>
+    </div>
+    <div class="filter-bar">
+      <button class="filter-btn ${activeFilter==='all'?'active':''}" onclick="navigate('/projects/all')">全部</button>
+      <button class="filter-btn ${activeFilter==='进行中'?'active':''}" onclick="navigate('/projects/进行中')">进行中</button>
+      <button class="filter-btn ${activeFilter==='已完成'?'active':''}" onclick="navigate('/projects/已完成')">已完成</button>
+    </div>
+    <div class="page active" id="page-projects">
+      <div id="projectList"><div class="inline-loading">加载中...</div></div>
+    </div>
+    <div class="fab" onclick="toast('新增项目功能开发中...')">+</div>
+    ${renderTabBar('projects')}
+  `;
+
+  try {
+    let projects = await fetchWithFallback('/crm/projects', 'projects');
+    if (!Array.isArray(projects)) projects = MOCK.projects;
+    if (activeFilter !== 'all') {
+      projects = projects.filter(p => p.status === activeFilter);
+    }
+    if (!projects.length) {
+      $('#projectList').innerHTML = '<div class="empty-state"><div class="es-icon">📁</div><div class="es-text">暂无项目</div></div>';
+      return;
+    }
+    $('#projectList').innerHTML = projects.map(p => {
+      const pct = p.progress || 0;
+      const color = pct >= 80 ? 'var(--success)' : pct >= 50 ? 'var(--primary)' : 'var(--warning)';
+      const priTag = p.priority === 'high' ? '<span class="tag tag-red">高</span>' : p.priority === 'mid' ? '<span class="tag tag-orange">中</span>' : '<span class="tag tag-gray">低</span>';
+      const statusTag = p.status === '已完成' ? '<span class="tag tag-green">已完成</span>' : '<span class="tag tag-blue">进行中</span>';
+      return `<div class="list-card" onclick="navigate('/projects/detail/${p.id}')">
+        <div class="lc-header">
+          <div class="lc-title">${p.name}</div>
+          ${statusTag}
+        </div>
+        <div class="lc-body">
+          <span>👥 ${p.client||'—'}</span>
+          <span>📅 ${p.deadline?formatDateShort(p.deadline):'—'}</span>
+          <span>${priTag}</span>
+        </div>
+        <div class="lc-footer">
+          <div class="progress-bar" style="width:100%;height:6px"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div>
+          <div class="pi-pct" style="width:auto;margin-left:8px">${pct}%</div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch {
+    $('#projectList').innerHTML = '<div class="empty-state"><div class="es-icon">📁</div><div class="es-text">加载失败</div></div>';
+  }
+});
+
+// --- Project Detail ---
+route('/projects/detail', async function(id){
+  const app = $('#app');
+  app.innerHTML = `
+    <div class="back-header">
+      <div class="back-btn" onclick="navigate('/projects')">‹</div>
+      <div class="back-title">项目详情</div>
+    </div>
+    <div class="page active" id="page-project-detail">
+      <div class="inline-loading">加载中...</div>
+    </div>
+  `;
+
+  try {
+    let project = null;
+    try {
+      project = await API.get('/crm/projects/' + id);
+    } catch {
+      project = MOCK.projects.find(p => p.id == id) || MOCK.projects[0];
+    }
+
+    // Fetch related reports
+    let reports = [];
+    try {
+      const allReports = await fetchWithFallback('/crm/progress-reports', 'reports');
+      reports = (Array.isArray(allReports) ? allReports : MOCK.reports).filter(r => r.project === project.name);
+    } catch {
+      reports = MOCK.reports.filter(r => r.project === project.name);
+    }
+
+    const pct = project.progress || 0;
+    const color = pct >= 80 ? 'var(--success)' : pct >= 50 ? 'var(--primary)' : 'var(--warning)';
+
+    $('#page-project-detail').innerHTML = `
+      <div class="card">
+        <div class="card-title">${project.name}</div>
+        <div class="info-row"><span class="ir-label">关联客户</span><span class="ir-value">${project.client||'—'}</span></div>
+        <div class="info-row"><span class="ir-label">项目状态</span><span class="ir-value"><span class="tag ${project.status==='已完成'?'tag-green':'tag-blue'}">${project.status||'—'}</span></span></div>
+        <div class="info-row"><span class="ir-label">优先级</span><span class="ir-value">${project.priority==='high'?'高':project.priority==='mid'?'中':'低'}</span></div>
+        <div class="info-row"><span class="ir-label">截止日期</span><span class="ir-value">${project.deadline?formatDate(project.deadline):'—'}</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">项目进度</div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="progress-bar" style="flex:1;height:10px;border-radius:5px">
+            <div class="bar-fill" style="width:${pct}%;background:${color};border-radius:5px"></div>
+          </div>
+          <div style="font-size:18px;font-weight:700;color:${color}">${pct}%</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">工时记录</div>
+        <div class="info-row"><span class="ir-label">已用工时</span><span class="ir-value">320h</span></div>
+        <div class="info-row"><span class="ir-label">预计工时</span><span class="ir-value">450h</span></div>
+        <div class="info-row"><span class="ir-label">工时占比</span><span class="ir-value">71%</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">日报记录 (${reports.length})</div>
+        ${reports.length ? reports.map(r => `
+          <div class="progress-item" onclick="navigate('/reports')">
+            <div class="pi-info">
+              <div class="pi-name">${r.author} · ${formatDateShort(r.date)}</div>
+              <div class="pi-sub">${r.issue?'问题: '+r.issue:''}</div>
+            </div>
+            <span class="tag ${r.status==='通过'?'tag-green':r.status==='待审核'?'tag-orange':'tag-red'}">${r.status}</span>
+            <div class="pi-pct">${r.progress}%</div>
+          </div>
+        `).join('') : '<div class="empty-state"><div class="es-text">暂无日报</div></div>'}
+      </div>
+    `;
+  } catch {
+    $('#page-project-detail').innerHTML = '<div class="empty-state"><div class="es-icon">😕</div><div class="es-text">加载失败</div></div>';
+  }
+});
+
+// --- Leads ---
+route('/leads', async function(){
+  const app = $('#app');
+  app.innerHTML = `
+    <div class="app-header">
+      <div class="header-row"><div class="header-title">商机管理</div></div>
+    </div>
+    <div class="page active" id="page-leads">
+      <div id="leadList"><div class="inline-loading">加载中...</div></div>
+    </div>
+    <div class="fab" onclick="toast('新增商机功能开发中...')">+</div>
+    ${renderTabBar('')}
+  `;
+
+  try {
+    let leads = await fetchWithFallback('/crm/leads', 'leads');
+    if (!Array.isArray(leads)) leads = MOCK.leads;
+    if (!leads.length) {
+      $('#leadList').innerHTML = '<div class="empty-state"><div class="es-icon">💼</div><div class="es-text">暂无商机</div></div>';
+      return;
+    }
+    $('#leadList').innerHTML = leads.map(l => {
+      const levelTag = l.level === 'A' ? 'tag-red' : l.level === 'B' ? 'tag-orange' : 'tag-gray';
+      const levelText = l.level === 'A' ? 'A级' : l.level === 'B' ? 'B级' : 'C级';
+      return `<div class="list-card" onclick="navigate('/leads/detail/${l.id}')">
+        <div class="lc-header">
+          <div class="lc-title">${l.company}</div>
+          <span class="tag ${levelTag}">${levelText}</span>
+        </div>
+        <div class="lc-body">
+          <span>💰 ${formatMoney(l.amount)}</span>
+          <span>📊 ${l.status||'—'}</span>
+          <span>👤 ${l.contact||'—'}</span>
+        </div>
+      </div>`;
+    }).join('');
+  } catch {
+    $('#leadList').innerHTML = '<div class="empty-state"><div class="es-icon">💼</div><div class="es-text">加载失败</div></div>';
+  }
+});
+
+// --- Lead Detail ---
+route('/leads/detail', async function(id){
+  const app = $('#app');
+  app.innerHTML = `
+    <div class="back-header">
+      <div class="back-btn" onclick="navigate('/leads')">‹</div>
+      <div class="back-title">商机详情</div>
+    </div>
+    <div class="page active" id="page-lead-detail">
+      <div class="inline-loading">加载中...</div>
+    </div>
+  `;
+
+  try {
+    let lead = null;
+    try {
+      lead = await API.get('/crm/leads/' + id);
+    } catch {
+      lead = MOCK.leads.find(l => l.id == id) || MOCK.leads[0];
+    }
+    const levelTag = lead.level === 'A' ? 'tag-red' : lead.level === 'B' ? 'tag-orange' : 'tag-gray';
+
+    $('#page-lead-detail').innerHTML = `
+      <div class="card">
+        <div class="card-title">${lead.company}</div>
+        <div class="info-row"><span class="ir-label">意向等级</span><span class="ir-value"><span class="tag ${levelTag}">${lead.level}级</span></span></div>
+        <div class="info-row"><span class="ir-label">预估金额</span><span class="ir-value" style="color:var(--success);font-weight:700">${formatMoney(lead.amount)}</span></div>
+        <div class="info-row"><span class="ir-label">当前状态</span><span class="ir-value">${lead.status||'—'}</span></div>
+        <div class="info-row"><span class="ir-label">联系人</span><span class="ir-value">${lead.contact||'—'}</span></div>
+        <div class="info-row"><span class="ir-label">电话</span><span class="ir-value">${lead.phone||'—'}</span></div>
+        <div class="info-row"><span class="ir-label">来源</span><span class="ir-value">${lead.source||'—'}</span></div>
+        <div class="info-row"><span class="ir-label">创建时间</span><span class="ir-value">${lead.created_at?formatDate(lead.created_at):'—'}</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">跟进记录</div>
+        <div class="activity-item">
+          <div class="ai-dot" style="background:var(--success)"></div>
+          <div class="ai-content">
+            <div class="ai-text">${lead.status||'初步接触'} — ${lead.contact||'联系人'}沟通</div>
+            <div class="ai-time">${lead.created_at?relativeTime(lead.created_at):''}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="toast('跟进记录功能开发中...')">添加跟进</button>
+        <button class="btn btn-outline" onclick="toast('转客户功能开发中...')">转为客户</button>
+      </div>
+    `;
+  } catch {
+    $('#page-lead-detail').innerHTML = '<div class="empty-state"><div class="es-icon">😕</div><div class="es-text">加载失败</div></div>';
+  }
+});
+
+// --- Reports List ---
+route('/reports', async function(){
+  const app = $('#app');
+  app.innerHTML = `
+    <div class="app-header">
+      <div class="header-row"><div class="header-title">日报管理</div></div>
+    </div>
+    <div class="page active" id="page-reports">
+      <div id="reportList"><div class="inline-loading">加载中...</div></div>
+    </div>
+    <div class="fab" onclick="navigate('/reports/new')">+</div>
+    ${renderTabBar('reports')}
+  `;
+
+  try {
+    let reports = await fetchWithFallback('/crm/progress-reports', 'reports');
+    if (!Array.isArray(reports)) reports = MOCK.reports;
+    if (!reports.length) {
+      $('#reportList').innerHTML = '<div class="empty-state"><div class="es-icon">📝</div><div class="es-text">暂无日报</div></div>';
+      return;
+    }
+    $('#reportList').innerHTML = reports.map(r => {
+      const statusTag = r.status === '通过' ? 'tag-green' : r.status === '待审核' ? 'tag-orange' : 'tag-red';
+      return `<div class="list-card" onclick="navigate('/reports/detail/${r.id}')">
+        <div class="lc-header">
+          <div class="lc-title">${r.author} · ${formatDateShort(r.date)}</div>
+          <span class="tag ${statusTag}">${r.status}</span>
+        </div>
+        <div class="lc-body">
+          <span>📁 ${r.project||'—'}</span>
+          <span>📊 进度 ${r.progress}%</span>
+        </div>
+      </div>`;
+    }).join('');
+  } catch {
+    $('#reportList').innerHTML = '<div class="empty-state"><div class="es-icon">📝</div><div class="es-text">加载失败</div></div>';
+  }
+});
+
+// --- Report Detail ---
+route('/reports/detail', async function(id){
+  const app = $('#app');
+  app.innerHTML = `
+    <div class="back-header">
+      <div class="back-btn" onclick="navigate('/reports')">‹</div>
+      <div class="back-title">日报详情</div>
+    </div>
+    <div class="page active" id="page-report-detail">
+      <div class="inline-loading">加载中...</div>
+    </div>
+  `;
+
+  try {
+    let report = null;
+    try {
+      report = await API.get('/crm/progress-reports/' + id);
+    } catch {
+      report = MOCK.reports.find(r => r.id == id) || MOCK.reports[0];
+    }
+    const statusTag = report.status === '通过' ? 'tag-green' : report.status === '待审核' ? 'tag-orange' : 'tag-red';
+
+    $('#page-report-detail').innerHTML = `
+      <div class="card">
+        <div class="card-title">日报信息</div>
+        <div class="info-row"><span class="ir-label">提交人</span><span class="ir-value">${report.author}</span></div>
+        <div class="info-row"><span class="ir-label">日期</span><span class="ir-value">${formatDate(report.date)}</span></div>
+        <div class="info-row"><span class="ir-label">关联项目</span><span class="ir-value">${report.project||'—'}</span></div>
+        <div class="info-row"><span class="ir-label">进展</span><span class="ir-value">${report.progress}%</span></div>
+        <div class="info-row"><span class="ir-label">状态</span><span class="ir-value"><span class="tag ${statusTag}">${report.status}</span></span></div>
+      </div>
+      ${report.issue ? `<div class="card"><div class="card-title">遇到问题</div><p style="font-size:14px;color:var(--gray-700);line-height:1.7">${report.issue}</p></div>` : ''}
+      ${report.solution ? `<div class="card"><div class="card-title">解决方案</div><p style="font-size:14px;color:var(--gray-700);line-height:1.7">${report.solution}</p></div>` : ''}
+      ${report.plan ? `<div class="card"><div class="card-title">明日计划</div><p style="font-size:14px;color:var(--gray-700);line-height:1.7">${report.plan}</p></div>` : ''}
+    `;
+  } catch {
+    $('#page-report-detail').innerHTML = '<div class="empty-state"><div class="es-icon">😕</div><div class="es-text">加载失败</div></div>';
+  }
+});
+
+// --- New Report ---
+route('/reports/new', async function(){
+  const app = $('#app');
+  
+  // Try to load projects for select
+  let projects = [];
+  try {
+    projects = await fetchWithFallback('/crm/projects', 'projects');
+    if (!Array.isArray(projects)) projects = MOCK.projects;
+  } catch {
+    projects = MOCK.projects;
+  }
+
+  app.innerHTML = `
+    <div class="back-header">
+      <div class="back-btn" onclick="navigate('/reports')">‹</div>
+      <div class="back-title">提交日报</div>
+    </div>
+    <div class="page active">
+      <div class="form-group">
+        <label class="form-label">关联项目 *</label>
+        <select class="form-select" id="rpProject">
+          ${projects.map(p => `<option value="${p.name}">${p.name}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">日期 *</label>
+        <input type="date" class="form-input" id="rpDate" value="${formatDate(new Date())}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">进展百分比 (%)</label>
+        <input type="number" class="form-input" id="rpProgress" min="0" max="100" value="0" placeholder="0-100">
+      </div>
+      <div class="form-group">
+        <label class="form-label">遇到问题</label>
+        <textarea class="form-textarea" id="rpIssue" placeholder="描述遇到的问题..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">解决方案</label>
+        <textarea class="form-textarea" id="rpSolution" placeholder="如何解决或计划如何解决..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">明日计划</label>
+        <textarea class="form-textarea" id="rpPlan" placeholder="明天的工作计划..."></textarea>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-outline" onclick="navigate('/reports')">取消</button>
+        <button class="btn btn-primary" id="rpSubmit">提交日报</button>
+      </div>
+    </div>
+  `;
+
+  $('#rpSubmit').addEventListener('click', async function(){
+    const data = {
+      project: $('#rpProject').value,
+      date: $('#rpDate').value,
+      progress: parseInt($('#rpProgress').value) || 0,
+      issue: $('#rpIssue').value.trim(),
+      solution: $('#rpSolution').value.trim(),
+      plan: $('#rpPlan').value.trim(),
+      author: '当前用户',
+      status: '待审核'
+    };
+    if (!data.project || !data.date) {
+      toast('请填写必填项');
+      return;
+    }
+    showLoading(true);
+    try {
+      await API.post('/crm/progress-reports', data);
+      showLoading(false);
+      toast('日报提交成功！');
+      setTimeout(()=>navigate('/reports'), 800);
+    } catch(e) {
+      showLoading(false);
+      // Even if API fails, show success (demo mode)
+      MOCK.reports.unshift({ id: Date.now(), ...data });
+      toast('日报已保存（演示模式）');
+      setTimeout(()=>navigate('/reports'), 800);
+    }
+  });
+});
+
+// --- Knowledge Base ---
+route('/kb', async function(cat){
+  const app = $('#app');
+  const activeCat = cat || 'all';
+  const cats = [
+    {key:'all', label:'全部'},
+    {key:'政策', label:'政策'},
+    {key:'流程', label:'流程'},
+    {key:'FAQ', label:'FAQ'},
+    {key:'报价', label:'报价'},
+    {key:'产品', label:'产品'},
+    {key:'销售', label:'销售'},
+  ];
+
+  app.innerHTML = `
+    <div class="app-header">
+      <div class="header-row"><div class="header-title">知识库</div></div>
+    </div>
+    <div class="kb-search">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="kbSearchInput" placeholder="搜索知识库..." oninput="filterKB()">
+      </div>
+    </div>
+    <div class="kb-cats">
+      ${cats.map(c => `<button class="cat-btn ${activeCat===c.key?'active':''}" onclick="navigate('/kb/${c.key}')">${c.label}</button>`).join('')}
+    </div>
+    <div class="page active" id="page-kb">
+      <div id="kbList"><div class="inline-loading">加载中...</div></div>
+    </div>
+    ${renderTabBar('kb')}
+  `;
+
+  // Load and render
+  window._kbData = null;
+  try {
+    let data = await fetchWithFallback('/crm/knowledge-base', 'knowledge');
+    if (!Array.isArray(data)) data = MOCK.knowledge;
+    window._kbData = data;
+
+    renderKBList(data, activeCat);
+  } catch {
+    window._kbData = MOCK.knowledge;
+    renderKBList(MOCK.knowledge, activeCat);
+  }
+});
+
+function renderKBList(data, activeCat){
+  let filtered = data;
+  if (activeCat && activeCat !== 'all') {
+    filtered = data.filter(d => d.category === activeCat);
+  }
+  if (!filtered.length) {
+    $('#kbList').innerHTML = '<div class="empty-state"><div class="es-icon">📚</div><div class="es-text">暂无文章</div></div>';
+    return;
+  }
+  $('#kbList').innerHTML = filtered.map(item => `
+    <div class="list-card" onclick="showKBDetail(${item.id})">
+      <div class="lc-header">
+        <div class="lc-title">${item.title}</div>
+        <span class="tag tag-blue">${item.category}</span>
+      </div>
+      <div class="lc-body">
+        <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:block">${item.summary||''}</span>
+      </div>
+      <div class="lc-footer">
+        <span class="text-xs text-gray">更新于 ${item.updated_at?relativeTime(item.updated_at):'—'}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+window.filterKB = function(){
+  const q = $('#kbSearchInput').value.toLowerCase().trim();
+  const data = window._kbData || [];
+  const cat = window.location.hash.split('/')[2] || 'all';
+  let filtered = cat === 'all' ? data : data.filter(d => d.category === cat);
+  if (q) {
+    filtered = filtered.filter(d =>
+      (d.title||'').toLowerCase().includes(q) ||
+      (d.summary||'').toLowerCase().includes(q) ||
+      (d.content||'').toLowerCase().includes(q)
+    );
+  }
+  renderKBList(filtered, 'all');
+};
+
+window.showKBDetail = function(id){
+  const item = (window._kbData || MOCK.knowledge).find(d => d.id == id);
+  if (!item) return;
+  const body = `
+    <div class="modal-close" onclick="closeModal()">✕</div>
+    <div class="modal-title">${item.title}</div>
+    <div style="text-align:center;margin-bottom:12px">
+      <span class="tag tag-blue">${item.category}</span>
+      <span class="text-xs text-gray" style="margin-left:8px">更新于 ${item.updated_at?relativeTime(item.updated_at):'—'}</span>
+    </div>
+    <div class="modal-body">${renderMarkdown(item.content||item.summary||'')}</div>
+  `;
+  openModal(body);
+};
+
+function openModal(html){
+  $('#modalBody').innerHTML = html;
+  $('#modalOverlay').classList.add('show');
+}
+function closeModal(){
+  $('#modalOverlay').classList.remove('show');
+}
+$('#modalOverlay').addEventListener('click', function(e){
+  if (e.target === this) closeModal();
+});
+
+// --- Finance ---
+route('/finance', async function(){
+  const app = $('#app');
+  app.innerHTML = `
+    <div class="back-header">
+      <div class="back-btn" onclick="navigate('/dashboard')">‹</div>
+      <div class="back-title">财务记录</div>
+    </div>
+    <div class="page active" id="page-finance">
+      <div id="financeList"><div class="inline-loading">加载中...</div></div>
+    </div>
+  `;
+
+  try {
+    let finance = await fetchWithFallback('/crm/finance', 'finance');
+    if (!Array.isArray(finance)) finance = MOCK.finance;
+    let totalIncome = 0, totalExpense = 0;
+    finance.forEach(f => {
+      if (f.type === 'income') totalIncome += f.amount;
+      else totalExpense += f.amount;
+    });
+
+    $('#financeList').innerHTML = `
+      <div class="card">
+        <div class="card-title">财务概览</div>
+        <div style="display:flex;gap:12px">
+          <div style="flex:1;text-align:center;padding:12px;background:var(--success-bg);border-radius:8px">
+            <div style="font-size:12px;color:var(--success)">总收入</div>
+            <div style="font-size:20px;font-weight:700;color:var(--success);margin-top:4px">${formatMoney(totalIncome)}</div>
+          </div>
+          <div style="flex:1;text-align:center;padding:12px;background:var(--danger-bg);border-radius:8px">
+            <div style="font-size:12px;color:var(--danger)">总支出</div>
+            <div style="font-size:20px;font-weight:700;color:var(--danger);margin-top:4px">${formatMoney(totalExpense)}</div>
+          </div>
+        </div>
+        <div style="text-align:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--gray-100)">
+          <span style="font-size:13px;color:var(--gray-500)">净利润</span>
+          <span style="font-size:18px;font-weight:700;color:var(--primary);margin-left:8px">${formatMoney(totalIncome - totalExpense)}</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">收支明细</div>
+        ${finance.map(f => `
+          <div class="finance-row">
+            <div>
+              <div style="font-size:14px;font-weight:500">${f.title}</div>
+              <div style="font-size:12px;color:var(--gray-400)">${formatDate(f.date)} · ${f.status}</div>
+            </div>
+            <div class="fr-amount ${f.type==='income'?'income':'expense'}">${f.type==='income'?'+':'-'}${formatMoney(f.amount)}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } catch {
+    $('#financeList').innerHTML = '<div class="empty-state"><div class="es-icon">💰</div><div class="es-text">加载失败</div></div>';
+  }
+});
+
+// --- Profile ---
+route('/profile', async function(){
+  const app = $('#app');
+  app.innerHTML = `
+    <div class="profile-header">
+      <div class="profile-avatar">👤</div>
+      <div class="profile-name">当前用户</div>
+      <div class="profile-role">项目经理 · 交付部</div>
+    </div>
+    <div class="page active" id="page-profile">
+      <div class="card">
+        <div class="card-title">个人信息</div>
+        <div class="info-row"><span class="ir-label">姓名</span><span class="ir-value">当前用户</span></div>
+        <div class="info-row"><span class="ir-label">角色</span><span class="ir-value">项目经理</span></div>
+        <div class="info-row"><span class="ir-label">部门</span><span class="ir-value">交付部</span></div>
+        <div class="info-row"><span class="ir-label">工号</span><span class="ir-value">SZ-2024-001</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">功能入口</div>
+        <div class="info-row" style="cursor:pointer" onclick="navigate('/finance')">
+          <span class="ir-label">💰 财务记录</span>
+          <span style="color:var(--gray-400)">›</span>
+        </div>
+        <div class="info-row" style="cursor:pointer" onclick="navigate('/leads')">
+          <span class="ir-label">💼 商机管理</span>
+          <span style="color:var(--gray-400)">›</span>
+        </div>
+        <div class="info-row" style="cursor:pointer" onclick="toast('团队管理功能开发中...')">
+          <span class="ir-label">🙋 团队管理</span>
+          <span style="color:var(--gray-400)">›</span>
+        </div>
+        <div class="info-row" style="cursor:pointer" onclick="toast('微信OAuth对接中...')">
+          <span class="ir-label">🔗 微信账号绑定</span>
+          <span style="color:var(--gray-400)">›</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">关于</div>
+        <div class="info-row"><span class="ir-label">版本</span><span class="ir-value">v1.0.0</span></div>
+        <div class="info-row"><span class="ir-label">构建时间</span><span class="ir-value">2025-01</span></div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-outline" onclick="toast('退出功能预留')">退出登录</button>
+      </div>
+    </div>
+    ${renderTabBar('')}
+  `;
+});
+
+/* ========== TabBar Component ========== */
+function renderTabBar(active){
+  const tabs = [
+    { icon:'🏠', name:'工作台', path:'/dashboard', key:'dashboard' },
+    { icon:'👥', name:'客户', path:'/customers', key:'customers' },
+    { icon:'📁', name:'项目', path:'/projects', key:'projects' },
+    { icon:'✅', name:'审批', path:'/approvals', key:'approvals' },
+    { icon:'🔔', name:'通知', path:'/notifications', key:'notifications' },
+  ];
+  return `
+    <div class="tabbar">
+      ${tabs.map(t => `
+        <div class="tab-item ${active===t.key?'active':''}" onclick="navigate('${t.path}')">
+          <div class="tab-icon">${t.icon}</div>
+          <div class="tab-text">${t.name}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+/* ========== Pull to Refresh ========== */
+let ptrStartY = 0, ptrPulling = false, ptrDistance = 0;
+const PTR_THRESHOLD = 60;
+
+document.addEventListener('touchstart', function(e){
+  const scrollY = window.scrollY;
+  if (scrollY <= 0) {
+    ptrStartY = e.touches[0].clientY;
+    ptrPulling = true;
+    ptrDistance = 0;
+  } else {
+    ptrPulling = false;
+  }
+}, { passive: true });
+
+document.addEventListener('touchmove', function(e){
+  if (!ptrPulling) return;
+  ptrDistance = e.touches[0].clientY - ptrStartY;
+  if (ptrDistance > 0 && ptrDistance < 100) {
+    const hint = $('#ptrHint');
+    if (hint) {
+      hint.classList.add('show');
+      const text = $('#ptrText');
+      const arrow = hint.querySelector('.ptr-arrow');
+      if (ptrDistance >= PTR_THRESHOLD) {
+        if (text) text.textContent = '释放刷新';
+        if (arrow) arrow.classList.add('rotate');
+      } else {
+        if (text) text.textContent = '下拉刷新';
+        if (arrow) arrow.classList.remove('rotate');
+      }
+    }
+  }
+}, { passive: true });
+
+document.addEventListener('touchend', function(){
+  if (!ptrPulling) return;
+  ptrPulling = false;
+  const hint = $('#ptrHint');
+  if (hint && ptrDistance >= PTR_THRESHOLD) {
+    const text = $('#ptrText');
+    if (text) text.textContent = '刷新中...';
+    // Clear cache and reload
+    Object.keys(_cache).forEach(k => delete _cache[k]);
+    setTimeout(()=>{
+      const path = window.location.hash.slice(1) || '/dashboard';
+      render(path);
+      if (hint) {
+        setTimeout(()=>{
+          hint.classList.remove('show');
+          const arrow = hint.querySelector('.ptr-arrow');
+          if (arrow) arrow.classList.remove('rotate');
+        }, 300);
+      }
+      toast('已刷新');
+    }, 600);
+  } else {
+    if (hint) {
+      hint.classList.remove('show');
+      const arrow = hint.querySelector('.ptr-arrow');
+      if (arrow) arrow.classList.remove('rotate');
+    }
+  }
+  ptrDistance = 0;
+}, { passive: true });
+
+/* ========== Init ========== */
+function init(){
+  const path = window.location.hash.slice(1) || '/dashboard';
+  render(path);
+}
+
+// ==================== 审批流 ====================
+route('/approvals', async function(){
+  const app = $('#app');
+  app.innerHTML = `
+    <div class="app-header">
+      <div class="header-row">
+        <div>
+          <div class="header-title">审批中心</div>
+          <div class="header-sub">项目审批 · 退款审批</div>
+        </div>
+        <div class="header-icon" onclick="navigate('/profile')">👤</div>
+      </div>
+    </div>
+    <div class="page active">
+      <div id="approvalTabs" style="display:flex;border-bottom:1px solid #eee;margin:12px">
+        <div class="ap-tab active" data-type="project" onclick="switchApprovalTab('project')" style="padding:8px 16px;border-bottom:2px solid #3b82f6;font-size:14px;font-weight:600">项目审批</div>
+        <div class="ap-tab" data-type="refund" onclick="switchApprovalTab('refund')" style="padding:8px 16px;font-size:14px;color:#666">退款审批</div>
+      </div>
+      <div id="approvalList" style="padding:12px">加载中...</div>
+    </div>
+    ${renderTabBar('')}
+  `;
+  loadProjectApprovalsMobile();
+});
+
+async function loadProjectApprovalsMobile() {
+  const el = $('#approvalList');
+  try {
+    const data = await API.get('/projects?page=1&limit=50');
+    const projects = data.list || data || [];
+    let allApprovals = [];
+    for (const p of projects) {
+      try {
+        const apData = await API.get('/projects/'+p.id+'/approvals');
+        const aps = apData.list || apData || [];
+        aps.forEach(a => allApprovals.push({...a, project_name: p.name}));
+      } catch(e) {}
+    }
+    const stMap = {pending:'#f59e0b',approved:'#22c55e',rejected:'#ef4444'};
+    const typeMap = {budget:'预算',timeline:'周期',scope:'范围',change:'变更',other:'其他'};
+    el.innerHTML = allApprovals.length ? allApprovals.map(a => `
+      <div style="background:#fff;border-radius:10px;padding:14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.06)">
+        <div style="display:flex;justify-content:space-between;align-items:start">
+          <div style="flex:1">
+            <div style="font-weight:600;font-size:15px">${a.title}</div>
+            <div style="font-size:12px;color:#888;margin-top:4px">${a.project_name||'-'} · ${typeMap[a.type]||a.type}</div>
+            <div style="font-size:13px;color:#555;margin-top:6px">${(a.content||'').slice(0,80)}</div>
+            <div style="font-size:12px;color:#aaa;margin-top:6px">申请人: ${a.requester||'-'} · ${a.created_at?new Date(a.created_at).toLocaleDateString('zh-CN'):''}</div>
+          </div>
+          <span style="background:${stMap[a.status]||'#999'}15;color:${stMap[a.status]||'#999'};padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600;white-space:nowrap">${a.status==='pending'?'待审':a.status==='approved'?'已批':'已驳'}</span>
+        </div>
+      </div>
+    `).join('') : '<div style="text-align:center;color:#999;padding:40px">暂无审批</div>';
+  } catch(e) { el.innerHTML = '<div style="text-align:center;color:#999;padding:40px">加载失败</div>'; }
+}
+
+async function loadRefundApprovalsMobile() {
+  const el = $('#approvalList');
+  try {
+    const data = await API.get('/commerce/refunds?page=1&limit=50');
+    const rows = data.list || [];
+    const stMap = {pending:'#f59e0b',approved:'#22c55e',rejected:'#ef4444'};
+    el.innerHTML = rows.length ? rows.map(r => `
+      <div style="background:#fff;border-radius:10px;padding:14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.06)">
+        <div style="display:flex;justify-content:space-between;align-items:start">
+          <div style="flex:1">
+            <div style="font-weight:600;font-size:15px">退款 ¥${(r.amount||0).toLocaleString()}</div>
+            <div style="font-size:12px;color:#888;margin-top:4px">订单: ${r.order_no||'-'}</div>
+            <div style="font-size:13px;color:#555;margin-top:6px">${r.reason||'-'}</div>
+            <div style="font-size:12px;color:#aaa;margin-top:6px">申请人: ${r.user_name||'-'} · ${r.created_at?new Date(r.created_at).toLocaleDateString('zh-CN'):''}</div>
+          </div>
+          <span style="background:${stMap[r.status]||'#999'}15;color:${stMap[r.status]||'#999'};padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600;white-space:nowrap">${r.status==='pending'?'待处理':r.status==='approved'?'已批准':'已驳回'}</span>
+        </div>
+      </div>
+    `).join('') : '<div style="text-align:center;color:#999;padding:40px">暂无退款申请</div>';
+  } catch(e) { el.innerHTML = '<div style="text-align:center;color:#999;padding:40px">加载失败</div>'; }
+}
+
+function switchApprovalTab(type) {
+  document.querySelectorAll('.ap-tab').forEach(t => {
+    const isActive = t.dataset.type === type;
+    t.style.borderBottom = isActive ? '2px solid #3b82f6' : 'none';
+    t.style.fontWeight = isActive ? '600' : '400';
+    t.style.color = isActive ? '' : '#666';
+  });
+  if (type === 'project') loadProjectApprovalsMobile();
+  else loadRefundApprovalsMobile();
+}
+
+// ==================== 通知中心 ====================
+route('/notifications', async function(){
+  const app = $('#app');
+  app.innerHTML = `
+    <div class="app-header">
+      <div class="header-row">
+        <div>
+          <div class="header-title">通知中心</div>
+          <div class="header-sub">消息推送 · 待办提醒</div>
+        </div>
+        <div class="header-icon" onclick="navigate('/profile')">👤</div>
+      </div>
+    </div>
+    <div class="page active">
+      <div id="notifList" style="padding:12px">加载中...</div>
+    </div>
+    ${renderTabBar('')}
+  `;
+  try {
+    const data = await API.get('/notifications?page=1&limit=50');
+    const rows = data.list || data || [];
+    const typeIcon = {order:'🛒',system:'🔧',policy:'📜',project:'📁',approval:'✅',refund:'💰',marketing:'📢'};
+    $('#notifList').innerHTML = rows.length ? rows.map(n => `
+      <div style="background:#fff;border-radius:10px;padding:14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.06);${n.read?'opacity:0.6':''}">
+        <div style="display:flex;gap:10px;align-items:start">
+          <div style="font-size:24px">${typeIcon[n.type]||'📬'}</div>
+          <div style="flex:1">
+            <div style="font-weight:600;font-size:14px">${n.title||'通知'}</div>
+            <div style="font-size:13px;color:#555;margin-top:4px">${n.content||''}</div>
+            <div style="font-size:12px;color:#aaa;margin-top:6px">${n.created_at?new Date(n.created_at).toLocaleString('zh-CN'):''}</div>
+          </div>
+          ${!n.read?'<span style="width:8px;height:8px;background:#ef4444;border-radius:50%;margin-top:6px"></span>':''}
+        </div>
+      </div>
+    `).join('') : '<div style="text-align:center;color:#999;padding:40px">暂无通知</div>';
+  } catch(e) {
+    // Fallback with mock notifications
+    const mock = [
+      {type:'approval',title:'项目变更审批待处理',content:'智慧工厂数字化转型项目的新增设备预警功能变更审批待您处理',created_at:new Date().toISOString(),read:false},
+      {type:'project',title:'里程碑即将到期',content:'核心模块开发里程碑计划日期为7月15日，请关注进度',created_at:new Date(Date.now()-3600000).toISOString(),read:false},
+      {type:'policy',title:'新政策推送',content:'山东省工信厅发布《2026年数字化转型专项资金申报指南》，请及时查看',created_at:new Date(Date.now()-86400000).toISOString(),read:true},
+      {type:'refund',title:'退款申请已批准',content:'订单ORD001的退款申请已批准，金额¥3,800',created_at:new Date(Date.now()-172800000).toISOString(),read:true}
+    ];
+    const typeIcon = {order:'🛒',system:'🔧',policy:'📜',project:'📁',approval:'✅',refund:'💰',marketing:'📢'};
+    $('#notifList').innerHTML = mock.map(n => `
+      <div style="background:#fff;border-radius:10px;padding:14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.06);${n.read?'opacity:0.6':''}">
+        <div style="display:flex;gap:10px;align-items:start">
+          <div style="font-size:24px">${typeIcon[n.type]||'📬'}</div>
+          <div style="flex:1">
+            <div style="font-weight:600;font-size:14px">${n.title}</div>
+            <div style="font-size:13px;color:#555;margin-top:4px">${n.content}</div>
+            <div style="font-size:12px;color:#aaa;margin-top:6px">${new Date(n.created_at).toLocaleString('zh-CN')}</div>
+          </div>
+          ${!n.read?'<span style="width:8px;height:8px;background:#ef4444;border-radius:50%;margin-top:6px"></span>':''}
+        </div>
+      </div>
+    `).join('');
+  }
+});
+
+// ==================== 日程管理 ====================
+route('/schedule', async function(){
+  const app = $('#app');
+  const today = new Date();
+  const monthLabels = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+  app.innerHTML = `
+    <div class="app-header">
+      <div class="header-row">
+        <div>
+          <div class="header-title">日程管理</div>
+          <div class="header-sub">${today.getFullYear()}年${monthLabels[today.getMonth()]}</div>
+        </div>
+        <div class="header-icon" onclick="navigate('/profile')">👤</div>
+      </div>
+    </div>
+    <div class="page active" style="padding:12px">
+      <div id="scheduleContent">加载中...</div>
+    </div>
+    ${renderTabBar('')}
+  `;
+  try {
+    // 获取项目里程碑作为日程
+    const projData = await API.get('/projects?page=1&limit=50');
+    const projects = projData.list || projData || [];
+    let events = [];
+    for (const p of projects) {
+      try {
+        const msData = await API.get('/projects/'+p.id+'/milestones');
+        const mss = msData.list || msData || [];
+        mss.forEach(m => {
+          if (m.planned_date) events.push({
+            date: m.planned_date,
+            title: m.title,
+            project: p.name,
+            status: m.status,
+            type: 'milestone'
+          });
+        });
+      } catch(e) {}
+    }
+    // 按日期排序
+    events.sort((a,b) => (a.date||'').localeCompare(b.date||''));
+    
+    // 按日期分组
+    const grouped = {};
+    events.forEach(e => {
+      if (!grouped[e.date]) grouped[e.date] = [];
+      grouped[e.date].push(e);
+    });
+    
+    const stColor = {done:'#22c55e',in_progress:'#f59e0b',pending:'#9ca3af',skipped:'#ef4444'};
+    const stLabel = {done:'已完成',in_progress:'进行中',pending:'待开始',skipped:'已跳过'};
+    
+    const dates = Object.keys(grouped).sort();
+    $('#scheduleContent').innerHTML = dates.length ? dates.map(date => {
+      const d = new Date(date);
+      const isPast = d < new Date(new Date().toDateString());
+      const isToday = date === new Date().toISOString().slice(0,10);
+      return `
+        <div style="margin-bottom:16px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <div style="background:${isToday?'#3b82f6':isPast?'#e5e7eb':'#f9fafb'};color:${isToday?'#fff':isPast?'#999':'#333'};width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px">
+              ${d.getDate()}
+            </div>
+            <div>
+              <div style="font-weight:600;font-size:13px;color:${isToday?'#3b82f6':'#333'}">${isToday?'今天':' '+['日','一','二','三','四','五','六'][d.getDay()]+'周'}</div>
+              <div style="font-size:11px;color:#999">${d.getMonth()+1}月</div>
+            </div>
+          </div>
+          ${grouped[date].map(e => `
+            <div style="background:#fff;border-radius:8px;padding:12px;margin-bottom:8px;margin-left:44px;border-left:3px solid ${stColor[e.status]||'#999'};box-shadow:0 1px 2px rgba(0,0,0,.04)">
+              <div style="font-weight:600;font-size:14px">${e.title}</div>
+              <div style="font-size:12px;color:#888;margin-top:4px">📁 ${e.project}</div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+                <span style="font-size:12px;color:${stColor[e.status]||'#999'}">${stLabel[e.status]||e.status}</span>
+                ${e.status==='pending'?'<span style="font-size:11px;color:#f59e0b">⚠ 待完成</span>':''}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }).join('') : '<div style="text-align:center;color:#999;padding:40px">暂无日程安排</div>';
+  } catch(e) {
+    $('#scheduleContent').innerHTML = '<div style="text-align:center;color:#999;padding:40px">加载失败</div>';
+  }
+});
+
+// DOM ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+</script>
+</body>
+</html>

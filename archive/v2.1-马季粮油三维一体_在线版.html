@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>数造工坊 · 企业后服务演示 · 马季粮油</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--b:#2563eb;--bl:#6366f1;--bd:#1d4ed8;--bg:#f0f2f5;--c:#fff;--d:#0a1628;--t:#1f2937;--m:#6b7280;--g:#059669;--o:#ea580c;--r:#ef4444;--sh:0 2px 12px rgba(0,0,0,.05);--r12:12px}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;background:var(--bg);color:var(--t);line-height:1.7}
+
+/* Nav */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid #e5e7eb;height:56px;display:flex;align-items:center;padding:0 24px}
+.nav-brand{font-weight:700;font-size:15px;letter-spacing:1px;color:var(--d);margin-right:auto;display:flex;align-items:center;gap:8px}
+.nav-brand::before{content:'';width:22px;height:22px;border-radius:5px;background:linear-gradient(135deg,#2563eb,#6366f1);display:inline-block}
+.nav-brand span{color:var(--b)}
+.nav-tabs{display:flex;gap:4px;background:#f3f4f6;border-radius:10px;padding:3px}
+.nt{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;color:var(--m);border:none;background:transparent}
+.nt.active{background:#fff;color:var(--b);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.nt:hover:not(.active){color:var(--t)}
+
+/* Hero */
+.hero{background:linear-gradient(135deg,#0a1628 0%,#1e3a5f 50%,#2563eb 100%);color:#fff;padding:88px 24px 64px;text-align:center;margin-top:56px}
+.hero-tag{display:inline-block;padding:4px 16px;border:1px solid rgba(99,102,241,.4);border-radius:20px;font-size:11px;color:#a5b4fc;letter-spacing:4px;margin-bottom:16px;backdrop-filter:blur(8px);background:rgba(37,99,235,.1)}
+.hero h1{font-size:clamp(28px,5vw,48px);font-weight:700;letter-spacing:4px;margin-bottom:12px}
+.hero-sub{font-size:clamp(14px,2vw,18px);font-weight:300;opacity:.8;max-width:700px;margin:0 auto 28px;line-height:1.8}
+.metrics{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-top:24px}
+.mh{text-align:center}.mh-n{font-size:28px;font-weight:700;color:#a5b4fc;font-family:Georgia,serif}.mh-l{font-size:10px;opacity:.5;letter-spacing:2px;margin-top:2px}
+
+/* Container */
+.c{max-width:1000px;margin:0 auto;padding:48px 24px}
+.sec{margin-bottom:40px}
+
+/* Cards */
+.card{background:var(--c);border-radius:var(--r12);padding:24px;box-shadow:var(--sh);border:1px solid #e5e7eb;margin-bottom:16px}
+.ct{font-size:16px;font-weight:700;color:var(--d);margin-bottom:8px}
+.cx{font-size:13px;color:var(--m);line-height:1.8}
+
+/* Grid */
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+
+/* Badge */
+.bd{display:inline-block;padding:2px 10px;border-radius:4px;font-size:10px;font-weight:600;margin:1px}
+.b-b{background:#eff6ff;color:var(--b)}.b-g{background:#ecfdf5;color:var(--g)}.b-o{background:#fff7ed;color:var(--o)}.b-r{background:#fef2f2;color:var(--r)}.b-p{background:#fdf2f8;color:#ec4899}
+
+/* Table */
+table{width:100%;border-collapse:collapse;background:var(--c);border-radius:var(--r12);overflow:hidden;box-shadow:var(--sh);margin:12px 0}
+th{background:var(--d);color:#a5b4fc;padding:11px 14px;font-size:11px;text-align:left;font-weight:500;letter-spacing:1px}
+td{padding:9px 14px;font-size:12px;border-bottom:1px solid #e5e7eb}tr:hover td{background:#f8faff}.hl td{background:#eff6ff;font-weight:600}
+
+/* Flow */
+.flow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:16px 0}
+.fl{background:var(--d);color:#a5b4fc;padding:10px 16px;border-radius:8px;font-size:12px;font-weight:600}
+.fa{color:var(--m);font-size:16px}
+.fr{background:var(--c);border:2px solid var(--b);color:var(--b);padding:8px 14px;border-radius:8px;font-size:12px;font-weight:600}
+
+/* Progress */
+.prog{display:flex;height:6px;background:#e5e7eb;border-radius:3px;overflow:hidden;margin-top:6px}
+.pb{height:100%;border-radius:3px;background:linear-gradient(90deg,#2563eb,#6366f1)}
+
+/* Panel */
+.pnl{display:none}.pnl.active{display:block;animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* Video */
+.vf{position:relative;border-radius:var(--r12);overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.3);height:380px;background:linear-gradient(135deg,#0a1628,#1e3a5f,#2563eb);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.vp{width:72px;height:72px;border-radius:50%;background:rgba(37,99,235,.9);display:flex;align-items:center;justify-content:center;position:relative;z-index:2;transition:all .3s}
+.vp:hover{transform:scale(1.1)}
+.vp::after{content:'';width:0;height:0;border-style:solid;border-width:14px 0 14px 24px;border-color:transparent transparent transparent #fff;margin-left:5px}
+
+/* Gallery */
+.gal{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:16px}
+.gi{position:relative;border-radius:8px;overflow:hidden;height:140px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.gi img{width:100%;height:100%;object-fit:cover}
+.gc{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.8));padding:20px 10px 8px;color:#fff;font-size:11px}
+
+/* Feature */
+.feat{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid #f3f4f6}
+.feat:last-child{border-bottom:none}
+.fi{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.fi-b{background:#eff6ff;color:var(--b)}.fi-g{background:#ecfdf5;color:var(--g)}.fi-o{background:#fff7ed;color:var(--o)}.fi-r{background:#fef2f2;color:var(--r)}
+
+/* Case */
+.case-tag{display:inline-block;padding:3px 10px;border-radius:4px;font-size:10px;font-weight:600;background:#ecfdf5;color:#047857;margin-bottom:8px}
+
+.footer{text-align:center;padding:24px;color:var(--m);font-size:11px;border-top:1px solid #e5e7eb;margin-top:40px}
+
+@media(max-width:768px){.nav-tabs{display:none}}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="nav">
+  <div class="nav-brand">马季<span>粮油</span> · 企业后服务</div>
+  <div class="nav-tabs">
+    <button class="nt active" onclick="showTab('service')">🤝 服务撮合</button>
+    <button class="nt" onclick="showTab('brand')">🏢 企业形象</button>
+    <button class="nt" onclick="showTab('demo')">🎬 案例演示</button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-tag">ENTERPRISE POST-SERVICE DEMO</div>
+  <h1>企业后服务</h1>
+  <div style="font-size:clamp(18px,2.5vw,26px);font-weight:300;letter-spacing:2px;margin-top:4px">交付增值服务 → 讲好企业故事 → 卖好企业产品 → 撮合产业链生意</div>
+  <div class="metrics">
+    <div class="mh"><div class="mh-n">16+</div><div class="mh-l">服务产品</div></div>
+    <div class="mh"><div class="mh-n">5</div><div class="mh-l">营销形态</div></div>
+    <div class="mh"><div class="mh-n">¥1285w</div><div class="mh-l">平台年收入</div></div>
+    <div class="mh"><div class="mh-n">90天</div><div class="mh-l">客户保护期</div></div>
+  </div>
+</div>
+
+<div class="c">
+
+<!-- ===== TAB 1: 服务撮合 ===== -->
+<div class="pnl active" id="tab-service">
+  <div class="sec">
+    <div class="ct" style="font-size:22px;letter-spacing:1px">服务撮合 · 让企业找到最好的服务商</div>
+    <div class="cx" style="margin-bottom:24px">需求发布 → 智能匹配 → 方案对比 → 在线签约 → 履约跟踪 → 评价闭环</div>
+
+    <div class="g3" style="margin-bottom:24px">
+      <div class="card" style="text-align:center">
+        <div style="font-size:32px;margin-bottom:8px">📋</div>
+        <div style="font-size:14px;font-weight:700;color:var(--d)">需求发布</div>
+        <div class="cx">企业发布需求<br>系统智能分类</div>
+        <div class="prog"><div class="pb" style="width:15%"></div></div>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="font-size:32px;margin-bottom:8px">🔍</div>
+        <div style="font-size:14px;font-weight:700;color:var(--d)">智能匹配</div>
+        <div class="cx">AI推荐服务商<br>多维评分排序</div>
+        <div class="prog"><div class="pb" style="width:35%"></div></div>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="font-size:32px;margin-bottom:8px">📊</div>
+        <div style="font-size:14px;font-weight:700;color:var(--d)">方案对比</div>
+        <div class="cx">多方案横向PK<br>数据可视化</div>
+        <div class="prog"><div class="pb" style="width:55%"></div></div>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="font-size:32px;margin-bottom:8px">✍️</div>
+        <div style="font-size:14px;font-weight:700;color:var(--d)">在线签约</div>
+        <div class="cx">电子合同保障<br>资金安全托管</div>
+        <div class="prog"><div class="pb" style="width:75%"></div></div>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="font-size:32px;margin-bottom:8px">🚀</div>
+        <div style="font-size:14px;font-weight:700;color:var(--d)">履约跟踪</div>
+        <div class="cx">里程碑管理<br>实时进度可视</div>
+        <div class="prog"><div class="pb" style="width:90%"></div></div>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="font-size:32px;margin-bottom:8px">⭐</div>
+        <div style="font-size:14px;font-weight:700;color:var(--d)">评价闭环</div>
+        <div class="cx">双向评分体系<br>优质服务商上浮</div>
+        <div class="prog"><div class="pb" style="width:100%"></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ct">数造工坊服务撮合平台优势</div>
+      <div class="g2">
+        <div>
+          <div class="feat"><div class="fi fi-b">🤖</div><div><div style="font-size:13px;font-weight:600">AI智能匹配</div><div class="cx">基于需求描述自动匹配最优服务商，匹配准确率≥85%</div></div></div>
+          <div class="feat"><div class="fi fi-g">🔒</div><div><div style="font-size:13px;font-weight:600">资金安全托管</div><div class="cx">合同签约后资金托管，分阶段验收后放款，保障双方权益</div></div></div>
+          <div class="feat"><div class="fi fi-o">📑</div><div><div style="font-size:13px;font-weight:600">电子合同</div><div class="cx">在线签署+区块链存证，法律效力等同纸质合同</div></div></div>
+        </div>
+        <div>
+          <div class="feat"><div class="fi fi-r">⏱️</div><div><div style="font-size:13px;font-weight:600">90天客户保护期</div><div class="cx">代理商报备客户后90天内独家保护，避免恶性竞争</div></div></div>
+          <div class="feat"><div class="fi fi-b">📈</div><div><div style="font-size:13px;font-weight:600">实时数据看板</div><div class="cx">履约进度、里程碑、验收状态一目了然</div></div></div>
+          <div class="feat"><div class="fi fi-g">🏆</div><div><div style="font-size:13px;font-weight:600">服务商净化</div><div class="cx">自动考核+淘汰机制，平台只保留优质服务商</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <div class="ct">典型撮合案例</div>
+      <table>
+        <thead><tr><th>需求方</th><th>需求</th><th>匹配服务商</th><th>状态</th></tr></thead>
+        <tbody>
+          <tr class="hl"><td>老挝国家电力公司</td><td>ERP系统年度运维</td><td>特变电工运维团队</td><td><span class="bd b-g">履约中</span></td></tr>
+          <tr><td>宁夏马季粮油</td><td>智能工厂改造方案</td><td>正泰电器数字化团队</td><td><span class="bd b-b">签约完成</span></td></tr>
+          <tr><td>银川某制造企业</td><td>专精特新企业申报</td><td>认证服务中心</td><td><span class="bd b-g">履约中</span></td></tr>
+          <tr><td>平罗某农业合作社</td><td>农业物联网平台</td><td>智慧农业服务商</td><td><span class="bd b-o">待签约</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 2: 企业形象宣传 ===== -->
+<div class="pnl" id="tab-brand">
+  <div class="sec">
+    <div class="ct" style="font-size:22px;letter-spacing:1px">企业形象宣传 · 马季粮油</div>
+    <div class="cx" style="margin-bottom:24px">品牌展厅+企业画像+知识问答+视频故事 · 入驻即交付 · 让客户一眼认识你</div>
+
+    <!-- 企业画像 -->
+    <div class="card" style="background:linear-gradient(135deg,#0a1628,#1e3a5f);color:#fff;border:none">
+      <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
+        <div style="flex:1;min-width:200px">
+          <div style="font-size:11px;letter-spacing:4px;color:#a5b4fc;margin-bottom:8px">ENTERPRISE PROFILE</div>
+          <div style="font-size:24px;font-weight:700;letter-spacing:2px;margin-bottom:4px">宁夏马季食用油有限公司</div>
+          <div style="font-size:13px;opacity:.7;margin-bottom:16px">宁夏石嘴山市平罗县轻工业园区 · 成立于2013年 · 前身30余年家族油坊</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <span class="bd" style="background:rgba(5,150,105,.2);color:#6ee7b7;border:1px solid rgba(5,150,105,.3)">宁夏好粮油·2021</span>
+            <span class="bd" style="background:rgba(37,99,235,.2);color:#a5b4fc;border:1px solid rgba(37,99,235,.3)">清真认证</span>
+            <span class="bd" style="background:rgba(234,88,12,.2);color:#fdba74;border:1px solid rgba(234,88,12,.3)">食品生产许可</span>
+            <span class="bd" style="background:rgba(239,68,68,.2);color:#fca5a5;border:1px solid rgba(239,68,68,.3)">抽检合格</span>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;min-width:200px">
+          <div style="text-align:center;padding:16px;background:rgba(255,255,255,.05);border-radius:10px;border:1px solid rgba(255,255,255,.1)">
+            <div style="font-size:28px;font-weight:700;color:#a5b4fc">82</div>
+            <div style="font-size:10px;opacity:.5;letter-spacing:2px">信用评分</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:rgba(5,150,105,.1);border-radius:10px;border:1px solid rgba(5,150,105,.2)">
+            <div style="font-size:28px;font-weight:700;color:#6ee7b7">AA</div>
+            <div style="font-size:10px;opacity:.5;letter-spacing:2px">信用等级</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:rgba(255,255,255,.05);border-radius:10px;border:1px solid rgba(255,255,255,.1)">
+            <div style="font-size:28px;font-weight:700;color:#fdba74">55%+</div>
+            <div style="font-size:10px;opacity:.5;letter-spacing:2px">α-亚麻酸</div>
+          </div>
+          <div style="text-align:center;padding:16px;background:rgba(255,255,255,.05);border-radius:10px;border:1px solid rgba(255,255,255,.1)">
+            <div style="font-size:28px;font-weight:700;color:#fca5a5">30+</div>
+            <div style="font-size:10px;opacity:.5;letter-spacing:2px">年匠心</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 五维雷达 -->
+    <div class="card" style="margin-top:16px">
+      <div class="ct">五维能力画像</div>
+      <div class="g3">
+        <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>产品质量</span><span style="color:var(--b);font-weight:600">92分</span></div><div class="prog"><div class="pb" style="width:92%"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>品牌影响</span><span style="color:var(--b);font-weight:600">78分</span></div><div class="prog"><div class="pb" style="width:78%"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>供应链</span><span style="color:var(--b);font-weight:600">85分</span></div><div class="prog"><div class="pb" style="width:85%"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>创新能力</span><span style="color:var(--b);font-weight:600">70分</span></div><div class="prog"><div class="pb" style="width:70%"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>社会责任</span><span style="color:var(--b);font-weight:600">88分</span></div><div class="prog"><div class="pb" style="width:88%"></div></div></div>
+      </div>
+    </div>
+
+    <!-- 品牌故事 -->
+    <div class="card" style="margin-top:16px">
+      <div class="ct">品牌故事</div>
+      <div class="cx" style="font-size:14px;line-height:2">
+        30余年前，宁夏平原上的一口老油坊开始飘香。老师傅用木榨机，一勺一勺地把亚麻籽喂进榨膛，金黄色的油液缓缓滴落——这是马季粮油的前身。<br><br>
+        2013年，宁夏马季食用油有限公司正式成立。从木榨到现代物理压榨，从作坊到标准化工厂，"好油不急，慢慢压"的信念从未改变。物理压榨，不加化学溶剂，不脱臭不脱色，保留天然营养——α-亚麻酸含量≥55%。<br><br>
+        每年六月，蓝色亚麻花海覆盖宁夏平原。从花田到餐桌，干净得只有阳光、土地和匠心。
+      </div>
+    </div>
+
+    <!-- 视频故事 -->
+    <div class="card" style="margin-top:16px">
+      <div class="ct">视频故事 · 一滴干净的油从宁夏花田到你的餐桌</div>
+      <div class="vf" onclick="alert('Demo演示：实际部署后嵌入\n• 马季粮油品牌纪录片\n• 一滴干净的油·从花田到餐桌\n• 30年油坊匠心故事\n• 物理压榨工艺展示')">
+        <div style="position:absolute;inset:0;opacity:.3"></div>
+        <div class="vp"></div>
+        <div style="position:absolute;bottom:32px;left:32px;right:32px;text-align:left;z-index:2">
+          <div style="font-size:11px;letter-spacing:4px;color:#a5b4fc;margin-bottom:6px">DOCUMENTARY · 5min</div>
+          <div style="font-size:18px;font-weight:600;letter-spacing:1px">一滴干净的油：从宁夏花田到你的餐桌</div>
+          <div style="font-size:13px;opacity:.6;margin-top:4px">西部 · 黄河 · 贺兰山 · 北纬38° · 物理压榨 · 30年匠心</div>
+        </div>
+      </div>
+      <!-- 历史影像 -->
+      <div class="gal">
+        <div class="gi"><img src="assets/old-press.png" style="filter:grayscale(.8) sepia(.2)"><div class="gc">老式压榨机·木榨工艺</div></div>
+        <div class="gi"><img src="assets/old-craftsman.jpg" style="filter:grayscale(.8) sepia(.2)"><div class="gc">传统手工压榨·匠人坚守</div></div>
+        <div class="gi"><img src="assets/old-workshop.jpeg" style="filter:grayscale(.8) sepia(.2)"><div class="gc">老油坊·烟火气中的匠心</div></div>
+        <div class="gi"><img src="assets/ningxia-yellow-river.jpg"><div class="gc">黄河·滋养宁夏平原</div></div>
+      </div>
+    </div>
+
+    <!-- 产品展示 -->
+    <div class="card" style="margin-top:16px">
+      <div class="ct">产品矩阵 · 5款主力产品</div>
+      <div class="g3" style="margin-top:12px">
+        <div class="card" style="padding:16px;background:linear-gradient(135deg,#eff6ff,#f0f9ff);border:1px solid #bfdbfe">
+          <div style="font-size:28px;text-align:center;margin-bottom:8px">🫙</div>
+          <div style="font-size:13px;font-weight:700;text-align:center">亚麻籽油 5L</div>
+          <div style="font-size:20px;font-weight:700;color:var(--b);text-align:center;font-family:Georgia">¥168</div>
+          <div style="font-size:10px;color:var(--m);text-align:center">α-亚麻酸≥55%</div>
+        </div>
+        <div class="card" style="padding:16px;background:linear-gradient(135deg,#eff6ff,#f0f9ff);border:1px solid #bfdbfe">
+          <div style="font-size:28px;text-align:center;margin-bottom:8px">🧴</div>
+          <div style="font-size:13px;font-weight:700;text-align:center">亚麻籽油 1.6L</div>
+          <div style="font-size:20px;font-weight:700;color:var(--b);text-align:center;font-family:Georgia">¥68</div>
+          <div style="font-size:10px;color:var(--m);text-align:center">日常家用装</div>
+        </div>
+        <div class="card" style="padding:16px;background:linear-gradient(135deg,#fff7ed,#fef3c7);border:1px solid #fde68a">
+          <div style="font-size:28px;text-align:center;margin-bottom:8px">🌻</div>
+          <div style="font-size:13px;font-weight:700;text-align:center">葵花籽油 5L</div>
+          <div style="font-size:20px;font-weight:700;color:var(--o);text-align:center;font-family:Georgia">¥128</div>
+          <div style="font-size:10px;color:var(--m);text-align:center">物理压榨·清香</div>
+        </div>
+        <div class="card" style="padding:16px;background:linear-gradient(135deg,#fef2f2,#fef9c3);border:1px solid #fecaca">
+          <div style="font-size:28px;text-align:center;margin-bottom:8px">🎁</div>
+          <div style="font-size:13px;font-weight:700;text-align:center">礼盒装</div>
+          <div style="font-size:20px;font-weight:700;color:var(--r);text-align:center;font-family:Georgia">¥198</div>
+          <div style="font-size:10px;color:var(--m);text-align:center">亚麻籽油1.6L×2</div>
+        </div>
+        <div class="card" style="padding:16px;background:linear-gradient(135deg,#ecfdf5,#f0fdf4);border:1px solid #bbf7d0">
+          <div style="font-size:28px;text-align:center;margin-bottom:8px">🍶</div>
+          <div style="font-size:13px;font-weight:700;text-align:center">调和油 5L</div>
+          <div style="font-size:20px;font-weight:700;color:var(--g);text-align:center;font-family:Georgia">¥108</div>
+          <div style="font-size:10px;color:var(--m);text-align:center">科学配比·营养均衡</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 知识问答 -->
+    <div class="card" style="margin-top:16px">
+      <div class="ct">知识问答 · 让客户了解·认可·选择·复购</div>
+      <div style="margin-top:12px">
+        <div class="faq-item">
+          <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">马季食用油是哪家公司？公司背景如何？<span class="faq-icon"></span></div>
+          <div class="faq-a"><div class="faq-a-inner">宁夏马季食用油有限公司，前身是宁夏马季清真食用油有限公司，成立于2013年，坐落于宁夏石嘴山市平罗县轻工业园区。前身为30余年的家族油坊，现已发展成为集生产、研发、销售于一体的现代化粮油企业。</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">亚麻籽油的营养价值和核心卖点？<span class="faq-icon"></span></div>
+          <div class="faq-a"><div class="faq-a-inner">亚麻籽油（胡麻油）富含α-亚麻酸（Omega-3），含量≥55%，远超国标下限。α-亚麻酸是人体必需脂肪酸，对心脑血管健康至关重要。物理压榨工艺保留天然营养成分，不脱臭不脱色。</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">亚麻籽油适合哪些人群食用？<span class="faq-icon"></span></div>
+          <div class="faq-a"><div class="faq-a-inner">适合全年龄段食用。特别推荐：中老年（心脑血管养护）、孕妇（胎儿大脑发育）、婴幼儿辅食添加、三高人群、脑力工作者。建议每日摄入量15-20ml，直接饮用或凉拌为佳。</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">如何保存亚麻籽油？保质期多久？<span class="faq-icon"></span></div>
+          <div class="faq-a"><div class="faq-a-inner">避光冷藏保存最佳，开封后建议3个月内食用完毕。未开封保质期18个月。因富含不饱和脂肪酸，高温烹饪会破坏营养，建议凉拌、直接饮用或低温烹饪。</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">马季粮油有哪些资质认证？<span class="faq-icon"></span></div>
+          <div class="faq-a"><div class="faq-a-inner">宁夏好粮油（2021年认证）、清真食品认证、食品生产许可证（SC认证）、ISO22000食品安全管理体系认证。产品经国家粮食质量检验中心检测合格。</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">产品溯源体系如何保障品质？<span class="faq-icon"></span></div>
+          <div class="faq-a"><div class="faq-a-inner">从种植基地到成品出厂全程溯源。每批次产品可追溯到具体的种植地块、收割时间、压榨批次、质检报告。消费者可通过产品包装溯源码查询全链路信息。</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 联系方式 -->
+    <div class="card" style="margin-top:16px;background:var(--d);color:#fff;text-align:center">
+      <div style="font-size:11px;letter-spacing:4px;color:#a5b4fc;margin-bottom:8px">CONTACT</div>
+      <div style="font-size:18px;font-weight:600;letter-spacing:2px;margin-bottom:16px">宁夏马季食用油有限公司</div>
+      <div style="font-size:13px;opacity:.8;line-height:2">
+        地址：宁夏石嘴山市平罗县轻工业园区轻9-5号<br>
+        电话：13709568021<br>
+        主营：亚麻籽油 · 葵花籽油 · 调和油
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 3: 案例演示 ===== -->
+<div class="pnl" id="tab-demo">
+  <div class="sec">
+    <div class="ct" style="font-size:22px;letter-spacing:1px">案例演示 · 马季粮油的数字化之旅</div>
+    <div class="cx" style="margin-bottom:24px">从入驻到交付的全流程演示 · 7项交付物 · 零代码上手</div>
+
+    <!-- 案例时间线 -->
+    <div class="card">
+      <div class="ct">入驻到交付 · 7步全流程</div>
+      <div style="margin-top:16px">
+        <div style="display:flex;align-items:flex-start;gap:16px;padding:16px 0;border-bottom:1px solid #f3f4f6">
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--b);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0">1</div>
+          <div><div style="font-size:14px;font-weight:700">客户入驻</div><div class="cx">企业提交资质（营业执照/生产许可/清真认证），平台审核通过，开通后台账户</div></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:16px;padding:16px 0;border-bottom:1px solid #f3f4f6">
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--b);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0">2</div>
+          <div><div style="font-size:14px;font-weight:700">企业画像建立</div><div class="cx">AI自动生成五维能力画像（产品质量92/品牌影响78/供应链85/创新70/社会责任88），信用82分/AA级</div></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:16px;padding:16px 0;border-bottom:1px solid #f3f4f6">
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--g);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0">3</div>
+          <div><div style="font-size:14px;font-weight:700">品牌展厅搭建</div><div class="cx">企业简介/产品展示/资质荣誉/品牌故事一键配置，支持自定义装修，10分钟上线</div></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:16px;padding:16px 0;border-bottom:1px solid #f3f4f6">
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--g);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0">4</div>
+          <div><div style="font-size:14px;font-weight:700">产品上架</div><div class="cx">5款产品一键发布，支持零售/大宗/扶贫/食堂/福利5种营销形态切换</div></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:16px;padding:16px 0;border-bottom:1px solid #f3f4f6">
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--o);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0">5</div>
+          <div><div style="font-size:14px;font-weight:700">内容运营</div><div class="cx">3篇品牌软文入库（品牌故事/视频故事/产品知识），知识问答10条覆盖4个维度，视频故事模块上线</div></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:16px;padding:16px 0;border-bottom:1px solid #f3f4f6">
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--o);color:#fff;display:flex;align-items:center;justain-content:center;justify-content:center;font-weight:700;flex-shrink:0">6</div>
+          <div><div style="font-size:14px;font-weight:700">服务撮合对接</div><div class="cx">企业需求发布→AI智能匹配服务商→方案对比→签约→履约跟踪→评价闭环</div></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:16px;padding:16px 0">
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--r);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0">7</div>
+          <div><div style="font-size:14px;font-weight:700">持续运营</div><div class="cx">SEO优化/内容更新/客户维护/数据分析/月度报告 · 让企业持续获得流量和订单</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 交付清单 -->
+    <div class="card" style="margin-top:16px">
+      <div class="ct">马季粮油 · 入驻交付清单</div>
+      <table>
+        <thead><tr><th>#</th><th>交付物</th><th>内容</th><th>状态</th></tr></thead>
+        <tbody>
+          <tr class="hl"><td>1</td><td>企业画像</td><td>信用82分/AA级/五维雷达/4枚徽章</td><td><span class="bd b-g">✅ 完成</span></td></tr>
+          <tr><td>2</td><td>品牌展厅</td><td>7模块综合页面（简介/产品/荣誉/资质/故事/视频/联系）</td><td><span class="bd b-g">✅ 完成</span></td></tr>
+          <tr><td>3</td><td>产品上架</td><td>5款产品（亚麻籽油5L/1.6L/葵花籽油5L/礼盒装/调和油5L）</td><td><span class="bd b-g">✅ 完成</span></td></tr>
+          <tr><td>4</td><td>知识问答</td><td>10条FAQ（了解产品/选购指南/使用保存/品质信任）</td><td><span class="bd b-g">✅ 完成</span></td></tr>
+          <tr><td>5</td><td>品牌软文</td><td>3篇入库（品牌故事/视频故事/产品知识）</td><td><span class="bd b-g">✅ 完成</span></td></tr>
+          <tr><td>6</td><td>视频故事</td><td>5分钟纪录片位+6章叙事+4张历史影像</td><td><span class="bd b-g">✅ 完成</span></td></tr>
+          <tr><td>7</td><td>服务撮合</td><td>企业需求发布→智能匹配→签约→履约→评价全链路</td><td><span class="bd b-b">✅ 系统就绪</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 服务商生态 -->
+    <div class="card" style="margin-top:16px">
+      <div class="ct">数造工坊服务商生态</div>
+      <div class="g3" style="margin-top:12px">
+        <div class="card" style="text-align:center;padding:20px">
+          <div style="font-size:24px;margin-bottom:6px">🏭</div>
+          <div style="font-size:13px;font-weight:700">数字化交付</div>
+          <div class="cx">MES/WMS/ERP/物联网<br>智能工厂/数字化车间</div>
+        </div>
+        <div class="card" style="text-align:center;padding:20px">
+          <div style="font-size:24px;margin-bottom:6px">💼</div>
+          <div style="font-size:13px;font-weight:700">企业服务</div>
+          <div class="cx">资质申报/财税代理<br>法律咨询/人力资源</div>
+        </div>
+        <div class="card" style="text-align:center;padding:20px">
+          <div style="font-size:24px;margin-bottom:6px">🌐</div>
+          <div style="font-size:13px;font-weight:700">电商代运营</div>
+          <div class="cx">店铺运营/内容营销<br>直播带货/数据分析</div>
+        </div>
+        <div class="card" style="text-align:center;padding:20px">
+          <div style="font-size:24px;margin-bottom:6px">📦</div>
+          <div style="font-size:13px;font-weight:700">供应链服务</div>
+          <div class="cx">仓储物流/冷链配送<br>供应链金融</div>
+        </div>
+        <div class="card" style="text-align:center;padding:20px">
+          <div style="font-size:24px;margin-bottom:6px">🎓</div>
+          <div style="font-size:13px;font-weight:700">培训咨询</div>
+          <div class="cx">数字化培训/管理咨询<br>行业研究/战略规划</div>
+        </div>
+        <div class="card" style="text-align:center;padding:20px">
+          <div style="font-size:24px;margin-bottom:6px">🏆</div>
+          <div style="font-size:13px;font-weight:700">品牌营销</div>
+          <div class="cx">品牌设计/广告投放<br>内容创作/公关传播</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 平台数据 -->
+    <div class="card" style="margin-top:16px">
+      <div class="ct">平台运营数据（实时演示用）</div>
+      <table>
+        <thead><tr><th>指标</th><th>数据</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr class="hl"><td>入驻企业</td><td>500+</td><td>覆盖宁夏、甘肃、内蒙等西北省份</td></tr>
+          <tr><td>服务商</td><td>200+</td><td>6大品类，经平台考核认证</td></tr>
+          <tr><td>撮合订单</td><td>1,200+</td><td>累计撮合服务交易额¥2.3亿</td></tr>
+          <tr><td>产品交易</td><td>¥405万GMV</td><td>马季粮油单企业年交易额</td></tr>
+          <tr><td>客户满意度</td><td>96.5%</td><td>基于服务完成后的双向评分</td></tr>
+          <tr><td>平均撮合周期</td><td>7天</td><td>需求发布到签约的平均时长</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="footer">
+  <p>数造工坊 · 企业后服务演示 · 马季粮油形象宣传-短视频推广-产品推广三维一体</p>
+  <p style="margin-top:4px">售前专用 · 双击打开即可演示 · 无需联网</p>
+</div>
+
+<script>
+function showTab(name) {
+  document.querySelectorAll('.pnl').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nt').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+</script>
+</body>
+</html>

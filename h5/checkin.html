@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>数造工坊 · 验收打卡</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f6fa;color:#1f2937;font-size:14px;padding-bottom:20px}
+.header{background:linear-gradient(135deg,#059669,#10b981);color:#fff;padding:48px 20px 20px;text-align:center}
+.header-title{font-size:20px;font-weight:700}.header-sub{font-size:12px;opacity:.7;margin-top:4px}
+.card{background:#fff;margin:12px;border-radius:14px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.card-title{font-size:16px;font-weight:600;margin-bottom:8px}
+.card-info{font-size:12px;color:#6b7280;line-height:1.6}
+.btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;margin-top:10px}
+.btn-primary{background:#059669;color:#fff}.btn-secondary{background:#f3f4f6;color:#374151}
+.form-label{font-size:12px;color:#6b7280;margin-bottom:4px;display:block}
+.form-input{width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;margin-bottom:12px}
+.form-textarea{width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;min-height:60px;resize:vertical;margin-bottom:12px}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.75);color:#fff;padding:10px 24px;border-radius:20px;font-size:13px;z-index:9999}
+.checkin-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #f3f4f6}
+.checkin-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.checkin-done{background:#d1fae5;color:#059669}
+.checkin-info{flex:1;font-size:12px;color:#4b5563}
+.loading,.empty{text-align:center;padding:40px;color:#9ca3af;font-size:13px}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-title">📸 验收打卡</div>
+  <div class="header-sub">现场定位 · 拍照上传 · 验收留痕</div>
+</div>
+<div id="app"><div class="loading">加载中...</div></div>
+<script>
+const API=window.location.origin+'/api';
+async function apiget(p){try{const r=await fetch(API+p);return r.json()}catch(e){return null}}
+function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2000)}
+
+async function init(){
+  const el=document.getElementById('app');
+  const[deliveries,checkins]=await Promise.all([apiget('/delivery'),apiget('/delivery/checkins').catch(()=>({list:[]}))]);
+  const deliveryList=deliveries?.list||[];
+  const checkinList=checkins.list||[];
+  const phases=['requirement','design','contract','development','deployment','testing','training','acceptance'];
+  const phaseMap=['需求调研','方案设计','合同签订','开发实施','部署集成','测试联调','培训上线','验收交付'];
+
+  el.innerHTML=`
+    <div class="card">
+      <div class="card-title">📍 选择交付项目</div>
+      <select id="selDelivery" onchange="showCheckinForm()" style="width:100%;padding:10px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;margin-top:8px">
+        <option value="">-- 请选择项目 --</option>
+        ${deliveryList.map(d=>'<option value="'+d.id+'">'+d.project_name+'</option>').join('')}
+      </select>
+      <div id="checkinForm" style="display:none;margin-top:14px">
+        <label class="form-label">当前阶段</label>
+        <select id="selPhase" style="width:100%;padding:10px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;margin-bottom:12px">
+          ${phases.map((p,i)=>'<option value="'+p+'">'+(i+1)+'. '+phaseMap[i]+'</option>').join('')}
+        </select>
+        <label class="form-label">打卡人</label>
+        <input class="form-input" id="chkName" placeholder="您的姓名">
+        <label class="form-label">当前位置</label>
+        <input class="form-input" id="chkLocation" placeholder="如：客户公司XX部门" readonly>
+        <button class="btn btn-secondary" onclick="getLocation()">📍 获取当前位置</button>
+        <label class="form-label" style="margin-top:12px">备注</label>
+        <textarea class="form-textarea" id="chkRemark" placeholder="验收情况说明..."></textarea>
+        <button class="btn btn-primary" onclick="submitCheckin()">📸 拍照打卡</button>
+      </div>
+    </div>
+    <div style="margin:12px;font-size:15px;font-weight:600">📋 打卡记录</div>
+    ${checkinList.length?checkinList.map(c=>`<div class="card">
+      <div class="checkin-item">
+        <div class="checkin-icon checkin-done">✓</div>
+        <div class="checkin-info">
+          <div style="font-weight:600;font-size:14px;margin-bottom:4px">${c.project_name||'-'}</div>
+          <div>📍 ${c.location||'-'}</div>
+          <div>👤 ${c.checker_name||'-'} · ${c.checker_role||''} · ${c.phase||''}</div>
+          <div style="color:#9ca3af;margin-top:2px">${(c.created_at||'').slice(0,16).replace('T',' ')}</div>
+          ${c.remark?`<div style="margin-top:4px;color:#059669">${c.remark}</div>`:''}
+        </div>
+      </div>
+    </div>`).join(''):'<div class="empty">暂无打卡记录</div>'}
+  `;
+}
+
+function showCheckinForm(){document.getElementById('checkinForm').style.display='block'}
+
+function getLocation(){
+  if(!navigator.geolocation){toast('浏览器不支持定位');return}
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const lat=pos.coords.latitude.toFixed(6);const lng=pos.coords.longitude.toFixed(6);
+    document.getElementById('chkLocation').value='坐标：'+lat+', '+lng;
+    toast('定位成功');
+  },()=>{document.getElementById('chkLocation').value='手动录入';toast('定位失败，请手动输入')});
+}
+
+async function submitCheckin(){
+  const did=document.getElementById('selDelivery').value;
+  const name=document.getElementById('chkName').value.trim();
+  const loc=document.getElementById('chkLocation').value.trim();
+  if(!did||!name){toast('请选择项目并填写姓名');return}
+  const body={
+    delivery_id:parseInt(did),
+    project_name:document.getElementById('selDelivery').selectedOptions[0].text,
+    checker_name:name,checker_role:'交付工程师',
+    location:loc||'未定位',phase:document.getElementById('selPhase').value,
+    status:'checked',remark:document.getElementById('chkRemark').value.trim()
+  };
+  try{
+    await fetch(API+'/delivery/checkin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    toast('打卡成功！');setTimeout(()=>location.reload(),1000);
+  }catch(e){toast('打卡失败')}
+}
+init();
+</script>
+</body>
+</html>

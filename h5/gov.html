@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>数造工坊 · 政府监管看板</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#0f766e;--bg:#f5f6fa;--card:#fff;--border:#e5e7eb;--text:#1f2937;--text2:#6b7280;--success:#22c55e;--warning:#f59e0b;--danger:#ef4444}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px;padding-bottom:20px}
+.header{background:linear-gradient(135deg,#0f766e,#14b8a6);color:#fff;padding:48px 20px 20px}
+.header-title{font-size:18px;font-weight:700}
+.header-sub{font-size:12px;opacity:.7;margin-top:2px}
+.stats{display:flex;gap:8px;padding:12px;overflow-x:auto;margin-top:-20px}
+.stats::-webkit-scrollbar{display:none}
+.stat{flex-shrink:0;background:#fff;border-radius:10px;padding:14px 16px;text-align:center;min-width:80px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.stat-num{font-size:24px;font-weight:700;color:var(--primary)}.stat-label{font-size:11px;color:var(--text2);margin-top:3px}
+.section{margin:12px}.section-title{font-size:15px;font-weight:600;margin-bottom:10px;padding-left:8px;border-left:3px solid var(--primary)}
+.card{background:#fff;border-radius:12px;padding:14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.card-row{display:flex;justify-content:space-between;align-items:start;margin-bottom:6px}
+.card-title{font-size:14px;font-weight:600;flex:1}
+.card-meta{font-size:11px;color:var(--text2);margin-top:4px}
+.card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:1px solid #f3f4f6;font-size:11px;color:var(--text2)}
+.badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:3px;font-weight:600}
+.badge-active{background:#d1fae5;color:#059669}
+.badge-progress{background:#fef3c7;color:#92400e}
+.badge-done{background:#dbeafe;color:#1e40af}
+.progress-bar{background:#e5e7eb;height:6px;border-radius:3px;overflow:hidden;margin-top:6px}
+.progress-fill{height:100%;border-radius:3px}
+.loading,.empty{text-align:center;padding:40px;color:#9ca3af;font-size:13px}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-title">🏛️ 政府监管看板</div>
+  <div class="header-sub">属地企业数字化转型项目进度公示</div>
+</div>
+
+<div id="app"><div class="loading">加载中...</div></div>
+
+<script>
+const API=window.location.origin+'/api';
+async function apiget(path){try{const r=await fetch(API+path);return r.json()}catch(e){return null}}
+
+async function init(){
+  const el=document.getElementById('app');
+  const[agents,projects,deliveries,contracts]=await Promise.all([
+    apiget('/agents'),apiget('/projects?page=1&limit=50'),apiget('/delivery'),apiget('/platform/pools/dashboard')
+  ]);
+
+  const agentList=(agents?.list||[]).filter(a=>a.status==='active');
+  const projList=projects?.list||projects||[];
+  const deliList=deliveries?.list||[];
+
+  const totalContract=contracts?.poolA?.total||0;
+  const projActive=projList.filter(p=>p.status==='active'||p.status==='planning').length;
+  const deliDone=deliList.filter(d=>d.acceptance_status==='accepted').length;
+
+  el.innerHTML=`
+    <div class="stats">
+      <div class="stat"><div class="stat-num">${projList.length}</div><div class="stat-label">辖区项目</div></div>
+      <div class="stat"><div class="stat-num" style="color:#f59e0b">${projActive}</div><div class="stat-label">进行中</div></div>
+      <div class="stat"><div class="stat-num" style="color:#22c55e">${deliDone}</div><div class="stat-label">已验收</div></div>
+      <div class="stat"><div class="stat-num" style="color:#0f766e">¥${(totalContract/10000).toFixed(1)}万</div><div class="stat-label">合同总额</div></div>
+      <div class="stat"><div class="stat-num">${agentList.length}</div><div class="stat-label">代理商</div></div>
+      <div class="stat"><div class="stat-num" style="color:#8b5cf6">${deliList.reduce((s,d)=>s+(d.payment_received||0),0)/10000}万</div><div class="stat-label">回款额</div></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">📊 数字化项目一览</div>
+      ${projList.map(p=>{
+        const stMap={active:'badge-progress',planning:'badge-active',completed:'badge-done'};
+        const stLabel={active:'执行中',planning:'立项中',completed:'已完成'};
+        const d=deliList.find(d=>d.project_id===p.id);
+        const prog=p.progress||0;
+        const progColor=prog>=75?'#22c55e':prog>=50?'#f59e0b':'#3b82f6';
+        return `<div class="card">
+          <div class="card-row">
+            <div class="card-title">${p.name}</div>
+            <span class="badge ${stMap[p.status]||'badge-active'}">${stLabel[p.status]||p.status}</span>
+          </div>
+          <div class="card-meta">客户：${p.client_name||'-'} · 经理：${p.manager||'-'} · 预算¥${(p.budget||0).toLocaleString()}</div>
+          ${d?`<div class="card-meta">交付：${d.delivery_type==='direct'?'直营':'代理'+(d.agent_name?'('+d.agent_name+')':'')} · 负责人：${d.assignee||'-'} · 回款¥${((d.payment_received||0)/10000).toFixed(1)}/${((d.payment_amount||0)/10000).toFixed(1)}万</div>`:''}
+          <div class="progress-bar"><div class="progress-fill" style="width:${prog}%;background:${progColor}"></div></div>
+          <div class="card-footer"><span>${p.start_date||'?'} ~ ${p.end_date||'?'}</span><span style="color:${progColor};font-weight:600">${prog}%</span></div>
+        </div>`;
+      }).join('')||'<div class="empty">暂无项目</div>'}
+    </div>
+
+    <div class="section">
+      <div class="section-title">🤝 金牌代理商</div>
+      ${agentList.map(a=>`<div class="card"><div class="card-title">${a.name} · ${a.company||''}</div><div class="card-meta">地区：${a.region||'-'} · 电话：${a.phone||'-'} · 微信：${a.wechat||'-'}</div></div>`).join('')||'<div class="empty">暂无代理商</div>'}
+    </div>
+
+    <div class="section">
+      <div class="section-title">📋 交付项目公示</div>
+      ${deliList.map(d=>{
+        const prog=d.progress||0;const progColor=prog>=75?'#22c55e':prog>=50?'#f59e0b':'#3b82f6';
+        return `<div class="card">
+          <div class="card-title">${d.project_name}</div>
+          <div class="card-meta">客户：${d.client_name||'-'} · ${d.delivery_type==='direct'?'直营':'代理'} · 负责人：${d.assignee||'-'}</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${prog}%;background:${progColor}"></div></div>
+          <div class="card-footer"><span>${d.start_date||'?'} ~ ${d.planned_end_date||'?'}</span><span style="color:${progColor};font-weight:600">${prog}%</span></div>
+        </div>`;
+      }).join('')||'<div class="empty">暂无交付</div>'}
+    </div>
+  `;
+}
+init();
+</script>
+</body>
+</html>

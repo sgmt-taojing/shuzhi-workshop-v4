@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>数智工坊 V4.0 项目计划</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--oil:#d4a017;--oil-a:#b8860b;--oil-d:#5d4506;--oil-c:#fdf6e3;--b:#2563eb;--bl:#6366f1;--ind:#7c3aed;--bg:#f5f7fa;--c:#fff;--d:#0a1628;--d2:#1e3a5f;--t:#1f2937;--m:#6b7280;--g:#059669;--o:#ea580c;--r:#ef4444}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;background:var(--bg);color:var(--t);line-height:1.7}
+.bb{height:6px;background:linear-gradient(90deg,var(--oil) 0%,var(--oil-a) 25%,var(--oil-d) 50%,var(--b) 75%,var(--ind) 100%);position:fixed;top:0;left:0;right:0;z-index:100}
+.wrap{max-width:900px;margin:0 auto;padding:36px 20px;padding-top:50px}
+h1{font-size:24px;font-weight:800;color:var(--d);letter-spacing:2px;margin-bottom:6px}
+h1 .oil{color:var(--oil-a)}
+.sub{font-size:13px;color:var(--m);margin-bottom:24px}
+.section{background:var(--c);border-radius:14px;padding:24px;box-shadow:0 2px 14px rgba(0,0,0,.04);border:1px solid #e5e7eb;margin-bottom:16px}
+.section-title{font-size:16px;font-weight:700;color:var(--d);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.section-title::before{content:'';width:4px;height:18px;background:linear-gradient(180deg,var(--b),var(--bl));border-radius:2px;flex-shrink:0}
+.section-title.oil::before{background:linear-gradient(180deg,var(--oil),var(--oil-a))}
+.section-title.g::before{background:linear-gradient(180deg,var(--g),#10b981)}
+.section-title.i::before{background:linear-gradient(180deg,var(--ind),var(--bl))}
+table{width:100%;border-collapse:collapse;margin:8px 0;font-size:13px}
+th{background:linear-gradient(135deg,var(--d),var(--d2));color:#dbeafe;padding:10px 12px;text-align:left;font-size:11px;font-weight:600;letter-spacing:1px}
+td{padding:9px 12px;border-bottom:1px solid #f1f5f9;font-size:12px}tr:last-child td{border-bottom:none}tr:hover td{background:#f8faff}
+.badge{display:inline-block;padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700;margin:1px}
+.b-g{background:#ecfdf5;color:#047857}.b-b{background:#eff6ff;color:var(--b)}.b-o{background:#fff7ed;color:#c2410c}.b-r{background:#fef2f2;color:#dc2626}.b-i{background:#f5f3ff;color:var(--ind)}.b-oil{background:var(--oil-c);color:var(--oil-d);border:1px solid rgba(212,160,23,.3)}
+.phase{display:flex;gap:16px;align-items:flex-start;padding:16px 0;border-bottom:1px solid #f1f5f9}
+.phase:last-child{border-bottom:none}
+.phase-num{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;flex-shrink:0}
+.p1{background:linear-gradient(135deg,var(--oil),var(--oil-a))}
+.p2{background:linear-gradient(135deg,var(--b),var(--bl))}
+.p3{background:linear-gradient(135deg,var(--g),#10b981)}
+.p4{background:linear-gradient(135deg,var(--ind),#9333ea)}
+.p5{background:linear-gradient(135deg,var(--o),#f97316)}
+.phase-body{flex:1}
+.phase-title{font-size:14px;font-weight:700;color:var(--d);margin-bottom:4px}
+.phase-desc{font-size:12px;color:var(--m);margin-bottom:6px}
+.phase-tasks{font-size:12px;color:var(--t);line-height:1.8}
+.phase-tasks div{padding-left:16px;position:relative}
+.phase-tasks div::before{content:'☐';position:absolute;left:0;color:var(--b)}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-top:12px}
+.metric{background:linear-gradient(135deg,var(--d),var(--d2));color:#fff;border-radius:12px;padding:16px;text-align:center}
+.metric-n{font-size:24px;font-weight:700;color:var(--oil);font-family:Georgia,serif}
+.metric-l{font-size:10px;opacity:.6;letter-spacing:1.5px;margin-top:2px}
+.alert{padding:12px 16px;border-radius:10px;font-size:12px;margin:8px 0}
+.alert-o{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412}
+.alert-b{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af}
+.alert-g{background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46}
+code{background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:11px;color:var(--ind);font-family:'SF Mono',Monaco,monospace}
+.ft{text-align:center;padding:24px;color:var(--m);font-size:11px}
+@media(max-width:768px){.metrics{grid-template-columns:repeat(2,1fr)}.phase{flex-direction:column;gap:8px}}
+</style>
+</head>
+<body>
+<div class="bb"></div>
+<div class="wrap">
+
+<h1>数智工坊 · 企业后服务 <span class="oil">V4.0</span> 项目计划</h1>
+<div class="sub">文（文化宣传）· 影（短视频）· 商（甄选商城）城立品牌，撮合产业链，严选源头好货，赋能万家</div>
+
+<div class="metrics">
+<div class="metric"><div class="metric-n">4</div><div class="metric-l">TAB 模块</div></div>
+<div class="metric"><div class="metric-n">55KB</div><div class="metric-l">在线版大小</div></div>
+<div class="metric"><div class="metric-n">643KB</div><div class="metric-l">离线版大小</div></div>
+<div class="metric"><div class="metric-n">0</div><div class="metric-l">外部依赖</div></div>
+<div class="metric"><div class="metric-n">5阶段</div><div class="metric-l">完整排期</div></div>
+<div class="metric"><div class="metric-n">~4天</div><div class="metric-l">预计周期</div></div>
+</div>
+
+<div class="section">
+<div class="section-title oil">当前状态盘点</div>
+<table>
+<thead><tr><th>模块</th><th>状态</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><strong>V4.0 在线版</strong></td><td><span class="badge b-g">已完成</span></td><td>55KB，4 Tab，需配合 assets/ 目录</td></tr>
+<tr><td><strong>V4.0 离线版</strong></td><td><span class="badge b-g">已完成</span></td><td>643KB，4张图 base64 内联，双击即开</td></tr>
+<tr><td><strong>桌面同步</strong></td><td><span class="badge b-g">已完成</span></td><td>在线版+离线版+4张图已拷到桌面</td></tr>
+<tr><td><strong>JS 修复</strong></td><td><span class="badge b-g">已完成</span></td><td>IIFE + addEventListener，零 event.target</td></tr>
+<tr><td><strong>SEO + ARIA</strong></td><td><span class="badge b-g">已完成</span></td><td>meta description/OG/aria-selected/键盘导航</td></tr>
+<tr><td>GitHub 仓库</td><td><span class="badge b-o">待用户授权</span></td><td>需提供 GitHub Personal Access Token</td></tr>
+<tr><td>外网部署</td><td><span class="badge b-o">待执行</span></td><td>GitHub Pages</td></tr>
+<tr><td>移动端测试</td><td><span class="badge b-o">待执行</span></td><td>真机扫码验证</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="section">
+<div class="section-title">五阶段排期</div>
+
+<div class="phase">
+<div class="phase-num p1">1</div>
+<div class="phase-body">
+<div class="phase-title">设计完善 <span class="badge b-oil">1天</span></div>
+<div class="phase-desc">SEO meta、ARIA 属性、语义化 HTML 审查</div>
+<div class="phase-tasks">
+<div>补充 SEO meta（description/keywords/OG标签）</div>
+<div>补充 ARIA 属性（aria-label/aria-selected/aria-controls）</div>
+<div>短视频区域增加占位说明</div>
+<div>源头甄选 Tab 增加品类路线图视觉</div>
+</div>
+<div class="alert alert-g" style="margin-top:8px"><strong>✓ 已完成</strong> — SEO meta、OG标签、ARIA属性、键盘导航均已落地</div>
+</div>
+</div>
+
+<div class="phase">
+<div class="phase-num p2">2</div>
+<div class="phase-body">
+<div class="phase-title">开发优化 <span class="badge b-b">1-2天</span></div>
+<div class="phase-desc">CSS 精简、图片压缩、移动端深度适配</div>
+<div class="phase-tasks">
+<div>CSS 精简（去除冗余规则，合并重复样式）</div>
+<div>离线版图片压缩（WebP格式，目标 &lt;450KB）</div>
+<div>移动端深度适配（触摸优化、字体缩放、横屏适配）</div>
+<div>增加加载动画（CSS-only spinner）</div>
+<div>打印样式优化</div>
+</div>
+</div>
+</div>
+
+<div class="phase">
+<div class="phase-num p3">3</div>
+<div class="phase-body">
+<div class="phase-title">测试验证 <span class="badge b-i">1天</span></div>
+<div class="phase-desc">三浏览器 + 移动端 + 功能测试</div>
+<div class="phase-tasks">
+<div>桌面 Chrome/Safari/Firefox 三浏览器测试</div>
+<div>移动端 iOS Safari / Android Chrome 测试</div>
+<div>Tab 切换功能测试（点击/键盘方向键）</div>
+<div>图片加载测试（在线版+离线版）</div>
+<div>响应式断点测试（375px/768px/1024px/1440px）</div>
+<div>控制台零报错验证</div>
+</div>
+</div>
+</div>
+
+<div class="phase">
+<div class="phase-num p4">4</div>
+<div class="phase-body">
+<div class="phase-title">发布部署 <span class="badge b-r">半天</span></div>
+<div class="phase-desc">GitHub 仓库创建 + Pages 启用 + 外网访问</div>
+<div class="phase-tasks">
+<div>创建 GitHub 仓库（需用户配合授权）</div>
+<div>推送代码到 GitHub</div>
+<div>启用 GitHub Pages（免费外网访问）</div>
+<div>生成外网访问 URL + 二维码</div>
+<div>更新 CHANGELOG.md</div>
+</div>
+<div class="alert alert-o" style="margin-top:8px"><strong>⚠ 需用户操作</strong> — 提供 GitHub Token 或执行 <code>gh auth login</code></div>
+</div>
+</div>
+
+<div class="phase">
+<div class="phase-num p5">5</div>
+<div class="phase-body">
+<div class="phase-title">移动端测试 <span class="badge b-o">半天</span></div>
+<div class="phase-desc">手机扫码访问 GitHub Pages URL</div>
+<div class="phase-tasks">
+<div>手机扫码访问外网 URL</div>
+<div>验证 4 个 Tab 触摸切换</div>
+<div>验证图片加载速度</div>
+<div>验证文字可读性和横屏体验</div>
+<div>收集体验反馈</div>
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="section">
+<div class="section-title i">GitHub 部署方案</div>
+<div class="alert alert-b">
+<strong>前置条件（需用户操作）：</strong><br>
+1. 安装 gh CLI: <code>brew install gh</code><br>
+2. 登录 GitHub: <code>gh auth login</code><br>
+3. 配置 git: <code>git config --global user.name "名字"</code> / <code>git config --global user.email "邮箱"</code>
+</div>
+<table>
+<thead><tr><th>步骤</th><th>命令</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>1. 初始化</td><td><code>git init && git add -A && git commit -m "V4.0"</code></td><td>在部署目录初始化</td></tr>
+<tr><td>2. 创建仓库</td><td><code>gh repo create shuzhi-workshop-v4 --public --source=. --push</code></td><td>自动创建并推送</td></tr>
+<tr><td>3. 启用 Pages</td><td><code>gh api repos/用户名/shuzhi-workshop-v4/pages -X POST -f source[branch]=main -f source[path]=/</code></td><td>启用免费外网托管</td></tr>
+<tr><td>4. 访问</td><td><code>https://用户名.github.io/shuzhi-workshop-v4/</code></td><td>外网URL，2-5分钟生效</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="section">
+<div class="section-title g">技术规格</div>
+<table>
+<thead><tr><th>项目</th><th>值</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>在线版</td><td><strong>55KB</strong></td><td>轻量级，适合网络传输</td></tr>
+<tr><td>离线版</td><td><strong>643KB</strong></td><td>base64内联，双击即开</td></tr>
+<tr><td>Tab数</td><td><strong>4</strong></td><td>企业宣传/源头甄选/产业链撮合/产品推广</td></tr>
+<tr><td>图片</td><td><strong>4张</strong></td><td>base64内联（离线版）</td></tr>
+<tr><td>JS依赖</td><td><strong>零</strong></td><td>纯原生 IIFE，无框架</td></tr>
+<tr><td>外部依赖</td><td><strong>零</strong></td><td>无CDN/字体/框架</td></tr>
+<tr><td>响应式断点</td><td>768px / 700px</td><td>平板+手机适配</td></tr>
+<tr><td>键盘导航</td><td>Tab + 方向键</td><td>ARIA 完备</td></tr>
+<tr><td>SEO</td><td>meta + OG标签</td><td>可被搜索引擎收录</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="section">
+<div class="section-title oil">风险与对策</div>
+<table>
+<thead><tr><th>风险</th><th>概率</th><th>影响</th><th>对策</th></tr></thead>
+<tbody>
+<tr><td>GitHub Token 权限不足</td><td><span class="badge b-o">中</span></td><td>阻断部署</td><td>用户确认勾选 repo 权限</td></tr>
+<tr><td>GitHub Pages 生效延迟</td><td><span class="badge b-b">低</span></td><td>10分钟内</td><td>等待 + 重试</td></tr>
+<tr><td>移动端图片加载慢</td><td><span class="badge b-o">中</span></td><td>体验</td><td>离线版base64避免额外请求</td></tr>
+<tr><td>Tab切换旧浏览器不工作</td><td><span class="badge b-b">低</span></td><td>功能降级</td><td>addEventListener 兼容性良好</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="ft">
+数智工坊 · 企业后服务 V4.0 · 2026-07-12<br>
+文影商城 · 源头甄选 · 产业链撮合 · 让天下没有难做的生意
+</div>
+
+</div>
+</body>
+</html>

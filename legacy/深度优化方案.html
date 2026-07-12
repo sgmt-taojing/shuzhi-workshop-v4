@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>数智工坊 · 平台深度优化方案</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8fafc;color:#1e293b;line-height:1.6;padding:20px}
+.container{max-width:900px;margin:0 auto}
+h1{font-size:24px;font-weight:700;margin-bottom:8px;color:#0f172a}
+h2{font-size:18px;font-weight:600;margin:24px 0 12px;color:#1e40af;border-left:4px solid #3b82f6;padding-left:10px}
+h3{font-size:15px;font-weight:600;margin:16px 0 8px;color:#334155}
+.sub{font-size:13px;color:#64748b;margin-bottom:20px}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.card-title{font-size:14px;font-weight:600;margin-bottom:8px;color:#0f172a}
+.card-body{font-size:13px;color:#475569}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:4px;margin-right:4px;font-weight:600}
+.badge-red{background:#fee2e2;color:#dc2626}
+.badge-blue{background:#dbeafe;color:#1e40af}
+.badge-green{background:#d1fae5;color:#059669}
+.badge-orange{background:#fef3c7;color:#92400e}
+.badge-purple{background:#f3e8ff;color:#6b21a8}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0}
+th{background:#f1f5f9;padding:8px;text-align:left;font-weight:600;color:#475569;border-bottom:2px solid #e2e8f0}
+td{padding:8px;border-bottom:1px solid #f1f5f9;color:#334155}
+.metric{display:inline-block;background:#f1f5f9;border-radius:8px;padding:8px 16px;margin:4px;text-align:center}
+.metric-num{font-size:20px;font-weight:700;color:#3b82f6}
+.metric-label{font-size:11px;color:#64748b}
+ul{margin:8px 0 8px 20px;font-size:13px;color:#475569}
+li{margin-bottom:4px}
+.priority{font-weight:700}
+.p0{color:#dc2626}.p1{color:#f59e0b}.p2{color:#3b82f6}.p3{color:#22c55e}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🏭 数智工坊 · 平台深度优化方案</h1>
+<p class="sub">基于用户要求：全链条跟踪/代理商赋能/客户增值服务/大并发安全/可配置/查询统计画像</p>
+
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin:16px 0">
+<div class="metric"><div class="metric-num">125</div><div class="metric-label">数据库表</div></div>
+<div class="metric"><div class="metric-num">60</div><div class="metric-label">路由文件</div></div>
+<div class="metric"><div class="metric-num">360+</div><div class="metric-label">API端点</div></div>
+<div class="metric"><div class="metric-num">9</div><div class="metric-label">多端入口</div></div>
+<div class="metric"><div class="metric-num">8</div><div class="metric-label">角色权限</div></div>
+<div class="metric"><div class="metric-num">32</div><div class="metric-label">客户企业</div></div>
+</div>
+
+<h2>一、我方全链条跟踪监控分析评价</h2>
+<div class="card">
+<div class="card-title"><span class="badge badge-red">P0</span> 全链条运营看板（新建）</div>
+<div class="card-body">
+<table>
+<tr><th>维度</th><th>功能</th><th>数据来源</th><th>优先级</th></tr>
+<tr><td>项目跟踪</td><td>8阶段交付进度+回款+验收+异常预警</td><td>delivery_tracking</td><td class="p0">P0</td></tr>
+<tr><td>代理商监控</td><td>报备量/转化率/分润/活跃度</td><td>agents+agent_leads+commissions</td><td class="p0">P0</td></tr>
+<tr><td>客户健康度</td><td>管家服务使用率/工单响应/续费率/NPS</td><td>enterprise_services+tickets</td><td class="p1">P1</td></tr>
+<tr><td>财务分析</td><td>A池/B池收入趋势/回款率/分润兑付</td><td>fund_pools+orders</td><td class="p1">P1</td></tr>
+<tr><td>服务商评价</td><td>履约率/评分/投诉率/净化记录</td><td>service_providers</td><td class="p2">P2</td></tr>
+</table>
+</div>
+</div>
+
+<h2>二、代理商赋能优化</h2>
+<div class="card">
+<div class="card-title"><span class="badge badge-orange">P1</span> 代理商产品推荐引擎</div>
+<div class="card-body">
+<ul>
+<li><span class="badge badge-green">已有</span> 产品库浏览 + 新品推送</li>
+<li><span class="badge badge-red">新增</span> AI推荐：根据报备客户行业/需求自动推荐匹配产品</li>
+<li><span class="badge badge-red">新增</span> 方案素材中心：产品白皮书/案例集/报价模板一键下载</li>
+<li><span class="badge badge-red">新增</span> 业绩排行榜：月度/季度/年度排名+目标完成率</li>
+</ul>
+</div>
+</div>
+
+<h2>三、已服务客户增值服务（核心盈利模型）</h2>
+<div class="card">
+<div class="card-title"><span class="badge badge-red">P0</span> 客户入驻与宣传推广</div>
+<div class="card-body">
+<ul>
+<li><span class="badge badge-green">已有</span> 品牌展厅+每日推荐+企业画像</li>
+<li><span class="badge badge-red">新增</span> 一键入驻流程：企业信息→展厅自动生成→产品上架→撮合对接</li>
+<li><span class="badge badge-red">新增</span> 营销推广中心：软文生成/海报模板/朋友圈文案/视频脚本</li>
+<li><span class="badge badge-red">新增</span> 客户互推引擎：基于行业互补自动推荐合作机会</li>
+</ul>
+</div>
+</div>
+<div class="card">
+<div class="card-title"><span class="badge badge-red">P0</span> 撮合与产品销售优化</div>
+<div class="card-body">
+<ul>
+<li><span class="badge badge-green">已有</span> 服务撮合+商城+团购+慈善捐赠</li>
+<li><span class="badge badge-red">新增</span> 客户产品智能定价：基于市场数据/同类产品/背书等级推荐价格区间</li>
+<li><span class="badge badge-red">新增</span> 销售漏斗分析：浏览→咨询→下单→复购全链路转化率</li>
+<li><span class="badge badge-red">新增</span> 客户满意度画像：服务评分+工单响应+续费意愿+推荐意愿</li>
+</ul>
+</div>
+</div>
+
+<h2>四、大并发与系统安全</h2>
+<div class="card">
+<div class="card-title"><span class="badge badge-purple">P2</span> 性能优化</div>
+<div class="card-body">
+<table>
+<tr><th>措施</th><th>说明</th><th>优先级</th></tr>
+<tr><td>API分页优化</td><td>所有列表API强制分页，默认20条，最大100条</td><td class="p1">P1</td></tr>
+<tr><td>数据库索引</td><td>高频查询字段加索引（created_at/status/client_id等）</td><td class="p1">P1</td></tr>
+<tr><td>请求限流增强</td><td>全局100req/min→按角色分级限流</td><td class="p2">P2</td></tr>
+<tr><td>缓存层</td><td>配置/政策等低频变更数据加内存缓存</td><td class="p2">P2</td></tr>
+<tr><td>SQL注入防护</td><td>全量参数化查询审计</td><td class="p1">P1</td></tr>
+<tr><td>XSS防护</td><td>所有用户输入HTML转义</td><td class="p1">P1</td></tr>
+</table>
+</div>
+</div>
+
+<h2>五、可配置与查询统计画像</h2>
+<div class="card">
+<div class="card-title"><span class="badge badge-blue">P1</span> 动态配置增强</div>
+<div class="card-body">
+<ul>
+<li><span class="badge badge-green">已有</span> 32项系统配置</li>
+<li><span class="badge badge-red">新增</span> 产品分类/服务类型/角色权限可后台增删改</li>
+<li><span class="badge badge-red">新增</span> H5首页布局可配置（快捷入口/轮播图/推荐位）</li>
+<li><span class="badge badge-red">新增</span> 邮件/短信/微信模板可配置</li>
+</ul>
+</div>
+</div>
+<div class="card">
+<div class="card-title"><span class="badge badge-blue">P1</span> 查询统计画像增强</div>
+<div class="card-body">
+<ul>
+<li><span class="badge badge-red">新增</span> 客户画像雷达图（交易额/活跃度/满意度/续费率/推荐数）</li>
+<li><span class="badge badge-red">新增</span> 代理商画像（报备量/转化率/分润额/活跃度/区域分布）</li>
+<li><span class="badge badge-red">新增</span> 产品销售画像（销量/复购率/评价/退货率/利润率）</li>
+<li><span class="badge badge-red">新增</span> 多维交叉分析（按地区/行业/时间/角色交叉统计）</li>
+</ul>
+</div>
+</div>
+
+<h2>六、执行优先级</h2>
+<table>
+<tr><th>阶段</th><th>内容</th><th>预计工作量</th></tr>
+<tr><td class="p0">P0 立即</td><td>全链条运营看板+客户入驻流程+营销推广中心+销售漏斗</td><td>本轮</td></tr>
+<tr><td class="p1">P1 紧接</td><td>AI产品推荐+业绩排行+客户满意度画像+安全审计+分页优化</td><td>下一轮</td></tr>
+<tr><td class="p2">P2 后续</td><td>缓存层+分级限流+动态布局+交叉分析</td><td>持续</td></tr>
+</table>
+
+</div>
+</body>
+</html>

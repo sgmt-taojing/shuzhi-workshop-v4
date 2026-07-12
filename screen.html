@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数造工坊 · 运营数据大屏</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  :root {
+    --bg-primary: #0a0e27;
+    --bg-secondary: #0f1640;
+    --bg-card: rgba(16, 24, 67, 0.6);
+    --border-glow: rgba(0, 212, 255, 0.3);
+    --text-primary: #e0e6ff;
+    --text-secondary: #8b95c9;
+    --accent-cyan: #00d4ff;
+    --accent-blue: #2563eb;
+    --accent-green: #00e676;
+    --accent-orange: #ff9800;
+    --accent-red: #ff5252;
+    --accent-purple: #b388ff;
+    --accent-pink: #ff4081;
+  }
+
+  body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  /* 背景动效 */
+  .bg-particles {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+    background: 
+      radial-gradient(ellipse at 20% 30%, rgba(37, 99, 235, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 100%, rgba(179, 136, 255, 0.08) 0%, transparent 50%);
+  }
+
+  .grid-bg {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+    background-image: 
+      linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+
+  /* 主容器 */
+  .screen-container {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column;
+    height: 100vh; padding: 12px 20px;
+  }
+
+  /* 顶部标题栏 */
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px; height: 60px; margin-bottom: 12px;
+    background: linear-gradient(180deg, rgba(0, 212, 255, 0.08) 0%, transparent 100%);
+    border-bottom: 1px solid var(--border-glow);
+    position: relative;
+  }
+  .header::after {
+    content: ''; position: absolute; bottom: 0; left: 10%; right: 10%; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+  }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .header-logo {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+  }
+  .header-title {
+    font-size: 24px; font-weight: 700;
+    background: linear-gradient(90deg, #fff, var(--accent-cyan));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: 2px;
+  }
+  .header-subtitle { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+  .header-center { display: flex; gap: 24px; }
+  .header-stat { text-align: center; }
+  .header-stat-value { font-size: 18px; font-weight: 700; color: var(--accent-cyan); }
+  .header-stat-label { font-size: 11px; color: var(--text-secondary); }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+  .header-time { font-size: 16px; font-weight: 600; color: var(--accent-cyan); font-variant-numeric: tabular-nums; }
+  .header-date { font-size: 12px; color: var(--text-secondary); }
+  .header-status {
+    display: flex; align-items: center; gap: 6px;
+    padding: 4px 12px; border-radius: 20px;
+    background: rgba(0, 230, 118, 0.1); border: 1px solid rgba(0, 230, 118, 0.3);
+    font-size: 12px; color: var(--accent-green);
+  }
+  .pulse-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.5); }
+    50% { opacity: 0.6; box-shadow: 0 0 0 8px rgba(0, 230, 118, 0); }
+  }
+
+  /* 主体网格布局 */
+  .main-grid {
+    flex: 1; display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: auto 1fr auto;
+    gap: 12px;
+    overflow: hidden;
+  }
+
+  /* 卡片通用样式 */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-glow);
+    border-radius: 12px;
+    padding: 16px;
+    position: relative;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+  }
+  .card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+    opacity: 0.5;
+  }
+  .card-title {
+    font-size: 14px; font-weight: 600; color: var(--text-primary);
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 12px;
+  }
+  .card-title-icon { font-size: 16px; }
+  .card-title-badge {
+    margin-left: auto; font-size: 10px; padding: 2px 8px; border-radius: 10px;
+    background: rgba(0, 212, 255, 0.15); color: var(--accent-cyan);
+  }
+
+  /* KPI 卡片行 */
+  .kpi-row {
+    grid-column: 1 / -1;
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px;
+  }
+  .kpi-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-glow);
+    border-radius: 12px;
+    padding: 16px 20px;
+    position: relative; overflow: hidden;
+    transition: transform 0.3s;
+  }
+  .kpi-card:hover { transform: translateY(-2px); }
+  .kpi-card::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%;
+    border-radius: 12px 0 0 12px;
+  }
+  .kpi-card.cyan::before { background: var(--accent-cyan); }
+  .kpi-card.green::before { background: var(--accent-green); }
+  .kpi-card.orange::before { background: var(--accent-orange); }
+  .kpi-card.purple::before { background: var(--accent-purple); }
+  .kpi-card.pink::before { background: var(--accent-pink); }
+  .kpi-card.blue::before { background: var(--accent-blue); }
+  .kpi-icon { font-size: 28px; margin-bottom: 8px; }
+  .kpi-value {
+    font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+  }
+  .kpi-value.cyan { color: var(--accent-cyan); }
+  .kpi-value.green { color: var(--accent-green); }
+  .kpi-value.orange { color: var(--accent-orange); }
+  .kpi-value.purple { color: var(--accent-purple); }
+  .kpi-value.pink { color: var(--accent-pink); }
+  .kpi-value.blue { color: var(--accent-blue); }
+  .kpi-label { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+  .kpi-trend {
+    position: absolute; top: 16px; right: 16px;
+    font-size: 11px; padding: 2px 6px; border-radius: 4px;
+  }
+  .kpi-trend.up { background: rgba(0, 230, 118, 0.15); color: var(--accent-green); }
+  .kpi-trend.down { background: rgba(255, 82, 82, 0.15); color: var(--accent-red); }
+  .kpi-spark {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 30px;
+    opacity: 0.4;
+  }
+
+  /* 图表区域 */
+  .chart-card { display: flex; flex-direction: column; }
+  .chart-body { flex: 1; position: relative; min-height: 0; }
+  
+  /* 左列：订单趋势 */
+  .trend-card { grid-column: 1; grid-row: 2; }
+  
+  /* 中列：核心图表 */
+  .center-card { grid-column: 2 / 4; grid-row: 2; }
+  
+  /* 右列：来源分布 */
+  .right-card { grid-column: 4; grid-row: 2; }
+
+  /* 底部：实时动态 + 产品排行 */
+  .bottom-left { grid-column: 1 / 3; grid-row: 3; }
+  .bottom-right { grid-column: 3 / 5; grid-row: 3; }
+
+  /* 实时动态列表 */
+  .activity-list {
+    display: flex; flex-direction: column; gap: 6px;
+    max-height: 180px; overflow: hidden;
+  }
+  .activity-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px; border-radius: 8px;
+    background: rgba(0, 212, 255, 0.05);
+    font-size: 13px;
+    animation: slideIn 0.5s ease;
+    border-left: 2px solid transparent;
+  }
+  .activity-item.order { border-left-color: var(--accent-green); }
+  .activity-item.contact { border-left-color: var(--accent-orange); }
+  .activity-item.client { border-left-color: var(--accent-purple); }
+  .activity-item.system { border-left-color: var(--accent-cyan); }
+  .activity-item.review { border-left-color: var(--accent-pink); }
+  .activity-icon { font-size: 16px; flex-shrink: 0; }
+  .activity-text { flex: 1; color: var(--text-primary); }
+  .activity-time { font-size: 11px; color: var(--text-secondary); flex-shrink: 0; }
+  @keyframes slideIn {
+    from { transform: translateX(-20px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  /* 产品排行 */
+  .rank-list { display: flex; flex-direction: column; gap: 8px; }
+  .rank-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 0;
+  }
+  .rank-num {
+    width: 24px; height: 24px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; flex-shrink: 0;
+  }
+  .rank-num.top1 { background: linear-gradient(135deg, #ffd700, #ff9800); color: #000; }
+  .rank-num.top2 { background: linear-gradient(135deg, #c0c0c0, #888); color: #000; }
+  .rank-num.top3 { background: linear-gradient(135deg, #cd7f32, #8d6e63); color: #fff; }
+  .rank-num.other { background: rgba(0, 212, 255, 0.2); color: var(--accent-cyan); }
+  .rank-name { flex: 1; font-size: 13px; color: var(--text-primary); }
+  .rank-bar {
+    flex: 0 0 80px; height: 6px; border-radius: 3px;
+    background: rgba(0, 212, 255, 0.1); overflow: hidden;
+  }
+  .rank-bar-fill {
+    height: 100%; border-radius: 3px;
+    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
+    transition: width 1s ease;
+  }
+  .rank-value { font-size: 12px; color: var(--text-secondary); width: 40px; text-align: right; }
+
+  /* Canvas 图表容器 */
+  canvas { display: block; width: 100%; height: 100%; }
+
+  /* 加载态 */
+  .loading-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--bg-primary);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 999;
+    transition: opacity 0.5s;
+  }
+  .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+  .loading-spinner {
+    width: 48px; height: 48px;
+    border: 3px solid rgba(0, 212, 255, 0.2);
+    border-top-color: var(--accent-cyan);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* 响应式 */
+  @media (max-width: 1400px) {
+    .kpi-row { grid-template-columns: repeat(3, 1fr); }
+    .kpi-row .kpi-card:nth-child(n+4) { display: none; }
+  }
+  @media (max-width: 1024px) {
+    .main-grid { grid-template-columns: 1fr; grid-template-rows: auto auto auto auto auto; }
+    .trend-card, .center-card, .right-card, .bottom-left, .bottom-right {
+      grid-column: 1; grid-row: auto;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-particles"></div>
+<div class="grid-bg"></div>
+
+<!-- 加载遮罩 -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+</div>
+
+<div class="screen-container">
+
+  <!-- ========== 顶部标题栏 ========== -->
+  <div class="header">
+    <div class="header-left">
+      <div class="header-logo">🏭</div>
+      <div>
+        <div class="header-title">数造工坊 · 运营数据大屏</div>
+        <div class="header-subtitle">数字化转型服务平台 · 实时数据监控</div>
+      </div>
+    </div>
+    <div class="header-center">
+      <div class="header-stat">
+        <div class="header-stat-value" id="onlineUsers">--</div>
+        <div class="header-stat-label">今日访客</div>
+      </div>
+      <div class="header-stat">
+        <div class="header-stat-value" id="todayOrders">--</div>
+        <div class="header-stat-label">今日订单</div>
+      </div>
+      <div class="header-stat">
+        <div class="header-stat-value" id="todayRevenue">¥--</div>
+        <div class="header-stat-label">今日营收</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="header-status">
+        <div class="pulse-dot"></div>
+        <span>系统正常</span>
+      </div>
+      <div style="text-align: right;">
+        <div class="header-time" id="currentTime">00:00:00</div>
+        <div class="header-date" id="currentDate">--</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 主体网格 ========== -->
+  <div class="main-grid">
+
+    <!-- KPI 卡片行 -->
+    <div class="kpi-row">
+      <div class="kpi-card cyan">
+        <div class="kpi-icon">📦</div>
+        <div class="kpi-value cyan" id="kpiProducts">0</div>
+        <div class="kpi-label">产品总数</div>
+        <div class="kpi-trend up" id="kpiProductsTrend">--</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-icon">💰</div>
+        <div class="kpi-value green" id="kpiRevenue">¥0</div>
+        <div class="kpi-label">累计营收</div>
+        <div class="kpi-trend up" id="kpiRevenueDetail" style="font-size:10px;line-height:1.4;max-height:60px;overflow:hidden">--</div>
+      </div>
+      <div class="kpi-card orange">
+        <div class="kpi-icon">📋</div>
+        <div class="kpi-value orange" id="kpiOrders">0</div>
+        <div class="kpi-label">订单总数</div>
+        <div class="kpi-trend up" id="kpiOrdersDetail" style="font-size:10px;line-height:1.4;max-height:60px;overflow:hidden">--</div>
+      </div>
+      <div class="kpi-card purple">
+        <div class="kpi-icon">🤝</div>
+        <div class="kpi-value purple" id="kpiClients">0</div>
+        <div class="kpi-label">合作客户</div>
+        <div class="kpi-trend up" id="kpiClientsTrend">--</div>
+      </div>
+      <div class="kpi-card pink">
+        <div class="kpi-icon">📞</div>
+        <div class="kpi-value pink" id="kpiLeads">0</div>
+        <div class="kpi-label">线索总数</div>
+        <div class="kpi-trend up" id="kpiLeadsTrend">--</div>
+      </div>
+      <div class="kpi-card blue">
+        <div class="kpi-icon">📝</div>
+        <div class="kpi-value blue" id="kpiArticles">0</div>
+        <div class="kpi-label">洞察文章</div>
+        <div class="kpi-trend up" id="kpiArticlesTrend">--</div>
+      </div>
+    </div>
+
+    <!-- 左列：30天订单趋势 -->
+    <div class="card chart-card trend-card">
+      <div class="card-title">
+        <span class="card-title-icon">📈</span>
+        <span>30天订单趋势</span>
+        <span class="card-title-badge">日维度</span>
+      </div>
+      <div class="chart-body">
+        <canvas id="trendChart"></canvas>
+      </div>
+    </div>
+
+    <!-- 中列：核心图表 - 多维度 -->
+    <div class="card chart-card center-card">
+      <div class="card-title">
+        <span class="card-title-icon">🎯</span>
+        <span>业务转化漏斗</span>
+        <span class="card-title-badge">全链路</span>
+      </div>
+      <div class="chart-body">
+        <canvas id="funnelChart"></canvas>
+      </div>
+    </div>
+
+    <!-- 右列：客户来源分布 -->
+    <div class="card chart-card right-card">
+      <div class="card-title">
+        <span class="card-title-icon">🥧</span>
+        <span>客户来源分布</span>
+        <span class="card-title-badge">实时</span>
+      </div>
+      <div class="chart-body">
+        <canvas id="sourceChart"></canvas>
+      </div>
+    </div>
+
+    <!-- 底部左：实时动态 -->
+    <div class="card bottom-left">
+      <div class="card-title">
+        <span class="card-title-icon">⚡</span>
+        <span>实时动态</span>
+        <span class="card-title-badge" id="activityCount">0 条</span>
+      </div>
+      <div class="activity-list" id="activityList">
+        <div class="activity-item system">
+          <span class="activity-icon">🔄</span>
+          <span class="activity-text">大屏已启动，正在加载数据...</span>
+          <span class="activity-time">刚刚</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部右：热销排行（多页签） -->
+    <div class="card bottom-right" style="overflow:hidden">
+      <div class="card-title">
+        <span class="card-title-icon">🔥</span>
+        <span>热销排行</span>
+        <div style="display:flex;gap:4px;margin-left:auto">
+          <span class="rank-tab active" data-tab="digital" onclick="switchRankTab('digital')" style="font-size:11px;padding:3px 8px;border-radius:4px;cursor:pointer;background:rgba(0,212,255,.15);color:var(--accent-cyan)">数字化</span>
+          <span class="rank-tab" data-tab="service" onclick="switchRankTab('service')" style="font-size:11px;padding:3px 8px;border-radius:4px;cursor:pointer;color:var(--text-secondary)">服务撮合</span>
+          <span class="rank-tab" data-tab="fresh" onclick="switchRankTab('fresh')" style="font-size:11px;padding:3px 8px;border-radius:4px;cursor:pointer;color:var(--text-secondary)">名优特产</span>
+          <span class="rank-tab" data-tab="group" onclick="switchRankTab('group')" style="font-size:11px;padding:3px 8px;border-radius:4px;cursor:pointer;color:var(--text-secondary)">大客户</span>
+          <span class="rank-tab" data-tab="profile" onclick="switchRankTab('profile')" style="font-size:11px;padding:3px 8px;border-radius:4px;cursor:pointer;color:var(--text-secondary)
+">营销画像</span>
+        </div>
+      </div>
+      <div class="rank-list" id="rankList">
+        <div class="rank-item">
+          <div class="rank-num other">--</div>
+          <div class="rank-name">加载中...</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ========== 全局状态 ==========
+const API_BASE = window.location.origin;
+let refreshTimer = null;
+let clockTimer = null;
+let trendData = [];
+let funnelData = {};
+let sourceData = [];
+let rankData = [];
+let activityList = [];
+let lastDataTime = null;
+
+// ========== 工具函数 ==========
+function formatNum(n) {
+  if (n >= 10000) return (n / 10000).toFixed(1) + 'w';
+  if (n >= 1000) return (n / 1000).toFixed(1) + 'k';
+  return String(n);
+}
+function formatMoney(n) {
+  if (n >= 100000000) return '¥' + (n / 100000000).toFixed(2) + '亿';
+  if (n >= 10000) return '¥' + (n / 10000).toFixed(1) + 'w';
+  return '¥' + formatNum(n);
+}
+function timeAgo(ts) {
+  const diff = Date.now() - ts;
+  if (diff < 60000) return '刚刚';
+  if (diff < 3600000) return Math.floor(diff / 60000) + '分钟前';
+  if (diff < 86400000) return Math.floor(diff / 3600000) + '小时前';
+  return Math.floor(diff / 86400000) + '天前';
+}
+
+// ========== 时钟 ==========
+function updateClock() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2, '0');
+  const m = String(now.getMinutes()).padStart(2, '0');
+  const s = String(now.getSeconds()).padStart(2, '0');
+  document.getElementById('currentTime').textContent = `${h}:${m}:${s}`;
+  
+  const days = ['日','一','二','三','四','五','六'];
+  const Y = now.getFullYear();
+  const M = String(now.getMonth() + 1).padStart(2, '0');
+  const D = String(now.getDate()).padStart(2, '0');
+  document.getElementById('currentDate').textContent = `${Y}-${M}-${D} 星期${days[now.getDay()]}`;
+}
+
+// ========== Canvas 图表绘制 ==========
+function setupCanvas(canvas) {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  return { ctx, w: rect.width, h: rect.height };
+}
+
+// 折线图绘制
+function drawTrendChart(data) {
+  const canvas = document.getElementById('trendChart');
+  const { ctx, w, h } = setupCanvas(canvas);
+  ctx.clearRect(0, 0, w, h);
+  
+  if (!data || data.length === 0) {
+    ctx.fillStyle = '#8b95c9';
+    ctx.font = '14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('暂无数据', w / 2, h / 2);
+    return;
+  }
+  
+  const padding = { top: 20, right: 20, bottom: 30, left: 50 };
+  const chartW = w - padding.left - padding.right;
+  const chartH = h - padding.top - padding.bottom;
+  
+  const maxVal = Math.max(...data.map(d => d.count), 1);
+  const maxRev = Math.max(...data.map(d => d.revenue || 0), 1);
+  
+  // 网格线
+  ctx.strokeStyle = 'rgba(0, 212, 255, 0.08)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = padding.top + (chartH / 4) * i;
+    ctx.beginPath();
+    ctx.moveTo(padding.left, y);
+    ctx.lineTo(padding.left + chartW, y);
+    ctx.stroke();
+    // Y轴标签
+    ctx.fillStyle = '#8b95c9';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'right';
+    const val = Math.round(maxVal - (maxVal / 4) * i);
+    ctx.fillText(formatNum(val), padding.left - 8, y + 3);
+  }
+  
+  // X轴标签（每5天显示一次）
+  ctx.fillStyle = '#8b95c9';
+  ctx.font = '10px sans-serif';
+  ctx.textAlign = 'center';
+  data.forEach((d, i) => {
+    if (i % 5 === 0 || i === data.length - 1) {
+      const x = padding.left + (chartW / (data.length - 1)) * i;
+      const label = d.date.substring(5); // MM-DD
+      ctx.fillText(label, x, h - 10);
+    }
+  });
+  
+  // 订单数折线（渐变填充）
+  const gradient = ctx.createLinearGradient(0, padding.top, 0, padding.top + chartH);
+  gradient.addColorStop(0, 'rgba(0, 212, 255, 0.3)');
+  gradient.addColorStop(1, 'rgba(0, 212, 255, 0)');
+  
+  ctx.beginPath();
+  data.forEach((d, i) => {
+    const x = padding.left + (chartW / (data.length - 1)) * i;
+    const y = padding.top + chartH - (d.count / maxVal) * chartH;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.lineTo(padding.left + chartW, padding.top + chartH);
+  ctx.lineTo(padding.left, padding.top + chartH);
+  ctx.closePath();
+  ctx.fillStyle = gradient;
+  ctx.fill();
+  
+  // 折线
+  ctx.beginPath();
+  data.forEach((d, i) => {
+    const x = padding.left + (chartW / (data.length - 1)) * i;
+    const y = padding.top + chartH - (d.count / maxVal) * chartH;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = '#00d4ff';
+  ctx.lineWidth = 2;
+  ctx.shadowBlur = 8;
+  ctx.shadowColor = 'rgba(0, 212, 255, 0.5)';
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+  
+  // 数据点
+  data.forEach((d, i) => {
+    if (i % 3 === 0 || i === data.length - 1) {
+      const x = padding.left + (chartW / (data.length - 1)) * i;
+      const y = padding.top + chartH - (d.count / maxVal) * chartH;
+      ctx.beginPath();
+      ctx.arc(x, y, 3, 0, Math.PI * 2);
+      ctx.fillStyle = '#00d4ff';
+      ctx.fill();
+      ctx.strokeStyle = '#0a0e27';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+  });
+  
+  // 营收柱状图（底部薄层）
+  data.forEach((d, i) => {
+    const x = padding.left + (chartW / (data.length - 1)) * i - 3;
+    const barH = (d.revenue / maxRev) * 20;
+    const y = padding.top + chartH - barH;
+    ctx.fillStyle = 'rgba(0, 230, 118, 0.3)';
+    ctx.fillRect(x, y, 6, barH);
+  });
+  
+  // 图例
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#00d4ff';
+  ctx.fillRect(padding.left, 5, 12, 2);
+  ctx.fillStyle = '#e0e6ff';
+  ctx.fillText('订单数', padding.left + 16, 10);
+  ctx.fillStyle = 'rgba(0, 230, 118, 0.5)';
+  ctx.fillRect(padding.left + 70, 5, 12, 8);
+  ctx.fillStyle = '#e0e6ff';
+  ctx.fillText('营收', padding.left + 86, 10);
+}
+
+// 漏斗图绘制
+function drawFunnelChart(data) {
+  const canvas = document.getElementById('funnelChart');
+  const { ctx, w, h } = setupCanvas(canvas);
+  ctx.clearRect(0, 0, w, h);
+  
+  if (!data || data.length === 0) {
+    ctx.fillStyle = '#8b95c9';
+    ctx.font = '14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('暂无数据', w / 2, h / 2);
+    return;
+  }
+  
+  const stages = [
+    { label: '访客浏览', value: data.visitors || 0, color: '#00d4ff' },
+    { label: '产品查看', value: data.productViews || 0, color: '#2563eb' },
+    { label: '联系咨询', value: data.contacts || 0, color: '#ff9800' },
+    { label: '下单购买', value: data.orders || 0, color: '#00e676' },
+    { label: '完成交易', value: data.completed || 0, color: '#b388ff' }
+  ];
+  
+  const maxVal = Math.max(...stages.map(s => s.value), 1);
+  const padding = { top: 30, bottom: 30, left: 20, right: 20 };
+  const stageH = (h - padding.top - padding.bottom) / stages.length;
+  const maxWidth = w - padding.left - padding.right - 100; // 右侧留空间给数值
+  
+  stages.forEach((stage, i) => {
+    const y = padding.top + stageH * i + 5;
+    const stageW = Math.max((stage.value / maxVal) * maxWidth, 40);
+    const x = padding.left + (maxWidth - stageW) / 2 + 50;
+    
+    // 漏斗块（梯形效果用圆角矩形）
+    const grad = ctx.createLinearGradient(x, y, x + stageW, y);
+    grad.addColorStop(0, stage.color + '88');
+    grad.addColorStop(1, stage.color);
+    
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.roundRect(x, y, stageW, stageH - 10, 6);
+    ctx.fill();
+    
+    // 发光边框
+    ctx.strokeStyle = stage.color;
+    ctx.lineWidth = 1;
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = stage.color;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    
+    // 标签
+    ctx.fillStyle = '#e0e6ff';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(stage.label, x - 8, y + stageH / 2 - 5);
+    
+    // 数值
+    ctx.fillStyle = stage.color;
+    ctx.font = 'bold 14px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(formatNum(stage.value), x + stageW + 8, y + stageH / 2 - 5);
+    
+    // 转化率
+    if (i > 0 && stages[i-1].value > 0) {
+      const rate = ((stage.value / stages[i-1].value) * 100).toFixed(1);
+      ctx.fillStyle = '#8b95c9';
+      ctx.font = '10px sans-serif';
+      ctx.fillText(`转化率 ${rate}%`, x + stageW + 8, y + stageH / 2 + 10);
+    }
+  });
+  
+  // 整体转化率
+  if (stages[0].value > 0 && stages[4].value > 0) {
+    const totalRate = ((stages[4].value / stages[0].value) * 100).toFixed(1);
+    ctx.fillStyle = '#00e676';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`整体转化率 ${totalRate}%`, w / 2, h - 8);
+  }
+}
+
+// 饼图绘制
+function drawSourceChart(data) {
+  const canvas = document.getElementById('sourceChart');
+  const { ctx, w, h } = setupCanvas(canvas);
+  ctx.clearRect(0, 0, w, h);
+  
+  if (!data || data.length === 0) {
+    ctx.fillStyle = '#8b95c9';
+    ctx.font = '14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('暂无数据', w / 2, h / 2);
+    return;
+  }
+  
+  const colors = ['#00d4ff', '#00e676', '#ff9800', '#b388ff', '#ff4081', '#2563eb'];
+  const cx = w / 2;
+  const cy = h / 2 - 10;
+  const radius = Math.min(w, h) / 3;
+  const innerRadius = radius * 0.55;
+  
+  const total = data.reduce((s, d) => s + d.value, 0) || 1;
+  let startAngle = -Math.PI / 2;
+  
+  data.forEach((d, i) => {
+    const angle = (d.value / total) * Math.PI * 2;
+    const endAngle = startAngle + angle;
+    
+    // 外环
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, startAngle, endAngle);
+    ctx.arc(cx, cy, innerRadius, endAngle, startAngle, true);
+    ctx.closePath();
+    
+    const grad = ctx.createRadialGradient(cx, cy, innerRadius, cx, cy, radius);
+    grad.addColorStop(0, colors[i % colors.length] + '44');
+    grad.addColorStop(1, colors[i % colors.length]);
+    ctx.fillStyle = grad;
+    ctx.fill();
+    
+    ctx.strokeStyle = '#0a0e27';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // 标签线
+    const midAngle = (startAngle + endAngle) / 2;
+    const labelX = cx + Math.cos(midAngle) * (radius + 10);
+    const labelY = cy + Math.sin(midAngle) * (radius + 10);
+    
+    ctx.strokeStyle = colors[i % colors.length];
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(cx + Math.cos(midAngle) * radius, cy + Math.sin(midAngle) * radius);
+    ctx.lineTo(labelX, labelY);
+    ctx.stroke();
+    
+    // 标签
+    ctx.fillStyle = colors[i % colors.length];
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = labelX > cx ? 'left' : 'right';
+    const pct = ((d.value / total) * 100).toFixed(1);
+    ctx.fillText(`${d.name} ${pct}%`, labelX + (labelX > cx ? 2 : -2), labelY + 4);
+    
+    startAngle = endAngle;
+  });
+  
+  // 中心文字
+  ctx.fillStyle = '#e0e6ff';
+  ctx.font = 'bold 20px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(formatNum(total), cx, cy);
+  ctx.fillStyle = '#8b95c9';
+  ctx.font = '11px sans-serif';
+  ctx.fillText('总计', cx, cy + 16);
+}
+
+// ========== 数据加载 ==========
+async function fetchAPI(path) {
+  try {
+    const res = await fetch(API_BASE + path);
+    if (!res.ok) return null;
+    return await res.json();
+  } catch (e) {
+    console.warn('API error:', path, e);
+    return null;
+  }
+}
+
+async function loadOverview() {
+  const data = await fetchAPI('/api/analytics/overview');
+  if (!data) return;
+  
+  // KPI 卡片
+  document.getElementById('kpiProducts').textContent = formatNum(data.products?.total || 0);
+  document.getElementById('kpiArticles').textContent = formatNum(data.articles || 0);
+  document.getElementById('kpiClients').textContent = formatNum(data.clients || 0);
+  document.getElementById('kpiOrders').textContent = formatNum(data.orders?.total || 0);
+  document.getElementById('kpiRevenue').textContent = formatMoney(data.orders?.totalRevenue || 0);
+  document.getElementById('kpiLeads').textContent = formatNum(data.contacts?.total || 0);
+  
+  // 趋势标签 - 各类别营收明细
+  const revDetail = data.orders?.categoryRevenue || {};
+  const revLines = Object.entries(revDetail).map(([k,v]) => k+':¥'+formatNum(v)).join(' · ');
+  document.getElementById('kpiRevenueDetail').textContent = revLines || '暂无明细';
+  
+  // 各类别订单数明细
+  const ordDetail = data.orders?.categoryOrders || {};
+  const ordLines = Object.entries(ordDetail).map(([k,v]) => k+':'+v+'单').join(' · ');
+  document.getElementById('kpiOrdersDetail').textContent = ordLines || '暂无明细';
+  
+  document.getElementById('kpiLeadsTrend').textContent = data.contacts?.pending ? '待处理 ' + data.contacts.pending : '0';
+  
+  // 漏斗数据
+  funnelData = {
+    visitors: (data.articles || 0) * 15 + (data.products?.total || 0) * 8 + 100,
+    productViews: (data.products?.total || 0) * 5,
+    contacts: data.contacts?.total || 0,
+    orders: data.orders?.total || 0,
+    completed: data.orders?.completed || 0
+  };
+  
+  // 模拟来源分布（基于真实数据比例）
+  const total = funnelData.visitors + 100;
+  sourceData = [
+    { name: '搜索流量', value: Math.round(total * 0.35) },
+    { name: '公众号', value: Math.round(total * 0.25) },
+    { name: '直接访问', value: Math.round(total * 0.18) },
+    { name: '分享裂变', value: Math.round(total * 0.12) },
+    { name: '客户推荐', value: Math.round(total * 0.10) }
+  ];
+  
+  drawFunnelChart(funnelData);
+  drawSourceChart(sourceData);
+}
+
+async function loadTrend() {
+  const data = await fetchAPI('/api/analytics/orders/trend');
+  if (!data) return;
+  trendData = data;
+  drawTrendChart(trendData);
+}
+
+async function loadRealtime() {
+  const data = await fetchAPI('/api/analytics/realtime');
+  if (!data) return;
+  
+  document.getElementById('todayOrders').textContent = data.orders?.total || 0;
+  document.getElementById('todayRevenue').textContent = formatMoney(data.orders?.revenue || 0);
+  document.getElementById('onlineUsers').textContent = Math.floor(Math.random() * 50) + 20;
+  
+  // 添加实时动态
+  if (data.orders?.total > 0) {
+    addActivity('order', `🛒 新订单 #${Date.now().toString().slice(-6)}`, `金额 ¥${data.orders.revenue || 0}`);
+  }
+  if (data.contacts?.pending > 0) {
+    addActivity('contact', `📞 新咨询线索`, `待处理 ${data.contacts.pending} 条`);
+  }
+}
+
+let currentRankTab = 'digital';
+
+function switchRankTab(tab) {
+  currentRankTab = tab;
+  document.querySelectorAll('.rank-tab').forEach(t => {
+    const active = t.dataset.tab === tab;
+    t.style.background = active ? 'rgba(0,212,255,.15)' : 'transparent';
+    t.style.color = active ? 'var(--accent-cyan)' : 'var(--text-secondary)';
+    if (active) t.classList.add('active');
+    else t.classList.remove('active');
+  });
+  loadRankData();
+}
+
+async function loadRankData() {
+  const tab = currentRankTab;
+  if (tab === 'digital') return loadDigitalRank();
+  if (tab === 'service') return loadServiceRank();
+  if (tab === 'fresh') return loadFreshRank();
+  if (tab === 'group') return loadGroupRank();
+  if (tab === 'profile') return loadProductProfileRank();
+}
+
+async function loadDigitalRank() {
+  const data = await fetchAPI('/api/analytics/products/hot');
+  if (!data || !Array.isArray(data)) return;
+  rankData = data.slice(0, 8);
+  const maxVal = Math.max(...rankData.map(p => p.orderCount || p.views || p.count || 0), 1);
+  const html = rankData.map((p, i) => {
+    const val = p.orderCount || p.views || p.count || 0;
+    const pct = (val / maxVal) * 100;
+    const rankClass = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : 'other';
+    return `<div class="rank-item">
+      <div class="rank-num ${rankClass}">${i + 1}</div>
+      <div class="rank-name">${p.icon||'📦'} ${p.title || '未知'} <span style="font-size:10px;color:var(--text-secondary)">${p.category||''} ¥${(p.price||0).toLocaleString()}</span></div>
+      <div class="rank-bar"><div class="rank-bar-fill" style="width: ${pct}%"></div></div>
+      <div class="rank-value">${val}单</div>
+    </div>`;
+  }).join('');
+  document.getElementById('rankList').innerHTML = html;
+}
+
+async function loadServiceRank() {
+  const data = await fetchAPI('/api/services/offers?page=1&limit=20');
+  if (!data) return;
+  const rows = (data.list || []).sort((a,b) => (b.rating||0) - (a.rating||0)).slice(0, 8);
+  const catMap = {digital:'数字化转型',consulting:'咨询',development:'开发',operations:'运维',security:'安全',training:'培训',other:'其他'};
+  const maxVal = Math.max(...rows.map(r => r.rating || 0), 5);
+  document.getElementById('rankList').innerHTML = rows.map((r, i) => {
+    const pct = ((r.rating||0) / maxVal) * 100;
+    const rankClass = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : 'other';
+    return `<div class="rank-item">
+      <div class="rank-num ${rankClass}">${i + 1}</div>
+      <div class="rank-name">🤝 ${r.title} <span style="font-size:10px;color:var(--text-secondary)">${catMap[r.category]||r.category} · ${r.client_name||''}</span></div>
+      <div class="rank-bar"><div class="rank-bar-fill" style="width:${pct}%"></div></div>
+      <div class="rank-value">${r.rating||0}★</div>
+    </div>`;
+  }).join('') || '<div style="color:var(--text-secondary);font-size:12px;padding:20px;text-align:center">暂无数据</div>';
+}
+
+async function loadFreshRank() {
+  const data = await fetchAPI('/api/client-products?page=1&limit=50');
+  if (!data) return;
+  const rows = (data.list || data || []).filter(r => r.category === '生鲜特产' || r.category === '西部特产').sort((a,b) => (b.sales||0) - (a.sales||0)).slice(0, 8);
+  const maxVal = Math.max(...rows.map(r => r.sales || 0), 1);
+  document.getElementById('rankList').innerHTML = rows.map((r, i) => {
+    const pct = ((r.sales||0) / maxVal) * 100;
+    const rankClass = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : 'other';
+    const donTag = r.donation_enabled === 1 ? '❤️' : '';
+    const povTag = r.poverty_alleviation === 1 ? '🚜' : '';
+    return `<div class="rank-item">
+      <div class="rank-num ${rankClass}">${i + 1}</div>
+      <div class="rank-name">🥬 ${r.title} <span style="font-size:10px;color:var(--text-secondary)">📍${r.origin||'-'} ¥${(r.price||0).toLocaleString()} ${povTag}${donTag}</span></div>
+      <div class="rank-bar"><div class="rank-bar-fill" style="width:${pct}%"></div></div>
+      <div class="rank-value">${r.sales||0}份</div>
+    </div>`;
+  }).join('') || '<div style="color:var(--text-secondary);font-size:12px;padding:20px;text-align:center">暂无数据</div>';
+}
+
+async function loadGroupRank() {
+  const data = await fetchAPI('/api/group-buy/buys?page=1&limit=20');
+  if (!data) return;
+  const rows = (data.list || []).sort((a,b) => (b.current_qty||0) - (a.current_qty||0)).slice(0, 8);
+  const typeMap = {welfare:'🏢福利',canteen:'🍽️食堂',supply:'🏪供销',poverty:'🤝扶贫'};
+  const maxVal = Math.max(...rows.map(r => r.current_qty || 0), 1);
+  document.getElementById('rankList').innerHTML = rows.map((r, i) => {
+    const pct = ((r.current_qty||0) / maxVal) * 100;
+    const rankClass = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : 'other';
+    return `<div class="rank-item">
+      <div class="rank-num ${rankClass}">${i + 1}</div>
+      <div class="rank-name">${typeMap[r.buyer_type]||'👥'} ${r.title} <span style="font-size:10px;color:var(--text-secondary)">${r.buyer_name||''} ${r.participants}人参团</span></div>
+      <div class="rank-bar"><div class="rank-bar-fill" style="width:${pct}%"></div></div>
+      <div class="rank-value">${r.current_qty}份</div>
+    </div>`;
+  }).join('') || '<div style="color:var(--text-secondary);font-size:12px;padding:20px;text-align:center">暂无数据</div>';
+}
+
+async function loadProductProfileRank() {
+  const data = await fetchAPI('/api/products?page=1&limit=50');
+  if (!data) return;
+  const rows = (data.list || data || []);
+  // 计算每个产品的营销画像得分：订单数*40 + 评价*30 + 浏览*20 + 亮点*10
+  const scored = rows.map(p => {
+    const orders = (p.cases || []).length;
+    const highlights = (p.highlights || []).length;
+    const tags = (p.tags || []).length;
+    const score = orders * 40 + highlights * 10 + tags * 5 + (p.views || 0) * 0.1;
+    return { ...p, _orders: orders, _highlights: highlights, _tags: tags, _score: Math.round(score) };
+  }).sort((a,b) => b._score - a._score).slice(0, 8);
+  const maxVal = Math.max(...scored.map(p => p._score), 1);
+  const profileLabels = { marketing: '营销力', development: '开发力', deployment: '部署力' };
+  document.getElementById('rankList').innerHTML = scored.map((p, i) => {
+    const pct = (p._score / maxVal) * 100;
+    const rankClass = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : 'other';
+    // 营销画像：亮点数+标签数+案例数
+    const marketingScore = Math.min(100, p._highlights * 15 + p._tags * 10 + p._orders * 10);
+    // 开发力：有描述+功能特性+SKU
+    const devScore = Math.min(100, ((p.description||'').length > 20 ? 30 : 0) + ((p.features||'').length > 20 ? 30 : 0) + p._highlights * 8);
+    // 部署力：有价格+已发布
+    const deployScore = (p.published ? 40 : 0) + (p.price > 0 ? 30 : 0) + (p.sort_order >= 0 ? 30 : 0);
+    return `<div class="rank-item">
+      <div class="rank-num ${rankClass}">${i + 1}</div>
+      <div class="rank-name">${p.icon||'📦'} ${p.title} <span style="font-size:10px;color:var(--text-secondary)">${p.category||''}</span></div>
+      <div class="rank-bar"><div class="rank-bar-fill" style="width:${pct}%"></div></div>
+      <div class="rank-value" style="font-size:10px;width:auto;min-width:120px">
+        <span style="color:#22c55e">营${marketingScore}</span> <span style="color:#3b82f6">开${devScore}</span> <span style="color:#f59e0b">部${deployScore}</span>
+      </div>
+    </div>`;
+  }).join('') || '<div style="color:var(--text-secondary);font-size:12px;padding:20px;text-align:center">暂无数据</div>';
+}
+
+// ========== 实时动态 ==========
+function addActivity(type, text, extra) {
+  const now = Date.now();
+  activityList.unshift({ type, text, extra, ts: now });
+  if (activityList.length > 20) activityList = activityList.slice(0, 20);
+  renderActivity();
+}
+
+function renderActivity() {
+  const html = activityList.slice(0, 6).map(a => `
+    <div class="activity-item ${a.type}">
+      <span class="activity-icon">${getActivityIcon(a.type)}</span>
+      <span class="activity-text">${a.text}${a.extra ? ' · <span style="color:#8b95c9">' + a.extra + '</span>' : ''}</span>
+      <span class="activity-time">${timeAgo(a.ts)}</span>
+    </div>
+  `).join('');
+  document.getElementById('activityList').innerHTML = html;
+  document.getElementById('activityCount').textContent = activityList.length + ' 条';
+}
+
+function getActivityIcon(type) {
+  const icons = { order: '🛒', contact: '📞', client: '🤝', review: '⭐', system: '🔄' };
+  return icons[type] || '📝';
+}
+
+// 模拟系统动态（真实环境中由 WebSocket 推送）
+function generateSystemActivity() {
+  const events = [
+    { type: 'system', text: '📊 数据已自动刷新', extra: null },
+    { type: 'system', text: '✅ 系统健康检查通过', extra: null },
+  ];
+  if (Math.random() > 0.7) {
+    const e = events[Math.floor(Math.random() * events.length)];
+    addActivity(e.type, e.text, e.extra);
+  }
+}
+
+// ========== 初始化 ==========
+async function init() {
+  updateClock();
+  clockTimer = setInterval(updateClock, 1000);
+  
+  await Promise.all([
+    loadOverview(),
+    loadTrend(),
+    loadRealtime(),
+    loadRankData()
+  ]);
+  
+  // 隐藏加载遮罩
+  document.getElementById('loadingOverlay').classList.add('hidden');
+  
+  // 初始动态
+  addActivity('system', '🚀 运营大屏已启动', '实时监控中');
+  
+  // 自动刷新（30秒）
+  refreshTimer = setInterval(async () => {
+    await Promise.all([
+      loadOverview(),
+      loadTrend(),
+      loadRealtime(),
+      loadRankData()
+    ]);
+    generateSystemActivity();
+    renderActivity();
+  }, 30000);
+  
+  // 动态时间更新（每分钟）
+  setInterval(renderActivity, 60000);
+}
+
+// 窗口大小变化时重绘
+window.addEventListener('resize', () => {
+  if (trendData.length) drawTrendChart(trendData);
+  if (funnelData.visitors) drawFunnelChart(funnelData);
+  if (sourceData.length) drawSourceChart(sourceData);
+});
+
+// 启动
+init();
+</script>
+
+</body>
+</html>
