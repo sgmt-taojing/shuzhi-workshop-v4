@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>数智工坊 · 全功能访问地址</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,sans-serif;background:#f5f7fa;color:#1f2937;line-height:1.7;padding:20px}
+.wrap{max-width:800px;margin:0 auto}
+h1{font-size:20px;color:#0a1628;margin-bottom:16px}
+.sec{background:#fff;border-radius:12px;padding:18px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.sec-t{font-size:14px;font-weight:700;margin-bottom:10px;color:#0a1628;border-left:4px solid #d4a017;padding-left:8px}
+a{color:#2563eb;text-decoration:none;font-size:13px}
+a:hover{text-decoration:underline}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#0a1628;color:#dbeafe;padding:8px;text-align:left;font-size:10px}
+td{padding:7px 8px;border-bottom:1px solid #f1f5f9}
+.badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700}
+.ok{background:#ecfdf5;color:#047857}
+.warn{background:#fff7ed;color:#c2410c}
+.info{background:#eff6ff;color:#2563eb}
+code{background:#f3f4f6;padding:1px 5px;border-radius:3px;font-size:11px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>数智工坊 · 全功能访问地址</h1>
+
+<div class="sec">
+<div class="sec-t">🌐 外网 (GitHub Pages)</div>
+<table>
+<tr><th>服务</th><th>URL</th><th>状态</th></tr>
+<tr><td>演示版在线版</td><td><a href="https://sgmt-taojing.github.io/shuzhi-workshop-v4/">https://sgmt-taojing.github.io/shuzhi-workshop-v4/</a></td><td><span class="badge ok">200</span></td></tr>
+<tr><td>演示版离线版</td><td><a href="https://sgmt-taojing.github.io/shuzhi-workshop-v4/v4.0-数智工坊_离线版.html">离线版链接</a></td><td><span class="badge ok">200</span></td></tr>
+<tr><td>GitHub仓库</td><td><a href="https://github.com/sgmt-taojing/shuzhi-workshop-v4">github.com/sgmt-taojing/shuzhi-workshop-v4</a></td><td><span class="badge ok">Public</span></td></tr>
+</table>
+</div>
+
+<div class="sec">
+<div class="sec-t">🖥️ 本地后端页面 (localhost:3004)</div>
+<table>
+<tr><th>页面</th><th>URL</th><th>状态</th></tr>
+<tr><td>管理后台 (58功能模块)</td><td><a href="http://localhost:3004/admin/">http://localhost:3004/admin/</a></td><td><span class="badge ok">200</span></td></tr>
+<tr><td>运营大屏</td><td><a href="http://localhost:3004/screen">http://localhost:3004/screen</a></td><td><span class="badge ok">200</span></td></tr>
+<tr><td>移动端门户</td><td><a href="http://localhost:3004/mobile/">http://localhost:3004/mobile/</a></td><td><span class="badge ok">200</span></td></tr>
+<tr><td>H5公众号首页</td><td><a href="http://localhost:3004/h5/">http://localhost:3004/h5/</a></td><td><span class="badge ok">200</span></td></tr>
+<tr><td>员工工作台</td><td><a href="http://localhost:3004/h5/work.html">http://localhost:3004/h5/work.html</a></td><td><span class="badge ok">200</span></td></tr>
+<tr><td>代理商工作台</td><td><a href="http://localhost:3004/h5/agent.html">http://localhost:3004/h5/agent.html</a></td><td><span class="badge ok">200</span></td></tr>
+<tr><td>企业管家H5</td><td><a href="http://localhost:3004/h5/enterprise.html">http://localhost:3004/h5/enterprise.html</a></td><td><span class="badge ok">200</span></td></tr>
+<tr><td>政府监管看板</td><td><a href="http://localhost:3004/h5/gov.html">http://localhost:3004/h5/gov.html</a></td><td><span class="badge ok">200</span></td></tr>
+<tr><td>验收打卡H5</td><td><a href="http://localhost:3004/h5/checkin.html">http://localhost:3004/h5/checkin.html</a></td><td><span class="badge ok">200</span></td></tr>
+</table>
+</div>
+
+<div class="sec">
+<div class="sec-t">📡 API端点 (localhost:3004)</div>
+<table>
+<tr><th>分类</th><th>端点</th><th>状态</th></tr>
+<tr><td rowspan="20">直接访问 (GET 200)</td><td><code>/api/products</code> <code>/api/articles</code> <code>/api/clients</code></td><td><span class="badge ok">200</span></td></tr>
+<tr><td><code>/api/banners</code> <code>/api/bookings</code> <code>/api/quotes</code></td><td><span class="badge ok">200</span></td></tr>
+<tr><td><code>/api/policies</code> <code>/api/projects</code> <code>/api/enterprise</code></td><td><span class="badge ok">200</span></td></tr>
+<tr><td><code>/api/agents</code> <code>/api/delivery</code> <code>/api/steward</code></td><td><span class="badge ok">200</span></td></tr>
+<tr><td><code>/api/providers</code> <code>/api/coupons</code> <code>/api/reviews</code></td><td><span class="badge ok">200</span></td></tr>
+<tr><td><code>/api/notifications</code> <code>/api/search</code> <code>/api/config</code></td><td><span class="badge ok">200</span></td></tr>
+<tr><td><code>/api/contact</code> <code>/api/client-products</code></td><td><span class="badge ok">200</span></td></tr>
+<tr><td rowspan="6">子路由模式</td><td><code>/api/faqs/list</code> <code>/api/faqs/categories</code> <code>/api/faqs/hot</code></td><td><span class="badge ok">200</span></td></tr>
+<tr><td><code>/api/campaigns/active</code> <code>/api/assessments/list</code></td><td><span class="badge ok">200</span></td></tr>
+<tr><td><code>/api/analytics/overview</code> (需参数)</td><td><span class="badge info">子路由</span></td></tr>
+<tr><td><code>/api/admin/login</code> (POST)</td><td><span class="badge ok">✓ 返回token</span></td></tr>
+<tr><td><code>/api/onboarding</code> <code>/api/feedback</code> <code>/api/audit-logs</code></td><td><span class="badge warn">401需认证</span></td></tr>
+<tr><td><code>/api/invoices</code> <code>/api/tickets</code> <code>/api/contracts</code></td><td><span class="badge warn">400需参数</span></td></tr>
+</table>
+</div>
+
+<div class="sec">
+<div class="sec-t">📊 数据库数据量</div>
+<table>
+<tr><th>数据</th><th>条数</th><th>数据</th><th>条数</th></tr>
+<tr><td>产品</td><td>16</td><td>客户</td><td>32</td></tr>
+<tr><td>文章</td><td>27</td><td>政策</td><td>99</td></tr>
+<tr><td>FAQ</td><td>30</td><td>企业画像</td><td>33</td></tr>
+<tr><td>订单</td><td>10</td><td>Banner</td><td>3</td></tr>
+<tr><td>代理商</td><td>4</td><td>服务商</td><td>5</td></tr>
+<tr><td>项目</td><td>6</td><td>反馈</td><td>3</td></tr>
+<tr><td>商机</td><td>3</td><td>维护工单</td><td>2</td></tr>
+</table>
+</div>
+
+<div class="sec">
+<div class="sec-t">📱 小程序 (源码就绪)</div>
+<table>
+<tr><th>项目</th><th>值</th></tr>
+<tr><td>主包页面</td><td>10</td></tr>
+<tr><td>分包页面</td><td>65</td></tr>
+<tr><td>JS文件</td><td>72</td></tr>
+<tr><td>状态</td><td><span class="badge warn">需微信开发者工具上传发布</span></td></tr>
+</table>
+</div>
+
+</div>
+</body>
+</html>
