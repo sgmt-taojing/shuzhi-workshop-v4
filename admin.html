@@ -3235,7 +3235,7 @@ async function loadAuditList() {
   const params = new URLSearchParams({ page: auditCurrentPage, limit: 20 });
   Object.entries(auditFilters).forEach(([k, v]) => { if (v) params.set(k, v); });
   try {
-    const resp = await fetch(API_BASE + '/audit-logs?' + params, {
+    const resp = await fetch(API + '/audit-logs?' + params, {
       headers: { 'Authorization': 'Bearer ' + token }
     });
     const data = await resp.json();
@@ -3294,7 +3294,7 @@ function auditGoPage(p) {
 
 async function showAuditDetail(id) {
   try {
-    const resp = await fetch(API_BASE + '/audit-logs?page=1&limit=1&keyword=' + id, {
+    const resp = await fetch(API + '/audit-logs?page=1&limit=1&keyword=' + id, {
       headers: { 'Authorization': 'Bearer ' + token }
     });
     const data = await resp.json();
@@ -3337,7 +3337,7 @@ function closeAuditDetail() {
 
 async function loadAuditStats() {
   try {
-    const resp = await fetch(API_BASE + '/audit-logs/stats?days=7', {
+    const resp = await fetch(API + '/audit-logs/stats?days=7', {
       headers: { 'Authorization': 'Bearer ' + token }
     });
     const data = await resp.json();
@@ -3396,7 +3396,7 @@ async function loadAuditStats() {
 function exportAuditLogs() {
   const params = new URLSearchParams();
   Object.entries(auditFilters).forEach(([k, v]) => { if (v) params.set(k, v); });
-  window.open(API_BASE + '/audit-logs/export?' + params + '&token=' + token, '_blank');
+  window.open(API + '/audit-logs/export?' + params + '&token=' + token, '_blank');
 }
 
 // ==================== 报价查询 ====================
@@ -3408,7 +3408,7 @@ async function loadQuotes() {
     <div id="quotes-list">加载中...</div>
   `;
   try {
-    const resp = await fetch(API_BASE + '/quotes?page=1&pageSize=50', {
+    const resp = await fetch(API + '/quotes?page=1&pageSize=50', {
       headers: { 'Authorization': 'Bearer ' + token }
     });
     const data = await resp.json();
@@ -3453,7 +3453,7 @@ async function loadQuotes() {
 
 async function updateQuoteStatus(id, status) {
   try {
-    const resp = await fetch(API_BASE + '/quotes/' + id, {
+    const resp = await fetch(API + '/quotes/' + id, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
       body: JSON.stringify({ status })
@@ -3602,7 +3602,7 @@ async function loadScheduler() {
 async function triggerSchedulerTask(name) {
   if (!confirm('确认手动触发任务「' + name + '」？')) return;
   try {
-    const result = await fetch(API_BASE + '/scheduler/trigger/' + name, {
+    const result = await fetch(API + '/scheduler/trigger/' + name, {
       method: 'POST',
       headers: { 'Authorization': 'Bearer ' + token }
     }).then(r => r.json());
@@ -3615,7 +3615,7 @@ async function triggerSchedulerTask(name) {
 
 async function toggleSchedulerTask(name, enabled) {
   try {
-    await fetch(API_BASE + '/scheduler/toggle/' + name, {
+    await fetch(API + '/scheduler/toggle/' + name, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
       body: JSON.stringify({ enabled })
@@ -3684,7 +3684,7 @@ async function loadServiceList() {
     if (serviceTrackerFilter !== 'all') params.set('status', serviceTrackerFilter);
     if (serviceTrackerKeyword) params.set('keyword', serviceTrackerKeyword);
 
-    const res = await fetch(API_BASE + '/service-tracker/list?' + params, {
+    const res = await fetch(API + '/service-tracker/list?' + params, {
       headers: { 'Authorization': 'Bearer ' + token }
     }).then(r => r.json());
 
@@ -3751,7 +3751,7 @@ async function viewServiceDetail(orderId) {
   detailEl.innerHTML = '<div style="text-align:center;padding:40px;color:#999;">加载中...</div>';
 
   try {
-    const res = await fetch(API_BASE + '/service-tracker/order/' + orderId, {
+    const res = await fetch(API + '/service-tracker/order/' + orderId, {
       headers: { 'Authorization': 'Bearer ' + token }
     }).then(r => r.json());
 
@@ -3876,7 +3876,7 @@ function closeServiceDetail() {
 async function initMilestones(orderId) {
   if (!confirm('确认为此订单初始化默认里程碑模板？已有里程碑将保留。')) return;
   try {
-    const res = await fetch(API_BASE + '/service-tracker/init/' + orderId, {
+    const res = await fetch(API + '/service-tracker/init/' + orderId, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }
     }).then(r => r.json());
@@ -3889,7 +3889,7 @@ async function initMilestones(orderId) {
 
 async function updateMilestoneStatus(id, status) {
   try {
-    await fetch(API_BASE + '/service-tracker/milestone/' + id, {
+    await fetch(API + '/service-tracker/milestone/' + id, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
       body: JSON.stringify({ status })
@@ -3912,7 +3912,7 @@ function addMilestone(orderId) {
   const expected_date = prompt('预计完成日期 (YYYY-MM-DD，可选):') || '';
   const notes = prompt('备注（可选）:') || '';
 
-  fetch(API_BASE + '/service-tracker/milestone', {
+  fetch(API + '/service-tracker/milestone', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
     body: JSON.stringify({ order_id: orderId, title, description, expected_date, notes })
@@ -3929,7 +3929,7 @@ function editMilestone(id, orderId, title, description, expectedDate, notes) {
   const newDate = prompt('预计完成日期:', expectedDate);
   const newNotes = prompt('备注:', notes);
 
-  fetch(API_BASE + '/service-tracker/milestone/' + id, {
+  fetch(API + '/service-tracker/milestone/' + id, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
     body: JSON.stringify({ title: newTitle, description: newDesc, expected_date: newDate, notes: newNotes })
@@ -3941,7 +3941,7 @@ function editMilestone(id, orderId, title, description, expectedDate, notes) {
 async function deleteMilestone(id) {
   if (!confirm('确定删除此里程碑？')) return;
   try {
-    await fetch(API_BASE + '/service-tracker/milestone/' + id, {
+    await fetch(API + '/service-tracker/milestone/' + id, {
       method: 'DELETE',
       headers: { 'Authorization': 'Bearer ' + token }
     }).then(r => r.json());
@@ -3953,7 +3953,7 @@ async function deleteMilestone(id) {
 
 async function loadServiceStats() {
   try {
-    const res = await fetch(API_BASE + '/service-tracker/stats', {
+    const res = await fetch(API + '/service-tracker/stats', {
       headers: { 'Authorization': 'Bearer ' + token }
     }).then(r => r.json());
 
@@ -3992,7 +3992,7 @@ async function loadServiceStats() {
 
 async function loadServiceTemplates() {
   try {
-    const res = await fetch(API_BASE + '/service-tracker/templates', {
+    const res = await fetch(API + '/service-tracker/templates', {
       headers: { 'Authorization': 'Bearer ' + token }
     }).then(r => r.json());
 

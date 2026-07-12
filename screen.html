@@ -292,6 +292,29 @@
     }
   }
 </style>
+<script>
+(function(){
+  var isLocal = location.hostname.includes('localhost') || location.hostname.includes('127.0.0.1') || location.hostname.includes('0.0.0.0');
+  if (!isLocal) {
+    window.__DEMO_MODE__ = true;
+    var origFetch = window.fetch;
+    window.fetch = function(url, opts) {
+      if (typeof url === 'string' && (url.includes('/api/') || url.includes('/api'))) {
+        return Promise.resolve(new Response(JSON.stringify({list:[],data:[],items:[],total:0,ok:true,stats:{}}), {
+          status: 200, headers: {'Content-Type':'application/json'}
+        }));
+      }
+      return origFetch.apply(this, arguments);
+    };
+    document.addEventListener('DOMContentLoaded', function(){
+      var b = document.createElement('div');
+      b.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#d4a017;color:#fff;text-align:center;font-size:12px;padding:6px;z-index:99999;font-family:sans-serif';
+      b.innerHTML = '演示模式 · 大屏数据需本地后端运行 · <a href="https://github.com/sgmt-taojing/shuzhi-workshop-v4" style="color:#fff;text-decoration:underline">GitHub</a>';
+      document.body.insertBefore(b, document.body.firstChild);
+    });
+  }
+})();
+</script>
 </head>
 <body>
 
