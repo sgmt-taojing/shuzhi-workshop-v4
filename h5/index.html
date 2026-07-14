@@ -136,6 +136,13 @@ img{max-width:100%;display:block}
 /* Footer */
 .h5-footer{text-align:center;padding:24px 16px 40px;color:#9ca3af;font-size:11px}
 .h5-footer a{color:var(--primary)}
+[data-theme="dark"]{--primary:#3b82f6;--primary-dark:#2563eb;--bg:#0f172a;--card:#1e293b;--border:#334155;--text:#e2e8f0;--text2:#94a3b8;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--info:#3b82f6}
+[data-theme="dark"] .h5-header{background:linear-gradient(135deg,#1e293b,#0f172a)}
+[data-theme="dark"] .nav-tabs{background:#1e293b;border-color:#334155}
+[data-theme="dark"] .nav-tab{color:#94a3b8}
+[data-theme="dark"] .nav-tab.active{color:#3b82f6}
+[data-theme="dark"] input,[data-theme="dark"] select,[data-theme="dark"] textarea{background:#0f172a;color:#e2e8f0;border-color:#334155}
+[data-theme="dark"] .stat-box{background:#1e293b}
 </style>
 <script>
 (function(){
@@ -168,7 +175,7 @@ img{max-width:100%;display:block}
 
 <!-- Header -->
 <div class="h5-header">
-  <div class="h5-logo" id="h5Logo">${SITE_CONFIG.site_icon||'🏭'} ${SITE_CONFIG.site_name||'数造工坊'}</div>
+  <div class="h5-logo" id="h5Logo">${SITE_CONFIG.site_icon||'🏭'} ${SITE_CONFIG.site_name||'数造工坊'} <span id="h5ThemeToggle" onclick="toggleH5Theme()" style="cursor:pointer;font-size:14px;opacity:.6;margin-left:8px">🌙</span></div>
   <div class="h5-slogan" id="h5Slogan">${SITE_CONFIG.site_slogan||'企业数字化转型一站式服务平台'}</div>
 </div>
 
@@ -214,6 +221,9 @@ img{max-width:100%;display:block}
 
 <script>
 const API_BASE = window.location.origin + '/api';
+
+function toggleH5Theme(){var t=document.documentElement.getAttribute('data-theme');if(t==='dark'){document.documentElement.removeAttribute('data-theme');localStorage.setItem('h5_theme','light');var e=document.getElementById('h5ThemeToggle');if(e)e.textContent='🌙'}else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('h5_theme','dark');var e=document.getElementById('h5ThemeToggle');if(e)e.textContent='☀️'}}
+(function(){var t=localStorage.getItem('h5_theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');setTimeout(function(){var e=document.getElementById('h5ThemeToggle');if(e)e.textContent='☀️'},500)}})();
 
 async function api(path, opts) {
   const r = await fetch(API_BASE + path, opts ? { ...opts, headers: { 'Content-Type': 'application/json' } } : {});
