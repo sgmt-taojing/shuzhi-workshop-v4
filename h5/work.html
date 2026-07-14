@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="数造工坊 · 员工工作台 — 数造工坊">
+<meta name="theme-color" content="#2563eb">
 <title>数造工坊 · 员工工作台</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -144,31 +146,38 @@ a{color:inherit;text-decoration:none}
 
 /* Toast */
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.75);color:#fff;padding:8px 20px;border-radius:20px;font-size:13px;z-index:9999;pointer-events:none}
+
+[data-theme="dark"]{--primary:#3b82f6;--primary-dark:#2563eb;--bg:#0f172a;--card:#1e293b;--border:#334155;--text:#e2e8f0;--text2:#94a3b8;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--info:#3b82f6}
+[data-theme="dark"] .h5-header{background:linear-gradient(135deg,#1e293b,#0f172a)}
+[data-theme="dark"] .nav-tabs,[data-theme="dark"] .stat-box,[data-theme="dark"] .card{background:#1e293b!important;border-color:#334155!important}
+[data-theme="dark"] input,[data-theme="dark"] select,[data-theme="dark"] textarea{background:#0f172a;color:#e2e8f0;border-color:#334155}
+[data-theme="dark"] table th{background:#334155}
 </style>
 <script>
-// 外网演示模式：检测非本地环境，API调用返回空数据不报错
+function toggleH5Theme(){var t=document.documentElement.getAttribute('data-theme');if(t==='dark'){document.documentElement.removeAttribute('data-theme');localStorage.setItem('h5_theme','light');var e=document.getElementById('h5ThemeToggle');if(e)e.textContent='🌙'}else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('h5_theme','dark');var e=document.getElementById('h5ThemeToggle');if(e)e.textContent='☀️'}}
+(function(){var t=localStorage.getItem('h5_theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');setTimeout(function(){var e=document.getElementById('h5ThemeToggle');if(e)e.textContent='☀️'},500)}})();
+</script>
+<script>
 (function(){
-  var isLocal = location.hostname.includes('localhost') || location.hostname.includes('127.0.0.1') || location.hostname.includes('0.0.0.0');
+  var isLocal = location.hostname.includes("localhost") || location.hostname.includes("127.0.0.1") || location.hostname.includes("0.0.0.0");
   if (!isLocal) {
     window.__DEMO_MODE__ = true;
-    // 拦截 fetch，对 /api/ 请求返回空数据
     var origFetch = window.fetch;
     window.fetch = function(url, opts) {
-      if (typeof url === 'string' && (url.includes('/api/') || url.includes('/api'))) {
-        return Promise.resolve(new Response(JSON.stringify({list:[],data:[],items:[],total:0,ok:true}), {
-          status: 200, headers: {'Content-Type':'application/json'}
+      if (typeof url === "string" && (url.includes("/api/") || url.includes("/api"))) {
+        return Promise.resolve(new Response(JSON.stringify({list:[],data:[],items:[],total:0,ok:true,stats:{},config:{},dashboard:{}}), {
+          status: 200, headers: {"Content-Type":"application/json"}
         }));
       }
       return origFetch.apply(this, arguments);
     };
-    // 显示演示模式提示
-    document.addEventListener('DOMContentLoaded', function(){
-      var b = document.createElement('div');
-      b.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#d4a017;color:#fff;text-align:center;font-size:12px;padding:6px;z-index:99999;font-family:sans-serif';
-      b.innerHTML = '演示模式 · API数据需本地后端运行 · <a href="https://github.com/sgmt-taojing/shuzhi-workshop-v4" style="color:#fff;text-decoration:underline">GitHub源码</a>';
+    document.addEventListener("DOMContentLoaded", function(){
+      var b = document.createElement("div");
+      b.style.cssText = "position:fixed;top:0;left:0;right:0;background:#d4a017;color:#fff;text-align:center;font-size:12px;padding:6px;z-index:99999;font-family:sans-serif";
+      b.innerHTML = '演示模式 · API数据需本地后端运行 · <a href="https://github.com/sgmt-taojing/shuzhi-workshop-v4" style="color:#fff;text-decoration:underline">GitHub</a>';
       document.body.insertBefore(b, document.body.firstChild);
-      var h = document.createElement('style');
-      h.textContent = 'body{padding-top:32px!important}';
+      var h = document.createElement("style");
+      h.textContent = "body{padding-top:32px!important}";
       document.head.appendChild(h);
     });
   }
