@@ -230,6 +230,16 @@ td{padding:9px 12px;font-size:12px;border-bottom:1px solid #f1f5f9}tr:last-child
 .loader-spin{width:40px;height:40px;border:3px solid rgba(212,160,23,.2);border-top-color:var(--oil);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loader-txt{position:absolute;bottom:30%;left:0;right:0;text-align:center;color:var(--oil);font-size:12px;letter-spacing:4px;opacity:.7}
+[data-theme="dark"]{--d:#f8fafc;--d2:#e2e8f0;--t:#0f172a;--m:#94a3b8;--c:#1e293b;--bd:#334155;--bg:#0f172a;--oil-c:#1e293b}
+[data-theme="dark"] body{background:#0f172a}
+[data-theme="dark"] .hero{background:linear-gradient(135deg,#0f172a,#1e293b)}
+[data-theme="dark"] .nav{background:#1e293b;border-color:#334155}
+[data-theme="dark"] .card,[data-theme="dark"] .dc,[data-theme="dark"] .pd,[data-theme="dark"] .faq{background:#1e293b;border-color:#334155}
+[data-theme="dark"] .dark-sec{background:#0f172a}
+[data-theme="dark"] .slogan{background:#1e293b;border-color:#334155}
+[data-theme="dark"] table th{background:#334155}
+[data-theme="dark"] table tr:hover td{background:rgba(212,160,23,.05)}
+[data-theme="dark"] input,[data-theme="dark"] select{background:#0f172a;color:#e2e8f0;border-color:#334155}
 </style>
 </head>
 <body>
@@ -247,7 +257,7 @@ td{padding:9px 12px;font-size:12px;border-bottom:1px solid #f1f5f9}tr:last-child
     <button class="ntb" type="button" data-tab="match" role="tab" aria-selected="false" aria-controls="tab-match">🤝 产业链撮合</button>
     <button class="ntb" type="button" data-tab="product" role="tab" aria-selected="false" aria-controls="tab-product">📦 产品推广</button>
   </div>
-  <div class="nv"><span class="nv-tag">V4.0</span></div>
+  <div class="nv"><span class="nv-tag">V4.0</span> <span id="v4ThemeToggle" onclick="toggleV4Theme()" style="cursor:pointer;font-size:14px;margin-left:6px">🌙</span></div>
 </nav>
 
 <section class="hero">
@@ -832,6 +842,8 @@ td{padding:9px 12px;font-size:12px;border-bottom:1px solid #f1f5f9}tr:last-child
   // 加载动画
   window.addEventListener('load',function(){setTimeout(function(){var l=document.getElementById('loader');if(l){l.classList.add('hide');setTimeout(function(){l.remove()},600)}},300)});
 })();
+function toggleV4Theme(){var t=document.documentElement.getAttribute('data-theme');if(t==='dark'){document.documentElement.removeAttribute('data-theme');localStorage.setItem('v4_theme','light');var e=document.getElementById('v4ThemeToggle');if(e)e.textContent='🌙'}else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('v4_theme','dark');var e=document.getElementById('v4ThemeToggle');if(e)e.textContent='☀️'}}
+(function(){var t=localStorage.getItem('v4_theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');setTimeout(function(){var e=document.getElementById('v4ThemeToggle');if(e)e.textContent='☀️'},500)}})();
 </script>
 </body>
 </html>
