@@ -94,6 +94,27 @@
   .follow-mutual { color: var(--success); font-weight: 600; }
   .follow-oneway { color: var(--warning); }
   .follow-none { color: var(--text2); }
+
+  /* Responsive */
+  @media(max-width:1024px){
+    .sidebar{width:180px}.main{padding:16px}.header h1{font-size:18px}
+  }
+  @media(max-width:768px){
+    .app.active{flex-direction:column}.sidebar{width:100%;height:auto;max-height:50px;overflow:hidden;position:relative;z-index:100}.sidebar.expanded{max-height:60vh;overflow-y:auto}.sidebar-brand{padding:12px 16px;font-size:16px;display:flex;justify-content:space-between;align-items:center}.sidebar-brand::after{content:'☰';font-size:18px;cursor:pointer}.main{padding:12px}.header{flex-wrap:wrap;gap:8px}.header h1{font-size:16px}
+  }
+  @media(max-width:480px){
+    .main{padding:8px}.header{margin-bottom:12px}
+  }
+
+  /* Dark Theme */
+  [data-theme="dark"]{--primary:#3b82f6;--primary-dark:#2563eb;--bg:#0f172a;--card:#1e293b;--border:#334155;--text:#e2e8f0;--text2:#94a3b8;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--info:#3b82f6}
+  [data-theme="dark"] .sidebar{background:#020617}
+  [data-theme="dark"] .nav-item{color:rgba(226,232,240,.65)}
+  [data-theme="dark"] .nav-item:hover,[data-theme="dark"] .nav-item.active{background:rgba(59,130,246,.15);color:#e2e8f0}
+  [data-theme="dark"] .login-card{background:var(--card);border:1px solid var(--border)}
+  [data-theme="dark"] input,[data-theme="dark"] select,[data-theme="dark"] textarea{background:#0f172a;color:var(--text);border-color:var(--border)}
+  [data-theme="dark"] table th{background:#1e293b}
+  [data-theme="dark"] table tr:hover td{background:rgba(59,130,246,.08)}
 </style>
 <script>
 (function(){
@@ -138,7 +159,7 @@
 <!-- App -->
 <div class="app" id="app">
   <div class="sidebar">
-    <div class="sidebar-brand">🏭 数造工坊</div>
+    <div class="sidebar-brand">🏭 数造工坊 <span id="themeToggle" onclick="toggleTheme()" style="cursor:pointer;font-size:14px;opacity:.6;float:right">🌙</span></div>
     <nav class="sidebar-nav">
       <a class="nav-item active" data-page="dashboard">📊 仪表盘</a>
       <a class="nav-item" data-page="analytics-dashboard">📈 数据分析</a>
@@ -226,15 +247,14 @@ let userPermissions = JSON.parse(localStorage.getItem('dt_permissions') || '"[\"
 let userInfo = JSON.parse(localStorage.getItem('dt_userinfo') || '{}');
 
 // --- Auth ---
+function toggleTheme(){var t=document.documentElement.getAttribute('data-theme');if(t==='dark'){document.documentElement.removeAttribute('data-theme');localStorage.setItem('dt_theme','light');document.getElementById('themeToggle').textContent='🌙'}else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('dt_theme','dark');document.getElementById('themeToggle').textContent='☀️'}}
+(function(){var t=localStorage.getItem('dt_theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');setTimeout(function(){var e=document.getElementById('themeToggle');if(e)e.textContent='☀️'},100)}})();
+
 async function doLogin() {
   const username = document.getElementById('loginUser').value;
   const password = document.getElementById('loginPass').value;
   try {
-    const r = await fetch(API + '/admin/login', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
-    });
-    const d = await r.json();
+    const d = await api('/admin/login', {method: 'POST', body: JSON.stringify({username, password})});
     if (d.token) {
       token = d.token;
       localStorage.setItem('dt_token', token);
@@ -1177,7 +1197,7 @@ async function uploadProductImage(input) {
   formData.append('file', file);
   formData.append('type', 'client-products');
   try {
-    const r = await fetch(API + '/upload', { method: 'POST', body: formData, headers: { 'Authorization': 'Bearer ' + token } });
+    const r = await api('/upload', {method: 'POST'});
     const data = await r.json();
     if (data.url) {
       document.getElementById('cp_image').value = data.url;
@@ -3235,9 +3255,7 @@ async function loadAuditList() {
   const params = new URLSearchParams({ page: auditCurrentPage, limit: 20 });
   Object.entries(auditFilters).forEach(([k, v]) => { if (v) params.set(k, v); });
   try {
-    const resp = await fetch(API + '/audit-logs?' + params, {
-      headers: { 'Authorization': 'Bearer ' + token }
-    });
+    const resp = await api('/audit-logs?' + params);
     const data = await resp.json();
     const body = document.getElementById('audit-list-body');
     if (!data.data || data.data.length === 0) {
@@ -3294,9 +3312,7 @@ function auditGoPage(p) {
 
 async function showAuditDetail(id) {
   try {
-    const resp = await fetch(API + '/audit-logs?page=1&limit=1&keyword=' + id, {
-      headers: { 'Authorization': 'Bearer ' + token }
-    });
+    const resp = await api('/audit-logs?page=1&limit=1&keyword=' + id);
     const data = await resp.json();
     const r = data.data && data.data[0];
     if (!r) { alert('未找到记录'); return; }
@@ -3337,9 +3353,7 @@ function closeAuditDetail() {
 
 async function loadAuditStats() {
   try {
-    const resp = await fetch(API + '/audit-logs/stats?days=7', {
-      headers: { 'Authorization': 'Bearer ' + token }
-    });
+    const resp = await api('/audit-logs/stats?days=7');
     const data = await resp.json();
     const section = document.getElementById('audit-stats-section');
     if (!data || data.total === 0) { section.innerHTML = ''; return; }
@@ -3408,9 +3422,7 @@ async function loadQuotes() {
     <div id="quotes-list">加载中...</div>
   `;
   try {
-    const resp = await fetch(API + '/quotes?page=1&pageSize=50', {
-      headers: { 'Authorization': 'Bearer ' + token }
-    });
+    const resp = await api('/quotes?page=1&pageSize=50');
     const data = await resp.json();
     const items = data.items || [];
     if (items.length === 0) {
@@ -3453,12 +3465,7 @@ async function loadQuotes() {
 
 async function updateQuoteStatus(id, status) {
   try {
-    const resp = await fetch(API + '/quotes/' + id, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-      body: JSON.stringify({ status })
-    });
-    const data = await resp.json();
+    const data = await api('/quotes/' + id, {method: 'PATCH'})
     if (data.success) {
       loadQuotes();
     } else {
@@ -3602,10 +3609,7 @@ async function loadScheduler() {
 async function triggerSchedulerTask(name) {
   if (!confirm('确认手动触发任务「' + name + '」？')) return;
   try {
-    const result = await fetch(API + '/scheduler/trigger/' + name, {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + token }
-    }).then(r => r.json());
+    const result = await api('/scheduler/trigger/' + name, {method: 'POST'});
     alert('任务触发完成\n\n结果: ' + JSON.stringify(result.result, null, 2));
     loadScheduler();
   } catch(e) {
@@ -3615,11 +3619,8 @@ async function triggerSchedulerTask(name) {
 
 async function toggleSchedulerTask(name, enabled) {
   try {
-    await fetch(API + '/scheduler/toggle/' + name, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-      body: JSON.stringify({ enabled })
-    }).then(r => r.json());
+    await api('/scheduler/toggle/' + name, {method: 'POST'})
+
     loadScheduler();
   } catch(e) {
     alert('操作失败: ' + e.message);
@@ -3684,9 +3685,7 @@ async function loadServiceList() {
     if (serviceTrackerFilter !== 'all') params.set('status', serviceTrackerFilter);
     if (serviceTrackerKeyword) params.set('keyword', serviceTrackerKeyword);
 
-    const res = await fetch(API + '/service-tracker/list?' + params, {
-      headers: { 'Authorization': 'Bearer ' + token }
-    }).then(r => r.json());
+    const res = await api('/service-tracker/list?' + params);
 
     if (!res.list || res.list.length === 0) {
       listEl.innerHTML = '<div style="text-align:center;padding:60px;color:#999;">📦 暂无服务交付订单</div>';
@@ -3751,9 +3750,7 @@ async function viewServiceDetail(orderId) {
   detailEl.innerHTML = '<div style="text-align:center;padding:40px;color:#999;">加载中...</div>';
 
   try {
-    const res = await fetch(API + '/service-tracker/order/' + orderId, {
-      headers: { 'Authorization': 'Bearer ' + token }
-    }).then(r => r.json());
+    const res = await api('/service-tracker/order/' + orderId);
 
     let html = `
       <div style="margin-bottom:16px;">
@@ -3876,10 +3873,7 @@ function closeServiceDetail() {
 async function initMilestones(orderId) {
   if (!confirm('确认为此订单初始化默认里程碑模板？已有里程碑将保留。')) return;
   try {
-    const res = await fetch(API + '/service-tracker/init/' + orderId, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }
-    }).then(r => r.json());
+    const res = await api('/service-tracker/init/' + orderId, {method: 'POST'});
     alert(res.message || '初始化成功');
     viewServiceDetail(orderId);
   } catch(e) {
@@ -3889,11 +3883,8 @@ async function initMilestones(orderId) {
 
 async function updateMilestoneStatus(id, status) {
   try {
-    await fetch(API + '/service-tracker/milestone/' + id, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-      body: JSON.stringify({ status })
-    }).then(r => r.json());
+    await api('/service-tracker/milestone/' + id, {method: 'PUT'})
+
     // 重新加载当前详情
     const orderId = document.querySelector('[onclick^="viewServiceDetail"]')?.getAttribute('onclick')?.match(/\d+/)?.[0];
     // 更简单地从面包屑找
@@ -3912,11 +3903,7 @@ function addMilestone(orderId) {
   const expected_date = prompt('预计完成日期 (YYYY-MM-DD，可选):') || '';
   const notes = prompt('备注（可选）:') || '';
 
-  fetch(API + '/service-tracker/milestone', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-    body: JSON.stringify({ order_id: orderId, title, description, expected_date, notes })
-  }).then(r => r.json()).then(res => {
+  api('/service-tracker/milestone', {method: 'POST'}).then(res => {
     alert(res.message || '添加成功');
     viewServiceDetail(orderId);
   }).catch(e => alert('添加失败: ' + e.message));
@@ -3929,11 +3916,7 @@ function editMilestone(id, orderId, title, description, expectedDate, notes) {
   const newDate = prompt('预计完成日期:', expectedDate);
   const newNotes = prompt('备注:', notes);
 
-  fetch(API + '/service-tracker/milestone/' + id, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-    body: JSON.stringify({ title: newTitle, description: newDesc, expected_date: newDate, notes: newNotes })
-  }).then(r => r.json()).then(res => {
+  api('/service-tracker/milestone/' + id, {method: 'PUT'}).then(res => {
     viewServiceDetail(orderId);
   }).catch(e => alert('更新失败: ' + e.message));
 }
@@ -3941,10 +3924,7 @@ function editMilestone(id, orderId, title, description, expectedDate, notes) {
 async function deleteMilestone(id) {
   if (!confirm('确定删除此里程碑？')) return;
   try {
-    await fetch(API + '/service-tracker/milestone/' + id, {
-      method: 'DELETE',
-      headers: { 'Authorization': 'Bearer ' + token }
-    }).then(r => r.json());
+    await api('/service-tracker/milestone/' + id, {method: 'DELETE'});
     location.reload();
   } catch(e) {
     alert('删除失败: ' + e.message);
@@ -3953,9 +3933,7 @@ async function deleteMilestone(id) {
 
 async function loadServiceStats() {
   try {
-    const res = await fetch(API + '/service-tracker/stats', {
-      headers: { 'Authorization': 'Bearer ' + token }
-    }).then(r => r.json());
+    const res = await api('/service-tracker/stats');
 
     let html = '<div style="background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.04);">';
     html += '<h3 style="margin-bottom:16px;">📊 服务交付统计</h3>';
@@ -3992,9 +3970,7 @@ async function loadServiceStats() {
 
 async function loadServiceTemplates() {
   try {
-    const res = await fetch(API + '/service-tracker/templates', {
-      headers: { 'Authorization': 'Bearer ' + token }
-    }).then(r => r.json());
+    const res = await api('/service-tracker/templates');
 
     let html = '<div style="background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.04);">';
     html += '<h3 style="margin-bottom:16px;">📋 默认里程碑模板</h3>';
@@ -5525,7 +5501,7 @@ async function takeoverChatbotSession(id) {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ session_id: id, admin_message: msg || '人工客服已接管，请稍候~' })
-    });
+  });
     alert('接管成功');
     closeModal();
     loadChatbotSessions();
@@ -9331,10 +9307,7 @@ if (token) {
   if (targetPage) loadPage(targetPage);
 } else if (autoLogin) {
   // 快捷方式自动登录
-  fetch(API + '/admin/login', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username: 'admin', password: 'admin123' })
-  }).then(r => r.json()).then(d => {
+  api('/admin/login', {method: 'POST'}).then(d => {
     if (d.token) {
       token = d.token;
       userPermissions = d.permissions || ['*'];
@@ -9366,7 +9339,7 @@ document.getElementById('loginUser')?.addEventListener('keydown', function(e) {
 const _origLogout = doLogout;
 doLogout = function() {
   // 调用退出登录 API
-  fetch(API + '/admin/logout', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token } }).catch(()=>{});
+  api('/admin/logout', {method: 'POST'}).catch(()=>{});
   token = '';
   userPermissions = [];
   userInfo = {};
