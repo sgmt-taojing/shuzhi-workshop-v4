@@ -3,6 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="数造工坊·数字化转型一站式服务平台 — 产品库/政策追踪/服务撮合/企业管家/AI诊断">
+<meta name="keywords" content="数造工坊,数字化转型,企业服务,产品库,政策追踪,服务撮合,AI诊断,马季粮油">
+<meta property="og:title" content="数造工坊 · 数字化转型一站式服务平台">
+<meta property="og:description" content="产品库/政策追踪/服务撮合/企业管家/AI诊断">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="zh_CN">
+<meta name="theme-color" content="#2563eb">
 <title>数造工坊 · 数字化转型一站式服务平台</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -11,8 +18,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 a{color:inherit;text-decoration:none}
 img{max-width:100%;display:block}
 .hidden{display:none!important}
-.loading{text-align:center;padding:40px;color:#9ca3af;font-size:13px}
-.empty{text-align:center;padding:40px;color:#9ca3af;font-size:13px}
+.loading{text-align:center;padding:40px;color:#9ca3af;font-size:13px}.skel{background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:skel 1.5s infinite;border-radius:6px}@keyframes skel{0%{background-position:200% 0}100%{background-position:-200% 0}}.skel-card{height:80px;margin-bottom:12px;border-radius:10px}.skel-line{height:14px;margin-bottom:8px;border-radius:4px}.skel-line.short{width:60%}
+.empty{text-align:center;padding:40px;color:#9ca3af;font-size:13px}html{scroll-behavior:smooth}
 
 /* Header */
 .h5-header{background:linear-gradient(135deg,#2563eb,#6366f1);color:#fff;padding:48px 20px 24px;text-align:center;position:relative;overflow:hidden}
@@ -130,35 +137,6 @@ img{max-width:100%;display:block}
 .h5-footer{text-align:center;padding:24px 16px 40px;color:#9ca3af;font-size:11px}
 .h5-footer a{color:var(--primary)}
 </style>
-<script>
-// 外网演示模式：检测非本地环境，API调用返回空数据不报错
-(function(){
-  var isLocal = location.hostname.includes('localhost') || location.hostname.includes('127.0.0.1') || location.hostname.includes('0.0.0.0');
-  if (!isLocal) {
-    window.__DEMO_MODE__ = true;
-    // 拦截 fetch，对 /api/ 请求返回空数据
-    var origFetch = window.fetch;
-    window.fetch = function(url, opts) {
-      if (typeof url === 'string' && (url.includes('/api/') || url.includes('/api'))) {
-        return Promise.resolve(new Response(JSON.stringify({list:[],data:[],items:[],total:0,ok:true}), {
-          status: 200, headers: {'Content-Type':'application/json'}
-        }));
-      }
-      return origFetch.apply(this, arguments);
-    };
-    // 显示演示模式提示
-    document.addEventListener('DOMContentLoaded', function(){
-      var b = document.createElement('div');
-      b.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#d4a017;color:#fff;text-align:center;font-size:12px;padding:6px;z-index:99999;font-family:sans-serif';
-      b.innerHTML = '演示模式 · API数据需本地后端运行 · <a href="https://github.com/sgmt-taojing/shuzhi-workshop-v4" style="color:#fff;text-decoration:underline">GitHub源码</a>';
-      document.body.insertBefore(b, document.body.firstChild);
-      var h = document.createElement('style');
-      h.textContent = 'body{padding-top:32px!important}';
-      document.head.appendChild(h);
-    });
-  }
-})();
-</script>
 </head>
 <body>
 
@@ -268,7 +246,7 @@ function closeDetail() {
 // ==================== 首页 ====================
 async function loadHome() {
   const el = $('#page-home');
-  el.innerHTML = '<div class="loading">加载中...</div>';
+  el.innerHTML = '<div class="skel skel-card"></div><div class="skel skel-card"></div><div class="skel skel-line"></div><div class="skel skel-line short"></div>';
   try {
     const [dashData, products, policies, articles, charityData] = await Promise.all([
       api('/admin/dashboard').catch(() => ({})),
