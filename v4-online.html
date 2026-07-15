@@ -374,12 +374,18 @@ td{padding:9px 12px;font-size:12px;border-bottom:1px solid #f1f5f9}tr:last-child
   <!-- 短视频 -->
   <div class="card">
     <div class="ct">短视频 · 一滴干净的油从宁夏花田到你的餐桌</div>
-    <div class="vf">
-      <div class="vp"></div>
+    <div class="vf" id="videoFrame">
+      <div class="vp" id="videoPlay" onclick="playVideo()"></div>
       <div style="position:absolute;bottom:20px;left:20px;right:20px;text-align:left;z-index:2">
         <div style="font-size:10px;letter-spacing:3px;color:var(--oil);margin-bottom:3px;text-shadow:0 1px 3px rgba(0,0,0,.5)">DOCUMENTARY · 5min</div>
         <div style="font-size:16px;font-weight:600;letter-spacing:1px;text-shadow:0 2px 6px rgba(0,0,0,.4)">一滴干净的油：从宁夏花田到你的餐桌</div>
         <div style="font-size:10px;opacity:.7;margin-top:2px;text-shadow:0 1px 3px rgba(0,0,0,.5)">西部 · 黄河 · 贺兰山 · 北纬38° · 物理压榨 · 30年匠心</div>
+      </div>
+    </div>
+    <div id="videoModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;align-items:center;justify-content:center" onclick="this.style.display='none'">
+      <div style="max-width:90%;max-height:90%">
+        <video controls autoplay style="width:100%;border-radius:12px" src=""></video>
+        <div style="color:#fff;text-align:center;margin-top:12px;font-size:13px">点击空白关闭 · 演示版暂无视频源，正式版将嵌入马季粮油纪录片</div>
       </div>
     </div>
     <div class="g3" style="margin-top:14px">
@@ -742,31 +748,31 @@ td{padding:9px 12px;font-size:12px;border-bottom:1px solid #f1f5f9}tr:last-child
   <div class="card">
     <div class="ct">产品矩阵 · 马季粮油5款核心SKU</div>
     <div class="pg" style="margin-top:14px">
-      <div class="pd">
+      <div class="pd" onclick="showProductDetail(this)">
         <div class="ph ph-flax"><span style="position:relative;z-index:2">🫙</span><span class="ptag pt-s">明星</span></div>
         <div class="pb2"><div class="pn">亚麻籽油 5L</div><div class="ps">α-亚麻酸≥55% · 物理压榨</div><div class="pp">¥168<small>/桶</small></div>
           <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:7px"><span class="pf pf-r">零售</span><span class="pf pf-b">大宗</span><span class="pf pf-g">扶贫</span><span class="pf pf-o">团购</span></div>
         </div>
       </div>
-      <div class="pd">
+      <div class="pd" onclick="showProductDetail(this)">
         <div class="ph ph-flax"><span style="position:relative;z-index:2">🧴</span><span class="ptag pt-n">热销</span></div>
         <div class="pb2"><div class="pn">亚麻籽油 1.6L</div><div class="ps">日常家用装 · 易保存</div><div class="pp">¥68<small>/瓶</small></div>
           <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:7px"><span class="pf pf-r">零售</span><span class="pf pf-b">大宗</span><span class="pf pf-o">团购</span><span class="pf pf-p">福利</span></div>
         </div>
       </div>
-      <div class="pd">
+      <div class="pd" onclick="showProductDetail(this)">
         <div class="ph ph-sun"><span style="position:relative;z-index:2">🌻</span></div>
         <div class="pb2"><div class="pn">葵花籽油 5L</div><div class="ps">物理压榨 · 清香不腻</div><div class="pp">¥128<small>/桶</small></div>
           <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:7px"><span class="pf pf-r">零售</span><span class="pf pf-b">大宗</span><span class="pf pf-g">扶贫</span></div>
         </div>
       </div>
-      <div class="pd">
+      <div class="pd" onclick="showProductDetail(this)">
         <div class="ph ph-gift"><span style="position:relative;z-index:2">🎁</span><span class="ptag pt-g">礼盒</span></div>
         <div class="pb2"><div class="pn">亚麻籽油礼盒装</div><div class="ps">1.6L×2瓶 · 送礼佳品</div><div class="pp">¥198<small>/盒</small></div>
           <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:7px"><span class="pf pf-b">大宗</span><span class="pf pf-p">福利</span></div>
         </div>
       </div>
-      <div class="pd">
+      <div class="pd" onclick="showProductDetail(this)">
         <div class="ph ph-blend"><span style="position:relative;z-index:2">🍶</span><span class="ptag pt-d">日常</span></div>
         <div class="pb2"><div class="pn">调和油 5L</div><div class="ps">科学配比 · 营养均衡</div><div class="pp">¥108<small>/桶</small></div>
           <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:7px"><span class="pf pf-r">零售</span><span class="pf pf-b">大宗</span><span class="pf pf-c">食堂</span></div>
@@ -816,8 +822,21 @@ td{padding:9px 12px;font-size:12px;border-bottom:1px solid #f1f5f9}tr:last-child
   <div class="ft-tag">SHUZHI WORKSHOP · V4.0</div>
   <p style="font-size:14px;font-weight:700;color:#fff">数智工坊 · 企业后服务</p>
   <p style="font-size:11px;margin-top:5px">企业宣传三维一体 · 源头甄选 · 产业链撮合 · 让天下没有难做的生意</p>
-  <p style="font-size:10px;margin-top:8px;opacity:.5">售前演示专用 · 双击打开即可演示</p>
+  <div style="max-width:500px;margin:16px auto 0;background:rgba(255,255,255,.1);border-radius:12px;padding:16px">
+    <div style="font-size:12px;font-weight:700;color:var(--oil);margin-bottom:10px">📞 预约演示 / 咨询合作</div>
+    <input id="consultName" placeholder="您的姓名" style="width:48%;padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-size:12px;margin-bottom:8px;margin-right:2%">
+    <input id="consultPhone" placeholder="联系电话" style="width:48%;padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-size:12px;margin-bottom:8px">
+    <textarea id="consultMsg" placeholder="简要描述您的需求" style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-size:12px;margin-bottom:8px;height:60px;resize:none"></textarea>
+    <button onclick="submitConsult()" style="width:100%;padding:8px;border:none;border-radius:8px;background:var(--oil);color:#fff;font-size:13px;font-weight:700;cursor:pointer">提交咨询</button>
+  </div>
+  <p style="font-size:10px;margin-top:12px;opacity:.5">售前演示专用 · 双击打开即可演示</p>
 </footer>
+
+<div id="productModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
+  <div style="background:#fff;border-radius:14px;max-width:460px;width:90%;padding:24px;max-height:80vh;overflow-y:auto">
+    <div id="pmContent"></div>
+  </div>
+</div>
 
 <script>
 (function(){
@@ -843,6 +862,9 @@ td{padding:9px 12px;font-size:12px;border-bottom:1px solid #f1f5f9}tr:last-child
   window.addEventListener('load',function(){setTimeout(function(){var l=document.getElementById('loader');if(l){l.classList.add('hide');setTimeout(function(){l.remove()},600)}},300)});
 })();
 function toggleV4Theme(){var t=document.documentElement.getAttribute('data-theme');if(t==='dark'){document.documentElement.removeAttribute('data-theme');localStorage.setItem('v4_theme','light');var e=document.getElementById('v4ThemeToggle');if(e)e.textContent='🌙'}else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('v4_theme','dark');var e=document.getElementById('v4ThemeToggle');if(e)e.textContent='☀️'}}
+function playVideo(){var m=document.getElementById('videoModal');m.style.display='flex'}
+function showProductDetail(el){var name=el.querySelector('.pn')?.textContent||'';var price=el.querySelector('.pp')?.textContent||'';var desc=el.querySelector('.ps')?.textContent||'';var tags=Array.from(el.querySelectorAll('.pf')).map(t=>t.textContent).join(' / ')||'';document.getElementById('pmContent').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3 style="font-size:18px;color:#0a1628">'+name+'</h3><span onclick="document.getElementById(\'productModal\').style.display=\'none\'" style="cursor:pointer;font-size:20px;color:#9ca3af">✕</span></div><div style="font-size:13px;color:#6b7280;margin-bottom:8px">'+desc+'</div><div style="font-size:22px;font-weight:800;color:#d4a017;margin-bottom:12px">'+price+'</div><div style="margin-bottom:16px">'+tags.split('/').map(t=>'<span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;background:#f0f4ff;color:#2563eb;margin-right:4px">'+t+'</span>').join('')+'</div><div style="border-top:1px solid #e5e7eb;padding-top:12px;margin-bottom:12px"><div style="font-size:12px;font-weight:700;color:#0a1628;margin-bottom:6px">产品详情</div><div style="font-size:12px;color:#6b7280;line-height:1.8">宁夏马季食用油有限公司出品，采用北纬38°黄金亚麻籽，物理压榨工艺，保留天然营养。α-亚麻酸含量≥55%，远超国家标准。</div></div><div style="border-top:1px solid #e5e7eb;padding-top:12px;margin-bottom:16px"><div style="font-size:12px;font-weight:700;color:#0a1628;margin-bottom:6px">资质认证</div><div style="font-size:11px;color:#6b7280">宁夏好粮油 · 清真认证 · SC食品生产许可 · ISO22000</div></div><button onclick="document.getElementById(\'productModal\').style.display=\'none\';document.getElementById(\'consultName\').scrollIntoView({behavior:\'smooth\'})" style="width:100%;padding:10px;border:none;border-radius:10px;background:#d4a017;color:#fff;font-size:14px;font-weight:700;cursor:pointer">咨询购买</button>';document.getElementById('productModal').style.display='flex'}
+function submitConsult(){var n=document.getElementById('consultName').value;var p=document.getElementById('consultPhone').value;if(!n||!p){alert('请填写姓名和电话');return}alert('提交成功！演示版不会真实提交。\n正式版将自动创建咨询工单并通知客服。');document.getElementById('consultName').value='';document.getElementById('consultPhone').value='';document.getElementById('consultMsg').value=''}
 (function(){var t=localStorage.getItem('v4_theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');setTimeout(function(){var e=document.getElementById('v4ThemeToggle');if(e)e.textContent='☀️'},500)}})();
 </script>
 </body>
