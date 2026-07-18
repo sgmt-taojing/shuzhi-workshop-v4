@@ -116,7 +116,6 @@
   [data-theme="dark"] input,[data-theme="dark"] select,[data-theme="dark"] textarea{background:#0f172a;color:var(--text);border-color:var(--border)}
   [data-theme="dark"] table th{background:#1e293b}
   [data-theme="dark"] table tr:hover td{background:rgba(59,130,246,.08)}
-</style>
 
 /* === Toast 通知组件 === */
 .toast-container{position:fixed;top:20px;right:20px;z-index:99999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
@@ -205,6 +204,10 @@ function confirmDialog(msg, callback) {
 <div class="app" id="app">
   <div class="sidebar">
     <div class="sidebar-brand">🏭 数造工坊 <span id="themeToggle" onclick="toggleTheme()" style="cursor:pointer;font-size:14px;opacity:.6;float:right">🌙</span></div>
+    
+    <div style="padding:8px 16px;border-bottom:1px solid rgba(255,255,255,.1)">
+      <input id="globalSearch" type="text" placeholder="搜索功能... (⌘K)" style="width:100%;padding:6px 10px;border:1px solid rgba(255,255,255,.2);border-radius:6px;font-size:12px;background:rgba(255,255,255,.05);color:rgba(255,255,255,.8)" oninput="filterNav(this.value)">
+    </div>
     <nav class="sidebar-nav">
       <a class="nav-item active" data-page="dashboard">📊 仪表盘</a>
       <a class="nav-item" data-page="analytics-dashboard">📈 数据分析</a>
