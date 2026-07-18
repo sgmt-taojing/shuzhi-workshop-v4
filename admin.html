@@ -225,6 +225,7 @@ function confirmDialog(msg, callback) {
     </div>
     <nav class="sidebar-nav">
       <a class="nav-item active" data-page="dashboard">📊 仪表盘</a>
+      <a class="nav-item" data-page="monitor">🖥️ 运营监控</a>
       <a class="nav-item" data-page="analytics-dashboard">📈 数据分析</a>
       <div class="nav-section-label" onclick="toggleNavGroup(this)">客户与CRM<span class="nav-group-count">4</span></div><div class="nav-group">
       <a class="nav-item parent" data-page="contacts">📞 咨询线索</a>
@@ -502,6 +503,7 @@ function loadPage(page) {
   currentPage = page;
   const loaders = {
     dashboard: loadDashboard,
+    monitor: loadMonitor,
     'analytics-dashboard': loadAnalyticsDashboard,
     contacts: loadContacts,
     onboardings: loadOnboardings,
@@ -615,6 +617,294 @@ async function loadLeadsPipeline() {
       </table>` : '<div class="empty">暂无线索数据</div>'}
     </div></div>
   `;
+}
+
+// --- Monitor Dashboard (全视角运营监控) ---
+async function loadMonitor() {
+  const mc = document.getElementById('mainContent');
+  mc.innerHTML = `
+    <div class="header"><h1>🖥️ 全视角运营监控</h1><span style="color:var(--text2);font-size:13px" id="monTime">加载中...</span></div>
+    <div id="monContent"><div style="text-align:center;padding:60px;color:#999">正在加载监控数据...</div></div>
+  `;
+  document.getElementById('monTime').textContent = new Date().toLocaleString('zh-CN');
+
+  try {
+    const [overview, roleUsage, featureUsage, processFlow, perf] = await Promise.all([
+      api('/monitor/overview').catch(() => null),
+      api('/monitor/role-usage').catch(() => null),
+      api('/monitor/feature-usage').catch(() => null),
+      api('/monitor/process-flow').catch(() => null),
+      api('/monitor/performance').catch(() => null),
+    ]);
+
+    if (!overview) { document.getElementById('monContent').innerHTML = '<div style="text-align:center;padding:60px;color:#f87171">监控数据加载失败</div>'; return; }
+
+    // === 1. 核心指标卡片 ===
+    const tx = overview.transaction || {};
+    const ag = overview.agent || {};
+    const ct = overview.contract || {};
+    const cs = overview.customer || {};
+    const sv = overview.service || {};
+    const rv = overview.review || {};
+    const mk = overview.marketing || {};
+    const ai = overview.ai || {};
+
+    // === 2. 流程漏斗 ===
+    const pf = processFlow || {};
+    const of = pf.orderFlow || {};
+    const lf = pf.leadFlow || {};
+    const cf = pf.contractFlow || {};
+    const df = pf.deliveryFlow || {};
+    const tf = pf.ticketFlow || {};
+
+    // === 3. 角色使用 ===
+    const ru = roleUsage || { roles: [], topActors: [], actionStats: [], severityStats: {} };
+
+    // === 4. 性能 ===
+    const pf2 = perf || { apiStats: {}, activity24h: {}, security: {}, systemHealth: {} };
+
+    // 漏斗条
+    function funnelBar(label, count, max, color) {
+      const w = max > 0 ? Math.max(count / max * 100, 3) : 0;
+      return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <span style="width:70px;font-size:11px;color:var(--text2);text-align:right">${label}</span>
+        <div style="flex:1;background:rgba(255,255,255,.05);border-radius:4px;height:18px;position:relative;overflow:hidden">
+          <div style="width:${w}%;height:100%;background:${color};border-radius:4px;transition:width .6s"></div>
+        </div>
+        <span style="width:36px;font-size:12px;font-weight:600;color:var(--text)">${count}</span>
+      </div>`;
+    }
+
+    // 流程状态徽章
+    function statusBadge(count, label, color) {
+      return `<span style="display:inline-block;background:${color}20;color:${color};padding:2px 10px;border-radius:12px;font-size:11px;margin:2px">${label}: ${count}</span>`;
+    }
+
+    // 漏斗最大值
+    const orderMax = Math.max(of.placed||0, of.paid||0, of.processing||0, of.completed||0, 1);
+    const leadMax = Math.max(lf.total||0, lf.new||0, lf.contacted||0, lf.locked||0, lf.converted||0, 1);
+    const contractMax = Math.max(cf.total||0, cf.draft||0, cf.reviewing||0, cf.signed||0, cf.active||0, 1);
+
+    // 安全事件列表
+    const secEvents = (pf2.security && pf2.security.recentEvents) || [];
+    const secList = secEvents.length ? secEvents.map(e => `
+      <tr><td style="font-size:11px">${(e.time||'').slice(5,16)}</td>
+      <td style="font-size:11px">${e.action||''}</td>
+      <td style="font-size:11px;color:${e.severity==='error'?'#f87171':'#fbbf24'}">${e.severity||''}</td>
+      <td style="font-size:11px;color:var(--text2)">${(e.description||'').slice(0,40)}</td>
+      <td style="font-size:11px;color:var(--text2)">${e.ip||'-'}</td></tr>`
+    ).join('') : '<tr><td colspan="5" style="text-align:center;color:#999;padding:12px">暂无安全事件</td></tr>';
+
+    // 角色使用表
+    const roleRows = (ru.roles || []).length ? ru.roles.map(r => `
+      <tr><td style="font-size:12px;font-weight:600">${r.name}</td>
+      <td style="font-size:12px">${r.users}</td>
+      <td style="font-size:12px;color:var(--primary)">${r.operations}</td>
+      <td style="font-size:12px;color:var(--text2)">${r.avgOpsPerUser}</td>
+      <td style="font-size:11px;color:var(--text2)">${(r.members||[]).join(', ')}</td></tr>`
+    ).join('') : '<tr><td colspan="5" style="text-align:center;color:#999;padding:12px">暂无角色操作数据</td></tr>';
+
+    // 24h 活动柱状图
+    const hourlyData = (pf2.activity24h && pf2.activity24h.hourly) || [];
+    const maxHourly = Math.max(...hourlyData.map(h => h.count), 1);
+    const hourChart = hourlyData.length ? hourlyData.map(h => {
+      const h2 = h.count / maxHourly * 100;
+      return `<div style="display:inline-block;width:3.5%;margin:0 1px;vertical-align:bottom">
+        <div style="height:${h2*1.2}px;background:linear-gradient(to top,#3b82f6,#60a5fa);border-radius:2px 2px 0 0;min-height:2px"></div>
+        <div style="font-size:8px;color:var(--text2);text-align:center;margin-top:2px">${h.hour}</div>
+      </div>`;
+    }).join('') : '<span style="color:#999;font-size:12px">暂无24小时活动数据</span>';
+
+    // 功能模块使用 Top 10
+    const modUsage = (featureUsage && featureUsage.moduleUsage) || [];
+    const modRows = modUsage.length ? modUsage.slice(0,10).map((m,i) => `
+      <tr><td style="font-size:12px">${i+1}</td>
+      <td style="font-size:12px;font-weight:600">${m.module}</td>
+      <td style="font-size:12px;color:var(--primary)">${m.count}</td>
+      <td style="font-size:12px;color:var(--text2)">${m.uniqueUsers||0}</td>
+      <td style="font-size:11px;color:var(--text2)">${(m.lastUsed||'').slice(5,16)}</td></tr>`
+    ).join('') : '<tr><td colspan="5" style="text-align:center;color:#999;padding:12px">暂无功能使用数据（运营后自动采集）</td></tr>';
+
+    // H5 用户行为
+    const h5Events = (featureUsage && featureUsage.h5Events) || [];
+    const h5Html = h5Events.length ? h5Events.map(e => `
+      <span style="display:inline-block;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:16px;padding:4px 12px;font-size:12px;margin:2px">${e.type}: <b style="color:var(--primary)">${e.count}</b></span>`
+    ).join('') : '<span style="color:#999;font-size:12px">暂无H5用户行为数据</span>';
+
+    document.getElementById('monContent').innerHTML = `
+      <style>
+        .mon-section { background:var(--card);border-radius:12px;padding:20px;margin-bottom:16px;border:1px solid var(--border) }
+        .mon-section-title { font-size:15px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px }
+        .mon-kpi { display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px }
+        .mon-kpi-card { background:var(--card);border-radius:10px;padding:14px;text-align:center;border:1px solid var(--border) }
+        .mon-kpi-card .v { font-size:22px;font-weight:700 }
+        .mon-kpi-card .l { font-size:11px;color:var(--text2);margin-top:2px }
+        .mon-grid2 { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px }
+        .mon-table { width:100%;border-collapse:collapse }
+        .mon-table th { font-size:11px;color:var(--text2);text-align:left;padding:6px 8px;border-bottom:1px solid var(--border) }
+        .mon-table td { padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.03) }
+        @media(max-width:1200px){ .mon-kpi{grid-template-columns:repeat(3,1fr)} .mon-grid2{grid-template-columns:1fr} }
+        @media(max-width:768px){ .mon-kpi{grid-template-columns:repeat(2,1fr)} }
+      </style>
+
+      <!-- KPI 指标卡片 -->
+      <div class="mon-kpi">
+        <div class="mon-kpi-card"><div class="v" style="color:#34d399">¥${(tx.totalRevenue||0).toLocaleString()}</div><div class="l">总成交额</div></div>
+        <div class="mon-kpi-card"><div class="v" style="color:#60a5fa">${tx.totalOrders||0}</div><div class="l">总订单</div></div>
+        <div class="mon-kpi-card"><div class="v" style="color:#fbbf24">${tx.processingOrders||0}</div><div class="l">处理中</div></div>
+        <div class="mon-kpi-card"><div class="v" style="color:#a78bfa">${ct.total||0}</div><div class="l">合同总数</div></div>
+        <div class="mon-kpi-card"><div class="v" style="color:#f87171">${sv.openTickets||0}</div><div class="l">待处理工单</div></div>
+        <div class="mon-kpi-card"><div class="v" style="color:#34d399">${rv.avgRating||0}</div><div class="l">平均评分</div></div>
+      </div>
+
+      <!-- 第二行 KPI -->
+      <div class="mon-kpi">
+        <div class="mon-kpi-card"><div class="v" style="color:#60a5fa">${cs.total||0}</div><div class="l">CRM客户</div></div>
+        <div class="mon-kpi-card"><div class="v" style="color:#60a5fa">${cs.wechatUsers||0}</div><div class="l">微信用户</div></div>
+        <div class="mon-kpi-card"><div class="v" style="color:#a78bfa">${ag.total||0}</div><div class="l">活跃代理</div></div>
+        <div class="mon-kpi-card"><div class="v" style="color:#a78bfa">${ag.totalLeads||0}</div><div class="l">代理线索</div></div>
+        <div class="mon-kpi-card"><div class="v" style="color:#34d399">${mk.activeCampaigns||0}</div><div class="l">活跃营销</div></div>
+        <div class="mon-kpi-card"><div class="v" style="color:#60a5fa">${ai.chatbotMessages||0}</div><div class="l">AI消息数</div></div>
+      </div>
+
+      <!-- 交易监控 + 流程监控 -->
+      <div class="mon-grid2">
+        <div class="mon-section">
+          <div class="mon-section-title">🛒 交易监控</div>
+          <div style="margin-bottom:12px">
+            ${statusBadge(tx.completedOrders||0,'已完成','#34d399')}
+            ${statusBadge(tx.processingOrders||0,'处理中','#fbbf24')}
+            ${statusBadge(tx.paidOrders||0,'已支付','#60a5fa')}
+            ${statusBadge(tx.cancelledOrders||0,'已取消','#f87171')}
+            ${statusBadge(tx.refundedOrders||0,'已退款','#f87171')}
+          </div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:8px">
+            总成交额: <b style="color:#34d399">¥${(tx.totalRevenue||0).toLocaleString()}</b> ·
+            待收金额: <b style="color:#fbbf24">¥${(tx.pendingRevenue||0).toLocaleString()}</b> ·
+            退款金额: <b style="color:#f87171">¥${(tx.refundAmount||0).toLocaleString()}</b>
+          </div>
+          <div style="font-size:12px;color:var(--text2)">
+            退款率: <b style="color:${(tx.refundRate||0)>5?'#f87171':'#34d399'}">${tx.refundRate||0}%</b> ·
+            客单价: <b style="color:var(--primary)">¥${(tx.avgOrderValue||0).toLocaleString()}</b>
+          </div>
+        </div>
+        <div class="mon-section">
+          <div class="mon-section-title">📦 订单流程漏斗</div>
+          ${funnelBar('下单', of.placed||0, orderMax, '#60a5fa')}
+          ${funnelBar('已支付', of.paid||0, orderMax, '#3b82f6')}
+          ${funnelBar('处理中', of.processing||0, orderMax, '#a78bfa')}
+          ${funnelBar('已完成', of.completed||0, orderMax, '#34d399')}
+          ${funnelBar('已取消', of.cancelled||0, orderMax, '#f87171')}
+          ${funnelBar('已退款', of.refunded||0, orderMax, '#ef4444')}
+        </div>
+      </div>
+
+      <!-- 代理线索 + 合同流程 -->
+      <div class="mon-grid2">
+        <div class="mon-section">
+          <div class="mon-section-title">🎯 代理线索转化漏斗</div>
+          ${funnelBar('总线索', lf.total||0, leadMax, '#60a5fa')}
+          ${funnelBar('新线索', lf.new||0, leadMax, '#34d399')}
+          ${funnelBar('已联系', lf.contacted||0, leadMax, '#fbbf24')}
+          ${funnelBar('已锁定', lf.locked||0, leadMax, '#a78bfa')}
+          ${funnelBar('已转化', lf.converted||0, leadMax, '#10b981')}
+          ${funnelBar('已流失', lf.lost||0, leadMax, '#f87171')}
+          <div style="font-size:12px;color:var(--text2);margin-top:8px">
+            转化率: <b style="color:${(ag.conversionRate||0)>0?'#34d399':'#f87171'}">${ag.conversionRate||0}%</b> ·
+            冻结佣金: <b style="color:#fbbf24">¥${(ag.frozenCommission||0).toLocaleString()}</b>
+          </div>
+        </div>
+        <div class="mon-section">
+          <div class="mon-section-title">📝 合同流程</div>
+          ${funnelBar('总数', cf.total||0, contractMax, '#60a5fa')}
+          ${funnelBar('草拟', cf.draft||0, contractMax, '#94a3b8')}
+          ${funnelBar('审核中', cf.reviewing||0, contractMax, '#fbbf24')}
+          ${funnelBar('已签', cf.signed||0, contractMax, '#a78bfa')}
+          ${funnelBar('生效中', cf.active||0, contractMax, '#34d399')}
+          ${funnelBar('终止', cf.terminated||0, contractMax, '#f87171')}
+          <div style="font-size:12px;color:var(--text2);margin-top:8px">
+            合同总金额: <b style="color:var(--primary)">¥${(ct.totalAmount||0).toLocaleString()}</b>
+          </div>
+        </div>
+      </div>
+
+      <!-- 角色使用监控 + 功能使用监控 -->
+      <div class="mon-grid2">
+        <div class="mon-section">
+          <div class="mon-section-title">👥 角色使用监控</div>
+          <table class="mon-table"><thead><tr><th>角色</th><th>人数</th><th>操作数</th><th>人均</th><th>成员</th></tr></thead><tbody>${roleRows}</tbody></table>
+        </div>
+        <div class="mon-section">
+          <div class="mon-section-title">📊 功能使用 Top 10</div>
+          <table class="mon-table"><thead><tr><th>#</th><th>模块</th><th>次数</th><th>用户数</th><th>最近</th></tr></thead><tbody>${modRows}</tbody></table>
+        </div>
+      </div>
+
+      <!-- H5 用户行为 + 24h 活动 -->
+      <div class="mon-grid2">
+        <div class="mon-section">
+          <div class="mon-section-title">📱 H5 用户行为</div>
+          <div style="line-height:2.4">${h5Html}</div>
+        </div>
+        <div class="mon-section">
+          <div class="mon-section-title">🕐 24小时活动趋势</div>
+          <div style="height:80px;display:flex;align-items:flex-end;gap:1px;padding:8px 0">
+            ${hourChart}
+          </div>
+          <div style="font-size:12px;color:var(--text2);margin-top:4px">
+            24h 活动总数: <b style="color:var(--primary)">${(pf2.activity24h && pf2.activity24h.total)||0}</b>
+          </div>
+        </div>
+      </div>
+
+      <!-- 性能监控 + 安全事件 -->
+      <div class="mon-grid2">
+        <div class="mon-section">
+          <div class="mon-section-title">⚡ 性能监控</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px">
+            <div style="text-align:center"><div style="font-size:18px;font-weight:700;color:${(pf2.apiStats||{}).errorRate>5?'#f87171':'#34d399'}">${(pf2.apiStats||{}).errorRate||0}%</div><div style="font-size:10px;color:var(--text2)">错误率</div></div>
+            <div style="text-align:center"><div style="font-size:18px;font-weight:700;color:var(--primary)">${(pf2.apiStats||{}).totalRequests||0}</div><div style="font-size:10px;color:var(--text2)">总请求数</div></div>
+            <div style="text-align:center"><div style="font-size:18px;font-weight:700;color:#fbbf24">${(pf2.apiStats||{}).slowRequests||0}</div><div style="font-size:10px;color:var(--text2)">慢请求</div></div>
+          </div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.8">
+            数据库表: <b>${(pf2.systemHealth||{}).dbTables||0}</b> ·
+            运行时长: <b>${Math.floor(((pf2.systemHealth||{}).uptime||0)/3600)}h</b> ·
+            内存: <b>${(pf2.systemHealth||{}).memoryMB||0}MB</b> ·
+            Node: <b>${(pf2.systemHealth||{}).nodeVersion||''}</b>
+          </div>
+        </div>
+        <div class="mon-section">
+          <div class="mon-section-title">🔒 安全事件（最近 ${(pf2.security||{}).totalEvents||0} 条）</div>
+          <table class="mon-table"><thead><tr><th>时间</th><th>动作</th><th>级别</th><th>描述</th><th>IP</th></tr></thead><tbody>${secList}</tbody></table>
+        </div>
+      </div>
+
+      <!-- 评价分布 + AI/Chatbot -->
+      <div class="mon-grid2">
+        <div class="mon-section">
+          <div class="mon-section-title">⭐ 评价分布</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+            <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:#34d399">${rv.fiveStar||0}</div><div style="font-size:10px;color:var(--text2)">5星</div></div>
+            <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:#60a5fa">${rv.fourStar||0}</div><div style="font-size:10px;color:var(--text2)">4星</div></div>
+            <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:#fbbf24">${rv.threeStar||0}</div><div style="font-size:10px;color:var(--text2)">3星</div></div>
+            <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:#f87171">${rv.belowThree||0}</div><div style="font-size:10px;color:var(--text2)">3星以下</div></div>
+          </div>
+          <div style="font-size:12px;color:var(--text2);margin-top:8px">总评价: ${rv.total||0} · 平均分: <b style="color:#34d399">${rv.avgRating||0}</b></div>
+        </div>
+        <div class="mon-section">
+          <div class="mon-section-title">🤖 AI & Chatbot</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+            <div style="text-align:center"><div style="font-size:18px;font-weight:700;color:var(--primary)">${ai.chatbotSessions||0}</div><div style="font-size:10px;color:var(--text2)">会话总数</div></div>
+            <div style="text-align:center"><div style="font-size:18px;font-weight:700;color:#34d399">${ai.activeSessions||0}</div><div style="font-size:10px;color:var(--text2)">活跃会话</div></div>
+            <div style="text-align:center"><div style="font-size:18px;font-weight:700;color:#fbbf24">${ai.chatbotMessages||0}</div><div style="font-size:10px;color:var(--text2)">消息数</div></div>
+            <div style="text-align:center"><div style="font-size:18px;font-weight:700;color:#a78bfa">${ai.faqs||0}</div><div style="font-size:10px;color:var(--text2)">FAQ数</div></div>
+          </div>
+        </div>
+      </div>
+    `;
+  } catch(e) {
+    document.getElementById('monContent').innerHTML = '<div style="text-align:center;padding:40px;color:#f87171">监控面板加载失败: '+e.message+'</div>';
+  }
 }
 
 // --- Dashboard ---
