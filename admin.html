@@ -100,7 +100,8 @@
     .sidebar{width:180px}.main{padding:16px}.header h1{font-size:18px}
   }
   @media(max-width:768px){
-    .app.active{flex-direction:column}.sidebar{width:100%;height:auto;max-height:50px;overflow:hidden;position:relative;z-index:100}.sidebar.expanded{max-height:60vh;overflow-y:auto}.sidebar-brand{padding:12px 16px;font-size:16px;display:flex;justify-content:space-between;align-items:center}.sidebar-brand::after{content:'☰';font-size:18px;cursor:pointer}.main{padding:12px}.header{flex-wrap:wrap;gap:8px}.header h1{font-size:16px}
+    .app.active{flex-direction:column}.sidebar{width:100%;height:auto;max-height:50px;overflow:hidden;position:relative;z-index:100}.sidebar.expanded{max-height:60vh;overflow-y:auto}.sidebar-brand{padding:12px 16px;font-size:16px;display:flex;justify-content:space-between;align-items:center}.sidebar-brand::after{content:'☰';font-size:18px;cursor:pointer}
+      .sidebar-brand{cursor:pointer}.main{padding:12px}.header{flex-wrap:wrap;gap:8px}.header h1{font-size:16px}
   }
   @media(max-width:480px){
     .main{padding:8px}.header{margin-bottom:12px}
@@ -117,37 +118,58 @@
   [data-theme="dark"] table tr:hover td{background:rgba(59,130,246,.08)}
 </style>
 
+/* === Toast 通知组件 === */
+.toast-container{position:fixed;top:20px;right:20px;z-index:99999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast-item{padding:12px 20px;border-radius:8px;font-size:14px;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.15);pointer-events:auto;animation:toastIn .3s ease;max-width:360px;word-break:break-word}
+.toast-item.toast-success{background:#10b981}
+.toast-item.toast-error{background:#ef4444}
+.toast-item.toast-warning{background:#f59e0b}
+.toast-item.toast-info{background:#3b82f6}
+.toast-item.toast-out{animation:toastOut .3s ease forwards}
+@keyframes toastIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes toastOut{to{transform:translateX(100%);opacity:0}}
+@media(max-width:480px){.toast-container{left:12px;right:12px;top:12px}.toast-item{max-width:none}}
+</style>
 
-
+<script>
+function toast(msg, type, duration) {
+  type = type || 'info';
+  duration = duration || 3000;
+  var c = document.querySelector('.toast-container');
+  if (!c) { c = document.createElement('div'); c.className = 'toast-container'; document.body.appendChild(c); }
+  var t = document.createElement('div');
+  t.className = 'toast-item toast-' + type;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(function() {
+    t.classList.add('toast-out');
+    setTimeout(function() { t.remove(); }, 300);
+  }, duration);
+}
+function confirmDialog(msg, callback) {
+  var overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:99999;display:flex;align-items:center;justify-content:center';
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#fff;border-radius:12px;padding:24px;max-width:360px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.2)';
+  box.innerHTML = '<div style="font-size:15px;color:#333;margin-bottom:20px">' + msg + '</div><div style="display:flex;gap:12px;justify-content:flex-end"><button class="btn-cancel" style="padding:8px 20px;border:1px solid #ddd;border-radius:6px;background:#fff;cursor:pointer;font-size:14px">取消</button><button class="btn-ok" style="padding:8px 20px;border:none;border-radius:6px;background:#ef4444;color:#fff;cursor:pointer;font-size:14px">确定</button></div>';
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+  box.querySelector('.btn-cancel').onclick = function() { overlay.remove(); };
+  box.querySelector('.btn-ok').onclick = function() { overlay.remove(); if (callback) callback(); };
+  overlay.onclick = function(e) { if (e.target === overlay) overlay.remove(); };
+}
+</script>
 
 <script>
 (function(){
   var isLocal = location.hostname.includes("localhost") || location.hostname.includes("127.0.0.1") || location.hostname.includes("0.0.0.0");
   if (!isLocal) {
     window.__DEMO_MODE__ = true;
-    var DEMO_DATA = {"products": {"list": [{"id": 1, "title": "工程项目管理系统", "subtitle": "从立项到结算，一条线管到底", "category": "工程管理", "price": "19800"}, {"id": 2, "title": "ERP数字化全家桶", "subtitle": "一套系统，管人财物产供销", "category": "综合管理", "price": "49800"}, {"id": 3, "title": "生产MES系统", "subtitle": "让车间从黑箱变透明", "category": "智能制造", "price": "29800"}, {"id": 4, "title": "进销存管理系统", "subtitle": "库存准、账清楚、周转快", "category": "供应链", "price": "9800"}, {"id": 5, "title": "财务管理系统", "subtitle": "从手工记账到智能财务", "category": "财务", "price": "12800"}, {"id": 6, "title": "CRM客户管理系统", "subtitle": "线索到成交，一个漏斗看清楚", "category": "销售", "price": "8800"}, {"id": 7, "title": "OA协同办公系统", "subtitle": "审批快、协作顺、办公在线", "category": "协同办公", "price": "6800"}, {"id": 8, "title": "HRM人力资源系统", "subtitle": "从招聘到离职，人事全数字化", "category": "人力资源", "price": "9800"}]}, "articles": {"list": [{"id": 1, "title": "为什么你的ERP总是用不起来？", "category": "深度观点", "summary": "ERP系统上线失败常见原因分析：流程梳理缺失、领导重视不足、培训不到位、数据质量差、期望过高。"}, {"id": 2, "title": "从Excel到ERP：一家电力工程公司30天的蜕变", "category": "客户案例", "summary": "一家电力工程公司30天完成数字化转型，项目透明度提升90%，成本超预算率从15%降到3%。"}, {"id": 3, "title": "库存永远对不上？问题出在这5个地方", "category": "痛点拆解", "summary": "库存对不上的5个常见原因：出入库不规范、批次管理缺失、单位换算错误、退货流程不完整、盘点方法不对。"}, {"id": 4, "title": "2026年中小企业数字化转型政策汇编", "category": "政策解读", "summary": "最新税收优惠、补贴申报、数字化改造政策一文看懂。"}, {"id": 5, "title": "RPA机器人：把财务从重复录入中解放出来", "category": "方案解读", "summary": "一个RPA机器人每天干完3个人的活儿，还不出错。"}, {"id": 6, "title": "老板每天看5分钟就够了：经营驾驶舱怎么搭", "category": "方案解读", "summary": "数据不是越多越好，关键指标一页看完，异常自动预警。"}]}, "policies": {"list": [{"id": 1, "title": "关于推进中小企业数字化转型的指导意见", "level": "national", "summary": "明确中小企业数字化转型路径，提供资金支持、平台服务和人才培训等全方位扶持。"}, {"id": 2, "title": "山东省数字经济发展促进条例", "level": "shandong", "summary": "山东省数字经济发展的地方法规，涵盖数据要素、产业数字化、数字产业化等方面。"}, {"id": 3, "title": "宁夏回族自治区「十四五」数字经济发展规划", "level": "ningxia", "summary": "宁夏数字经济五年规划，打造西部数字经济高地，推进算力枢纽节点建设。"}, {"id": 4, "title": "关于推进新型基础设施建设的若干政策措施", "level": "national", "summary": "国家层面推进新基建的政策包，涵盖5G、工业互联网、AI算力等方向。"}, {"id": 5, "title": "山东省关于支持民营企业高质量发展的若干措施", "level": "shandong", "summary": "山东支持民企发展30条，涵盖减税降费、金融支持、数字化转型等方面。"}, {"id": 6, "title": "宁夏关于加快数字经济人才培养的实施意见", "level": "ningxia", "summary": "宁夏数字经济人才专项政策，涵盖引进、培养、留用全链条。"}, {"id": 7, "title": "国家关于深化「互联网+先进制造业」发展工业互联网的指导意见", "level": "national", "summary": "国务院层面的工业互联网发展顶层设计，明确网络、平台、安全三大体系。"}, {"id": 9, "title": "《制造业数字化转型行动方案》", "level": "national", "summary": "围绕制造业数字化转型，提出到2027年实现规上制造业企业数字化改造全覆盖，培育一批数字化转型标杆企业和示范园区。"}, {"id": 10, "title": "《关于进一步完善研发费用税前加计扣除政策的通知》", "level": "national", "summary": "将符合条件的企业研发费用加计扣除比例由75%提高至100%，进一步降低企业研发成本，鼓励技术创新。"}, {"id": 11, "title": "《国家高层次人才特殊支持计划实施方案》", "level": "national", "summary": "面向全球引进战略科学家和科技领军人才，提供最高500万元个人资助，配套科研经费和住房保障。"}]}, "faqs": {"list": [{"id": 1, "question": "数造工坊是什么平台？", "answer": "数造工坊是面向企业数字化转型的双面服务平台。A面提供我方数字化服务产品展示、政策解读与软文引流；B面展示已服务客户的产品与服务，支持购买和撮合。我们致力于让企业数字化一步到位。"}, {"id": 2, "question": "平台提供哪些服务？", "answer": "我们提供16个标准化数字化方案（涵盖CRM、ERP、OA、数据分析等），按需定制开发服务，甲方严选产品交易撮合，免费数字化成熟度诊断，以及报价计算器等工具。"}, {"id": 3, "question": "如何联系客服？", "answer": "您可以通过以下方式联系我们：\n1. 小程序内点击「联系」页面填写需求表单\n2. 点击页面右下角客服按钮接入企业微信在线客服\n3. 关注公众号「数造工坊」留言\n\n工作日 9:00-18:00 内我们会尽快响应。"}, {"id": 4, "question": "产品方案可以定制吗？", "answer": "可以。我们的16个标准化方案都支持深度定制。您可以在产品详情页点击「预约演示」，我们的方案专家会与您沟通具体需求，提供定制化方案和报价。"}, {"id": 5, "question": "方案部署方式是什么？", "answer": "我们支持三种部署方式：\n1. SaaS云部署（快速上线，按年付费）\n2. 私有化部署（数据安全，一次性授权+年维护费）\n3. 混合部署（核心数据本地+非核心功能上云）\n\n具体方案可根据企业需求灵活选择。"}, {"id": 6, "question": "产品支持免费试用吗？", "answer": "部分SaaS类产品支持7-14天免费试用。定制类方案可预约免费演示。具体试用政策请咨询客服或查看产品详情页说明。"}, {"id": 7, "question": "如何选择适合的数字化方案？", "answer": "推荐三种方式：\n1. 使用小程序内的「免费诊断」功能，通过痛点速选获取推荐方案\n2. 使用「数字化成熟度评估」工具生成五维雷达图报告\n3. 使用「报价计算器」按模块组合方案\n\n也可直接联系客服，由方案专家为您一对一推荐。"}, {"id": 8, "question": "支持哪些支付方式？", "answer": "我们支持微信支付（JSAPI下单）。在小程序内选购甲方严选产品后，可直接通过微信支付完成付款。支付成功后订单状态自动更新，并触发服务交付流程。"}]}, "clients": {"list": [{"id": 1, "name": "老挝国家电力公司（EDL）", "industry": "能源"}, {"id": 2, "name": "特变电工股份有限公司", "industry": "智能制造"}, {"id": 3, "name": "正泰电器股份有限公司", "industry": "智能制造"}, {"id": 4, "name": "远东电缆有限公司", "industry": "智能制造"}, {"id": 5, "name": "广西水电建设集团", "industry": "工程建筑"}, {"id": 6, "name": "万象混凝土制品厂", "industry": "工程建筑"}, {"id": 7, "name": "江苏亨通光电", "industry": "智能制造"}, {"id": 8, "name": "某财税咨询公司", "industry": "服务企服"}, {"id": 9, "name": "星辰智造科技", "industry": "智能制造"}, {"id": 10, "name": "用友网络科技股份有限公司", "industry": "软件服务"}]}, "admin/dashboard": {"products": 16, "clients": 32, "policies": 99, "articles": 27, "orders": 49, "contracts": 21, "tickets": 17, "reviews": 23}, "admin/products": {"list": [{"id": 1, "title": "工程项目管理系统", "subtitle": "从立项到结算，一条线管到底", "category": "工程管理", "price": "19800"}, {"id": 2, "title": "ERP数字化全家桶", "subtitle": "一套系统，管人财物产供销", "category": "综合管理", "price": "49800"}, {"id": 3, "title": "生产MES系统", "subtitle": "让车间从黑箱变透明", "category": "智能制造", "price": "29800"}, {"id": 4, "title": "进销存管理系统", "subtitle": "库存准、账清楚、周转快", "category": "供应链", "price": "9800"}, {"id": 5, "title": "财务管理系统", "subtitle": "从手工记账到智能财务", "category": "财务", "price": "12800"}, {"id": 6, "title": "CRM客户管理系统", "subtitle": "线索到成交，一个漏斗看清楚", "category": "销售", "price": "8800"}, {"id": 7, "title": "OA协同办公系统", "subtitle": "审批快、协作顺、办公在线", "category": "协同办公", "price": "6800"}, {"id": 8, "title": "HRM人力资源系统", "subtitle": "从招聘到离职，人事全数字化", "category": "人力资源", "price": "9800"}]}, "admin/orders": {"list": [{"id": 49, "order_no": "DD202606210050", "product_title": "OA协同办公系统", "amount": 9800.0, "status": "completed", "buyer_name": "星辰智造", "created_at": "2026-07-10"}, {"id": 48, "order_no": "DD202606210049", "product_title": "CRM客户管理", "amount": 12800.0, "status": "completed", "buyer_name": "顺丰科技", "created_at": "2026-07-09"}, {"id": 47, "order_no": "DD202606210048", "product_title": "生产MES系统", "amount": 29800.0, "status": "completed", "buyer_name": "海尔智家", "created_at": "2026-07-09"}, {"id": 46, "order_no": "DD202606210047", "product_title": "ERP数字化全家桶", "amount": 49800.0, "status": "cancelled", "buyer_name": "远东电缆", "created_at": "2026-07-08"}, {"id": 45, "order_no": "DD202606210046", "product_title": "工程项目管理系统", "amount": 19800.0, "status": "completed", "buyer_name": "正泰电器", "created_at": "2026-07-08"}, {"id": 44, "order_no": "DD202606210045", "product_title": "供应链管理SCM", "amount": 22800.0, "status": "completed", "buyer_name": "特变电工", "created_at": "2026-07-07"}, {"id": 43, "order_no": "DD202606210044", "product_title": "智能仓储WMS", "amount": 18800.0, "status": "processing", "buyer_name": "广西水电", "created_at": "2026-07-07"}, {"id": 42, "order_no": "DD202606210043", "product_title": "数据分析BI平台", "amount": 25800.0, "status": "completed", "buyer_name": "杭州云栖", "created_at": "2026-07-06"}, {"id": 41, "order_no": "DD202606210042", "product_title": "OA协同办公系统", "amount": 9800.0, "status": "completed", "buyer_name": "北京旷视", "created_at": "2026-07-06"}, {"id": 40, "order_no": "DD202606210041", "product_title": "CRM客户管理", "amount": 12800.0, "status": "cancelled", "buyer_name": "金蝶国际", "created_at": "2026-07-05"}]}, "admin/clients": {"list": [{"id": 1, "name": "老挝国家电力公司（EDL）", "industry": "能源"}, {"id": 2, "name": "特变电工股份有限公司", "industry": "智能制造"}, {"id": 3, "name": "正泰电器股份有限公司", "industry": "智能制造"}, {"id": 4, "name": "远东电缆有限公司", "industry": "智能制造"}, {"id": 5, "name": "广西水电建设集团", "industry": "工程建筑"}, {"id": 6, "name": "万象混凝土制品厂", "industry": "工程建筑"}, {"id": 7, "name": "江苏亨通光电", "industry": "智能制造"}, {"id": 8, "name": "某财税咨询公司", "industry": "服务企服"}, {"id": 9, "name": "星辰智造科技", "industry": "智能制造"}, {"id": 10, "name": "用友网络科技股份有限公司", "industry": "软件服务"}]}, "admin/articles": {"list": [{"id": 1, "title": "为什么你的ERP总是用不起来？", "category": "深度观点", "summary": "ERP系统上线失败常见原因分析：流程梳理缺失、领导重视不足、培训不到位、数据质量差、期望过高。"}, {"id": 2, "title": "从Excel到ERP：一家电力工程公司30天的蜕变", "category": "客户案例", "summary": "一家电力工程公司30天完成数字化转型，项目透明度提升90%，成本超预算率从15%降到3%。"}, {"id": 3, "title": "库存永远对不上？问题出在这5个地方", "category": "痛点拆解", "summary": "库存对不上的5个常见原因：出入库不规范、批次管理缺失、单位换算错误、退货流程不完整、盘点方法不对。"}, {"id": 4, "title": "2026年中小企业数字化转型政策汇编", "category": "政策解读", "summary": "最新税收优惠、补贴申报、数字化改造政策一文看懂。"}, {"id": 5, "title": "RPA机器人：把财务从重复录入中解放出来", "category": "方案解读", "summary": "一个RPA机器人每天干完3个人的活儿，还不出错。"}, {"id": 6, "title": "老板每天看5分钟就够了：经营驾驶舱怎么搭", "category": "方案解读", "summary": "数据不是越多越好，关键指标一页看完，异常自动预警。"}]}, "admin/policies": {"list": [{"id": 1, "title": "关于推进中小企业数字化转型的指导意见", "level": "national", "summary": "明确中小企业数字化转型路径，提供资金支持、平台服务和人才培训等全方位扶持。"}, {"id": 2, "title": "山东省数字经济发展促进条例", "level": "shandong", "summary": "山东省数字经济发展的地方法规，涵盖数据要素、产业数字化、数字产业化等方面。"}, {"id": 3, "title": "宁夏回族自治区「十四五」数字经济发展规划", "level": "ningxia", "summary": "宁夏数字经济五年规划，打造西部数字经济高地，推进算力枢纽节点建设。"}, {"id": 4, "title": "关于推进新型基础设施建设的若干政策措施", "level": "national", "summary": "国家层面推进新基建的政策包，涵盖5G、工业互联网、AI算力等方向。"}, {"id": 5, "title": "山东省关于支持民营企业高质量发展的若干措施", "level": "shandong", "summary": "山东支持民企发展30条，涵盖减税降费、金融支持、数字化转型等方面。"}, {"id": 6, "title": "宁夏关于加快数字经济人才培养的实施意见", "level": "ningxia", "summary": "宁夏数字经济人才专项政策，涵盖引进、培养、留用全链条。"}, {"id": 7, "title": "国家关于深化「互联网+先进制造业」发展工业互联网的指导意见", "level": "national", "summary": "国务院层面的工业互联网发展顶层设计，明确网络、平台、安全三大体系。"}, {"id": 9, "title": "《制造业数字化转型行动方案》", "level": "national", "summary": "围绕制造业数字化转型，提出到2027年实现规上制造业企业数字化改造全覆盖，培育一批数字化转型标杆企业和示范园区。"}, {"id": 10, "title": "《关于进一步完善研发费用税前加计扣除政策的通知》", "level": "national", "summary": "将符合条件的企业研发费用加计扣除比例由75%提高至100%，进一步降低企业研发成本，鼓励技术创新。"}, {"id": 11, "title": "《国家高层次人才特殊支持计划实施方案》", "level": "national", "summary": "面向全球引进战略科学家和科技领军人才，提供最高500万元个人资助，配套科研经费和住房保障。"}]}, "admin/contracts": {"list": [{"id": 1, "contract_no": "HT1782190005485GUM4", "title": "ERP系统定制开发服务合同", "type": "customization", "party_a_name": "济南智造科技有限公司", "status": "signed", "amount": 88000.0}, {"id": 2, "contract_no": "", "title": "ERP系统升级改造项目合同", "type": "project", "party_a_name": "济南宏图贸易有限公司", "status": "active", "amount": 0.0}, {"id": 3, "contract_no": "", "title": "年度运维服务合同", "type": "service", "party_a_name": "正泰电器股份有限公司", "status": "active", "amount": 0.0}, {"id": 4, "contract_no": "HT20260620004", "title": "工程项目管理系统服务合同", "type": "service", "party_a_name": "广西水电建设集团", "status": "signed", "amount": 19800.0}, {"id": 5, "contract_no": "HT20260620005", "title": "ERP系统定制开发合同", "type": "service", "party_a_name": "特变电工", "status": "signed", "amount": 49800.0}]}, "admin/maintenance-tickets": {"list": [{"id": 1, "client_name": "", "type": "bug", "priority": "medium", "title": "服务器磁盘空间不足", "status": "open"}, {"id": 2, "client_name": "", "type": "bug", "priority": "high", "title": "SSL证书即将过期", "status": "open"}, {"id": 3, "client_name": "特变电工", "type": "bug", "priority": "high", "title": "ERP报表导出失败", "status": "open"}, {"id": 4, "client_name": "正泰电器", "type": "feature", "priority": "normal", "title": "CRM增加批量导入功能", "status": "processing"}, {"id": 5, "client_name": "广西水电", "type": "bug", "priority": "urgent", "title": "项目进度无法保存", "status": "open"}]}, "admin/reviews": {"list": [{"id": 1, "product_type": "client_product", "product_id": 1, "rating": 5, "content": "系统很好用，推荐！"}, {"id": 2, "product_type": "client_product", "product_id": 1, "rating": 5, "content": "这个产品非常好用，值得推荐给大家使用"}, {"id": 3, "product_type": "client_product", "product_id": 1, "rating": 4, "content": "产品质量很好，服务态度也不错，推荐购买给有需要的朋友"}, {"id": 4, "product_type": "product", "product_id": 1, "rating": 5, "content": "项目管理系统很实用，甘特图和成本控制功能很强大，推荐！"}, {"id": 5, "product_type": "product", "product_id": 2, "rating": 5, "content": "ERP全家桶功能齐全，财务业务一体化解决了我们的大问题。"}]}, "services/demands": {"list": []}, "group-buy/buys": {"list": []}, "onboarding": {"list": []}};
     var origFetch = window.fetch;
     window.fetch = function(url, opts) {
       if (typeof url === "string" && (url.includes("/api/") || url.includes("/api"))) {
-        var path = url.replace(/^.*\/api\//, "").replace(/\?.*$/, "");
-        var data = null;
-        for (var key in DEMO_DATA) {
-          if (path === key || path.indexOf(key) === 0) {
-            data = DEMO_DATA[key];
-            break;
-          }
-        }
-        if (!data) {
-          if (path.indexOf("admin/") === 0) {
-            data = {list: [], total: 0};
-          } else if (path.indexOf("products/") === 0 || path.indexOf("articles/") === 0) {
-            data = DEMO_DATA[path] || {id: 0, title: "", content: ""};
-          } else {
-            data = {list: [], data: [], items: [], total: 0, ok: true, stats: {}, config: {}, dashboard: DEMO_DATA["admin/dashboard"]};
-          }
-        }
-        return Promise.resolve(new Response(JSON.stringify(data), {
-          status: 200, headers: {"Content-Type": "application/json"}
+        return Promise.resolve(new Response(JSON.stringify({list:[],data:[],items:[],total:0,ok:true,stats:{},config:{},dashboard:{}}), {
+          status: 200, headers: {"Content-Type":"application/json"}
         }));
       }
       return origFetch.apply(this, arguments);
@@ -155,8 +177,9 @@
     document.addEventListener("DOMContentLoaded", function(){
       var b = document.createElement("div");
       b.style.cssText = "position:fixed;top:0;left:0;right:0;background:#d4a017;color:#fff;text-align:center;font-size:12px;padding:6px;z-index:99999;font-family:sans-serif";
-      b.innerHTML = "演示模式 · 数据已加载(" + Object.keys(DEMO_DATA).length + "组) · <a href=\"https://github.com/sgmt-taojing/shuzhi-workshop-v4\" style=\"color:#fff;text-decoration:underline\">GitHub</a>";
+      b.innerHTML = '演示模式 · API数据需本地后端运行 · <a href="https://github.com/sgmt-taojing/shuzhi-workshop-v4" style="color:#fff;text-decoration:underline">GitHub</a>';
       document.body.insertBefore(b, document.body.firstChild);
+      var sb=document.querySelector(".sidebar-brand");if(sb)sb.onclick=toggleSidebar;
       var h = document.createElement("style");
       h.textContent = "body{padding-top:32px!important}";
       document.head.appendChild(h);
@@ -264,6 +287,7 @@
 <script>
 const API = '/api';
 let token = localStorage.getItem('dt_token') || '';
+function authHeaders() { return token ? { 'Authorization': 'Bearer ' + token } : {}; }
 let currentPage = 'dashboard';
 let userPermissions = JSON.parse(localStorage.getItem('dt_permissions') || '"[\"*\"]"');
 let userInfo = JSON.parse(localStorage.getItem('dt_userinfo') || '{}');
@@ -273,8 +297,14 @@ function toggleTheme(){var t=document.documentElement.getAttribute('data-theme')
 (function(){var t=localStorage.getItem('dt_theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');setTimeout(function(){var e=document.getElementById('themeToggle');if(e)e.textContent='☀️'},100)}})();
 
 async function doLogin() {
-  const username = document.getElementById('loginUser').value;
+  const username = document.getElementById('loginUser').value.trim();
   const password = document.getElementById('loginPass').value;
+  const errEl = document.getElementById('loginError');
+  if (!username || !password) {
+    errEl.textContent = '请输入用户名和密码';
+    errEl.style.display = 'block';
+    return;
+  }
   try {
     const d = await api('/admin/login', {method: 'POST', body: JSON.stringify({username, password})});
     if (d.token) {
@@ -285,9 +315,13 @@ async function doLogin() {
       userPermissions = d.permissions || ['*'];
       userInfo = { username: d.username, display_name: d.display_name, role_name: d.role_name, department: d.department };
       showApp();
-    } else throw new Error();
-  } catch {
-    document.getElementById('loginError').style.display = 'block';
+    } else {
+      errEl.textContent = d.error || '登录失败，请重试';
+      errEl.style.display = 'block';
+    }
+  } catch (e) {
+    errEl.textContent = '无法连接服务器，请检查后端是否运行 (localhost:3004)';
+    errEl.style.display = 'block';
   }
 }
 
@@ -298,6 +332,44 @@ function doLogout() {
   document.getElementById('loginPage').style.display = 'flex';
 }
 
+
+document.addEventListener('keydown', function(e) {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    var search = document.querySelector('.header input[placeholder*="搜索"], .header input[type="search"], #globalSearch');
+    if (search) search.focus();
+  }
+});
+
+function filterNav(q) {
+  q = (q || '').toLowerCase();
+  document.querySelectorAll('.nav-item[data-page]').forEach(function(el) {
+    var text = el.textContent.toLowerCase();
+    var page = el.dataset.page.toLowerCase();
+    if (!q || text.includes(q) || page.includes(q)) {
+      el.style.display = '';
+    } else {
+      el.style.display = 'none';
+    }
+  });
+  document.querySelectorAll('.nav-section-label').forEach(function(el) {
+    var next = el.nextElementSibling;
+    var hasVisible = false;
+    while (next && !next.classList.contains('nav-section-label')) {
+      if (next.classList.contains('nav-item') && next.style.display !== 'none') {
+        hasVisible = true;
+        break;
+      }
+      next = next.nextElementSibling;
+    }
+    el.style.display = hasVisible ? '' : 'none';
+  });
+}
+
+function toggleSidebar() {
+  var s = document.querySelector('.sidebar');
+  if (s) s.classList.toggle('expanded');
+}
 function showApp() {
   document.getElementById('loginPage').style.display = 'none';
   document.getElementById('app').classList.add('active');
@@ -344,6 +416,11 @@ async function api(path, opts = {}) {
     document.getElementById('loginError').textContent = '登录已过期，请重新登录';
     document.getElementById('loginError').style.display = 'block';
     throw new Error('未授权');
+  }
+  // 404/500 等错误返回空数据不崩溃
+  if (!r.ok) {
+    console.warn('API error:', r.status, path);
+    return { list: [], data: [], items: [], total: 0, error: true };
   }
   return r.json();
 }
@@ -1225,9 +1302,9 @@ async function uploadProductImage(input) {
       document.getElementById('cp_image').value = data.url;
       document.getElementById('cp_image_preview').innerHTML = '<img src="'+data.url+'" style="width:80px;height:80px;border-radius:8px;object-fit:cover">';
     } else {
-      alert('上传失败: ' + (data.error || ''));
+      toast('上传失败: ' + (data.error || '', 'error'));
     }
-  } catch(e) { alert('上传失败'); }
+  } catch(e) { toast('上传失败', 'error'); }
 }
 
 async function saveClientProduct(id) {
@@ -1262,18 +1339,18 @@ async function saveClientProduct(id) {
     return_policy: document.getElementById('cp_return_policy').value.trim(),
     published: document.getElementById('cp_published').checked ? 1 : 0
   };
-  if (!body.title) { alert('请输入产品名称'); return; }
+  if (!body.title) { toast('请输入产品名称', 'error'); return; }
   try {
     if (id) await api('/admin/client-products/' + id, { method: 'PUT', body: JSON.stringify(body) });
     else await api('/admin/client-products', { method: 'POST', body: JSON.stringify(body) });
     closeModal(); loadClientProducts();
-  } catch(e) { alert('保存失败: ' + (e.message||'')); }
+  } catch(e) { toast('保存失败: ' + (e.message||'', 'error')); }
 }
 
 async function deleteClientProduct(id) {
   if (!confirm('确定删除此产品？')) return;
   try { await api('/admin/client-products/' + id, { method: 'DELETE' }); loadClientProducts(); }
-  catch(e) { alert('删除失败'); }
+  catch(e) { toast('删除失败', 'error'); }
 }
 
 // --- Articles ---
@@ -1381,13 +1458,13 @@ async function openPushModal(articleId, articleTitle) {
 
 async function confirmPush(articleId) {
   const accountId = document.getElementById('push_account_id').value;
-  if (!accountId) { alert('请选择目标公众号'); return; }
+  if (!accountId) { toast('请选择目标公众号', 'error'); return; }
   await api('/wechat/push-article', {
     method: 'POST',
     body: JSON.stringify({ article_id: articleId, account_id: Number(accountId) })
   });
   closeModal();
-  alert('推送成功！');
+  toast('推送成功！', 'success');
 }
 
 // --- WeChat Accounts Management ---
@@ -1521,12 +1598,12 @@ async function saveWechatAccount(id) {
     description: document.getElementById('wa_description').value,
     qrcode_url: document.getElementById('wa_qrcode_url').value
   };
-  if (!body.name) { alert('请输入公众号名称'); return; }
+  if (!body.name) { toast('请输入公众号名称', 'error'); return; }
   try {
     if (id) await api('/wechat/accounts/' + id, { method: 'PUT', body: JSON.stringify(body) });
     else await api('/wechat/accounts', { method: 'POST', body: JSON.stringify(body) });
     closeModal(); loadWechatAccounts();
-  } catch(e) { alert('保存失败: ' + (e.message||'')); }
+  } catch(e) { toast('保存失败: ' + (e.message||'', 'error')); }
 }
 
 async function deleteWechatAccount(id) {
@@ -1538,7 +1615,7 @@ async function deleteWechatAccount(id) {
 // --- Follow Management ---
 function openFollowModal(accountId, accountName, accountType) {
   // 只能为我方公众号设置互关状态，选择甲方公众号进行关联
-  if (accountType !== '我方') { alert('只能为我方公众号设置互关状态'); return; }
+  if (accountType !== '我方') { toast('只能为我方公众号设置互关状态', 'info'); return; }
   api('/wechat/accounts').then(rows => {
     const clientAccounts = rows.filter(r => r.type === '甲方');
     const m = document.getElementById('modalContent');
@@ -1570,7 +1647,7 @@ function openFollowModal(accountId, accountName, accountType) {
 async function confirmFollow(myAccountId) {
   const clientAccountId = document.getElementById('follow_client_account_id').value;
   const status = document.getElementById('follow_status').value;
-  if (!clientAccountId) { alert('请选择甲方公众号'); return; }
+  if (!clientAccountId) { toast('请选择甲方公众号', 'error'); return; }
   await api('/wechat/follow', {
     method: 'POST',
     body: JSON.stringify({ my_account_id: myAccountId, client_account_id: Number(clientAccountId), status })
@@ -1721,7 +1798,7 @@ async function loadUsers() {
 async function openUserModal(userId) {
   const usersData = await api('/auth/admin/users');
   const u = (usersData.list || []).find(x => x.id === userId);
-  if (!u) return alert('用户不存在');
+  if (!u) return toast('用户不存在', 'info');
 
   const ordersData = await api('/admin/orders?openid=' + encodeURIComponent(u.openid || ''));
   const orders = Array.isArray(ordersData) ? ordersData : [];
@@ -2094,7 +2171,7 @@ async function saveCrmCustomer(id) {
     project_manager: document.getElementById('cc_project_manager').value,
     region: document.getElementById('cc_region').value
   };
-  if (!body.company_name) return alert('公司名称必填');
+  if (!body.company_name) return toast('公司名称必填', 'error');
   if (id) await api('/crm/customers/' + id, { method: 'PUT', body: JSON.stringify(body) });
   else await api('/crm/customers', { method: 'POST', body: JSON.stringify(body) });
   closeModal(); loadCrmCustomers();
@@ -2287,7 +2364,7 @@ async function saveCrmLead() {
     next_followup: document.getElementById('cl_next_followup').value,
     owner: document.getElementById('cl_owner').value
   };
-  if (!body.company_name) return alert('公司名称必填');
+  if (!body.company_name) return toast('公司名称必填', 'error');
   await api('/crm/leads', { method: 'POST', body: JSON.stringify(body) });
   closeModal(); loadCrmLeads();
 }
@@ -2498,7 +2575,7 @@ async function saveCrmEmployee() {
     department: document.getElementById('ce_department').value,
     hourly_rate: Number(document.getElementById('ce_hourly_rate').value)
   };
-  if (!body.name) return alert('姓名必填');
+  if (!body.name) return toast('姓名必填', 'error');
   await api('/crm/employees', { method: 'POST', body: JSON.stringify(body) });
   closeModal(); loadCrmTeam();
 }
@@ -2829,11 +2906,11 @@ async function generateReport(type) {
   if (!confirm(`确认生成${type==='daily'?'日报':type==='weekly'?'周报':'月报'}（${label}）？`)) return;
   try {
     const r = await api('/reports/generate', { method:'POST', body: JSON.stringify({ type, date: dateStr }) });
-    alert('✅ '+r.message+'\n\n'+r.summary);
+    toast('✅ '+r.message+'\n\n'+r.summary, 'info');
     await loadReportsList();
   } catch(e) {
-    if (e.message && e.message.includes('已存在')) { alert('⚠️ 该日期的报告已存在，请直接查看'); }
-    else { alert('❌ 生成失败: '+(e.message||'未知错误')); }
+    if (e.message && e.message.includes('已存在')) { toast('⚠️ 该日期的报告已存在，请直接查看', 'info'); }
+    else { toast('❌ 生成失败: '+(e.message||'未知错误', 'error')); }
   }
 }
 
@@ -2918,7 +2995,7 @@ async function viewReport(id) {
       </div>
     `;
     openModal();
-  } catch(e) { alert('加载失败: '+e.message); }
+  } catch(e) { toast('加载失败: '+e.message, 'error'); }
 }
 
 async function deleteReport(id) {
@@ -2926,7 +3003,7 @@ async function deleteReport(id) {
   try {
     await api(`/reports/${id}`, { method:'DELETE' });
     await loadReportsList();
-  } catch(e) { alert('删除失败: '+e.message); }
+  } catch(e) { toast('删除失败: '+e.message, 'error'); }
 }
 
 async function markReportSent(id) {
@@ -2934,8 +3011,8 @@ async function markReportSent(id) {
     await api(`/reports/${id}/status`, { method:'PUT', body: JSON.stringify({ status:'sent' }) });
     closeModal();
     await loadReportsList();
-    alert('✅ 已标记为已推送');
-  } catch(e) { alert('操作失败: '+e.message); }
+    toast('✅ 已标记为已推送', 'success');
+  } catch(e) { toast('操作失败: '+e.message, 'error'); }
 }
 
 async function archiveReport(id) {
@@ -2943,8 +3020,8 @@ async function archiveReport(id) {
     await api(`/reports/${id}/status`, { method:'PUT', body: JSON.stringify({ status:'archived' }) });
     closeModal();
     await loadReportsList();
-    alert('✅ 已归档');
-  } catch(e) { alert('操作失败: '+e.message); }
+    toast('✅ 已归档', 'info');
+  } catch(e) { toast('操作失败: '+e.message, 'error'); }
 }
 
 // --- 数字化评估管理 ---
@@ -3110,7 +3187,7 @@ async function viewAssessment(id) {
       </div>
     `;
     document.getElementById('assessment-detail-modal').style.display = 'flex';
-  } catch(e) { alert('加载失败: '+e.message); }
+  } catch(e) { toast('加载失败: '+e.message, 'error'); }
 }
 
 // 生成 SVG 雷达图
@@ -3188,8 +3265,8 @@ async function updateAsmtStatus(id) {
     closeAsmtModal();
     await loadAssessmentList();
     await loadAssessmentStats();
-    alert('✅ 状态已更新');
-  } catch(e) { alert('更新失败: '+e.message); }
+    toast('✅ 状态已更新', 'success');
+  } catch(e) { toast('更新失败: '+e.message, 'error'); }
 }
 
 // --- Init ---
@@ -3337,7 +3414,7 @@ async function showAuditDetail(id) {
     const resp = await api('/audit-logs?page=1&limit=1&keyword=' + id);
     const data = await resp.json();
     const r = data.data && data.data[0];
-    if (!r) { alert('未找到记录'); return; }
+    if (!r) { toast('未找到记录', 'info'); return; }
     const meta = typeof r.metadata === 'object' ? r.metadata : {};
     const body = typeof r.request_body === 'object' ? r.request_body : (safeJsonParseDisplay(r.request_body));
     document.getElementById('audit-detail-content').innerHTML = `
@@ -3362,7 +3439,7 @@ async function showAuditDetail(id) {
       </div>
     `;
     document.getElementById('audit-detail-modal').style.display = 'flex';
-  } catch(e) { alert('加载失败: ' + e.message); }
+  } catch(e) { toast('加载失败: ' + e.message, 'error'); }
 }
 
 function safeJsonParseDisplay(str) {
@@ -3491,10 +3568,10 @@ async function updateQuoteStatus(id, status) {
     if (data.success) {
       loadQuotes();
     } else {
-      alert(data.error || '更新失败');
+      toast(data.error || '更新失败', 'error');
     }
   } catch (e) {
-    alert('请求失败: ' + e.message);
+    toast('请求失败: ' + e.message, 'error');
   }
 }
 
@@ -3632,10 +3709,10 @@ async function triggerSchedulerTask(name) {
   if (!confirm('确认手动触发任务「' + name + '」？')) return;
   try {
     const result = await api('/scheduler/trigger/' + name, {method: 'POST'});
-    alert('任务触发完成\n\n结果: ' + JSON.stringify(result.result, null, 2));
+    toast('任务触发完成\n\n结果: ' + JSON.stringify(result.result, null, 2, 'success'));
     loadScheduler();
   } catch(e) {
-    alert('触发失败: ' + e.message);
+    toast('触发失败: ' + e.message, 'error');
   }
 }
 
@@ -3645,7 +3722,7 @@ async function toggleSchedulerTask(name, enabled) {
 
     loadScheduler();
   } catch(e) {
-    alert('操作失败: ' + e.message);
+    toast('操作失败: ' + e.message, 'error');
   }
 }
 
@@ -3896,10 +3973,10 @@ async function initMilestones(orderId) {
   if (!confirm('确认为此订单初始化默认里程碑模板？已有里程碑将保留。')) return;
   try {
     const res = await api('/service-tracker/init/' + orderId, {method: 'POST'});
-    alert(res.message || '初始化成功');
+    toast(res.message || '初始化成功', 'success');
     viewServiceDetail(orderId);
   } catch(e) {
-    alert('初始化失败: ' + e.message);
+    toast('初始化失败: ' + e.message, 'error');
   }
 }
 
@@ -3914,7 +3991,7 @@ async function updateMilestoneStatus(id, status) {
     // 刷新整个详情
     location.reload();
   } catch(e) {
-    alert('更新失败: ' + e.message);
+    toast('更新失败: ' + e.message, 'error');
   }
 }
 
@@ -3926,9 +4003,9 @@ function addMilestone(orderId) {
   const notes = prompt('备注（可选）:') || '';
 
   api('/service-tracker/milestone', {method: 'POST'}).then(res => {
-    alert(res.message || '添加成功');
+    toast(res.message || '添加成功', 'success');
     viewServiceDetail(orderId);
-  }).catch(e => alert('添加失败: ' + e.message));
+  }).catch(e => toast('添加失败: ' + e.message, 'error'));
 }
 
 function editMilestone(id, orderId, title, description, expectedDate, notes) {
@@ -3940,7 +4017,7 @@ function editMilestone(id, orderId, title, description, expectedDate, notes) {
 
   api('/service-tracker/milestone/' + id, {method: 'PUT'}).then(res => {
     viewServiceDetail(orderId);
-  }).catch(e => alert('更新失败: ' + e.message));
+  }).catch(e => toast('更新失败: ' + e.message, 'error'));
 }
 
 async function deleteMilestone(id) {
@@ -3949,7 +4026,7 @@ async function deleteMilestone(id) {
     await api('/service-tracker/milestone/' + id, {method: 'DELETE'});
     location.reload();
   } catch(e) {
-    alert('删除失败: ' + e.message);
+    toast('删除失败: ' + e.message, 'error');
   }
 }
 
@@ -3986,7 +4063,7 @@ async function loadServiceStats() {
       listEl.insertBefore(div.firstChild, listEl.firstChild);
     }
   } catch(e) {
-    alert('加载统计失败: ' + e.message);
+    toast('加载统计失败: ' + e.message, 'error');
   }
 }
 
@@ -4014,7 +4091,7 @@ async function loadServiceTemplates() {
       listEl.insertBefore(div.firstChild, listEl.firstChild);
     }
   } catch(e) {
-    alert('加载模板失败: ' + e.message);
+    toast('加载模板失败: ' + e.message, 'error');
   }
 }
 
@@ -4123,7 +4200,7 @@ async function loadBannerList() {
 async function showBannerEditor(id) {
   let banner = null;
   if (id) {
-    try { banner = await api('/banners/' + id); } catch(e) { alert('加载失败'); return; }
+    try { banner = await api('/banners/' + id); } catch(e) { toast('加载失败', 'error'); return; }
   }
   const linkTypes = [
     { value: 'page', label: '小程序页面' },
@@ -4198,7 +4275,7 @@ async function showBannerEditor(id) {
 
 async function saveBanner(id, btn) {
   const title = document.getElementById('bn-title').value.trim();
-  if (!title) { alert('请填写标题'); return; }
+  if (!title) { toast('请填写标题', 'info'); return; }
   const payload = {
     title,
     subtitle: document.getElementById('bn-subtitle').value.trim(),
@@ -4218,18 +4295,18 @@ async function saveBanner(id, btn) {
     const url = id ? '/api/banners/' + id : '/api/banners';
     const res = await fetch(url, {
       method,
-      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
       body: JSON.stringify(payload)
     });
     const data = await res.json();
     if (data.error) throw new Error(data.error);
     btn.closest('.modal-overlay')?.remove();
     btn.parentElement.parentElement.parentElement.remove();
-    alert(id ? '更新成功' : '创建成功');
+    toast(id ? '更新成功' : '创建成功', 'success');
     loadBannerStats();
     loadBannerList();
   } catch(e) {
-    alert('保存失败: ' + e.message);
+    toast('保存失败: ' + e.message, 'error');
     btn.disabled = false;
     btn.textContent = '保存';
   }
@@ -4239,10 +4316,10 @@ async function deleteBanner(id) {
   if (!confirm('确定删除此Banner？此操作不可撤销。')) return;
   try {
     await api('/banners/' + id, { method: 'DELETE' });
-    alert('删除成功');
+    toast('删除成功', 'success');
     loadBannerStats();
     loadBannerList();
-  } catch(e) { alert('删除失败: ' + e.message); }
+  } catch(e) { toast('删除失败: ' + e.message, 'error'); }
 }
 
 async function toggleBannerStatus(id, newStatus) {
@@ -4250,17 +4327,17 @@ async function toggleBannerStatus(id, newStatus) {
     await api('/banners/' + id, { method: 'PUT', body: JSON.stringify({ status: newStatus }) });
     loadBannerStats();
     loadBannerList();
-  } catch(e) { alert('操作失败: ' + e.message); }
+  } catch(e) { toast('操作失败: ' + e.message, 'error'); }
 }
 
 async function seedBanners() {
   if (!confirm('将初始化3条默认Banner数据，如果已有数据将跳过。继续？')) return;
   try {
     const res = await api('/banners/seed', { method: 'POST' });
-    alert(res.message || '初始化成功');
+    toast(res.message || '初始化成功', 'success');
     loadBannerStats();
     loadBannerList();
-  } catch(e) { alert('初始化失败: ' + e.message); }
+  } catch(e) { toast('初始化失败: ' + e.message, 'error'); }
 }
 
 // ==================== 帮助中心 FAQ 管理 ====================
@@ -4529,7 +4606,7 @@ async function saveFaq(id) {
   const is_pinned = parseInt(document.getElementById('edit-pinned').value);
 
   if (!question || !answer) {
-    alert('问题和答案不能为空');
+    toast('问题和答案不能为空', 'error');
     return;
   }
 
@@ -4546,9 +4623,9 @@ async function saveFaq(id) {
     loadFaqList();
     loadFaqStats();
     loadFaqCategories();
-    alert(id ? '更新成功' : '创建成功');
+    toast(id ? '更新成功' : '创建成功', 'success');
   } catch(e) {
-    alert('保存失败: ' + e.message);
+    toast('保存失败: ' + e.message, 'error');
   }
 }
 
@@ -4559,8 +4636,8 @@ async function deleteFaq(id) {
     loadFaqList();
     loadFaqStats();
     loadFaqCategories();
-    alert('删除成功');
-  } catch(e) { alert('删除失败: ' + e.message); }
+    toast('删除成功', 'success');
+  } catch(e) { toast('删除失败: ' + e.message, 'error'); }
 }
 
 async function showCategoryEditor(id) {
@@ -4622,7 +4699,7 @@ async function saveCategory(id) {
   const sort_order = parseInt(document.getElementById('cat-sort').value) || 0;
   const status = document.getElementById('cat-status').value;
 
-  if (!name) { alert('名称不能为空'); return; }
+  if (!name) { toast('名称不能为空', 'error'); return; }
 
   const body = { name, icon, description, sort_order, status };
 
@@ -4635,8 +4712,8 @@ async function saveCategory(id) {
     document.querySelector('div[style*="fixed"]')?.remove();
     loadFaqCategories();
     loadFaqStats();
-    alert(id ? '更新成功' : '创建成功');
-  } catch(e) { alert('保存失败: ' + e.message); }
+    toast(id ? '更新成功' : '创建成功', 'success');
+  } catch(e) { toast('保存失败: ' + e.message, 'error'); }
 }
 
 async function deleteCategory(id, name) {
@@ -4646,19 +4723,19 @@ async function deleteCategory(id, name) {
     loadFaqCategories();
     loadFaqStats();
     loadFaqList();
-    alert(res.message || '删除成功');
-  } catch(e) { alert('删除失败: ' + e.message); }
+    toast(res.message || '删除成功', 'success');
+  } catch(e) { toast('删除失败: ' + e.message, 'error'); }
 }
 
 async function seedFaqs() {
   if (!confirm('将初始化6个分类和21条默认FAQ数据。如果已有数据将跳过。继续？')) return;
   try {
     const res = await api('/faqs/admin/seed', { method: 'POST' });
-    alert(res.msg || res.message || '初始化成功');
+    toast(res.msg || res.message || '初始化成功', 'success');
     loadFaqStats();
     loadFaqCategories();
     loadFaqList();
-  } catch(e) { alert('初始化失败: ' + e.message); }
+  } catch(e) { toast('初始化失败: ' + e.message, 'error'); }
 }
 
 // ==================== 发票管理 ====================
@@ -4832,7 +4909,7 @@ async function viewInvoiceDetail(id) {
     html += `<div><b>申请时间：</b>${inv.created_at}</div>`;
     html += '</div>';
     showModal('发票详情', html);
-  } catch(e) { alert('获取详情失败: ' + e.message); }
+  } catch(e) { toast('获取详情失败: ' + e.message, 'error'); }
 }
 
 function showIssueModal(id) {
@@ -4861,7 +4938,7 @@ async function doIssue(id) {
     closeModal();
     loadInvoiceList();
     loadInvoiceStats();
-  } catch(e) { alert('开票失败: ' + e.message); }
+  } catch(e) { toast('开票失败: ' + e.message, 'error'); }
 }
 
 function showRejectModal(id) {
@@ -4880,13 +4957,13 @@ function showRejectModal(id) {
 
 async function doReject(id) {
   const reason = document.getElementById('reject-reason')?.value.trim();
-  if (!reason) { alert('请填写拒绝原因'); return; }
+  if (!reason) { toast('请填写拒绝原因', 'info'); return; }
   try {
     await api(`/invoices/admin/${id}/reject`, { method: 'POST', body: JSON.stringify({ reason }) });
     closeModal();
     loadInvoiceList();
     loadInvoiceStats();
-  } catch(e) { alert('操作失败: ' + e.message); }
+  } catch(e) { toast('操作失败: ' + e.message, 'error'); }
 }
 
 function showVoidModal(id) {
@@ -4905,13 +4982,13 @@ function showVoidModal(id) {
 
 async function doVoid(id) {
   const reason = document.getElementById('void-reason')?.value.trim();
-  if (!reason) { alert('请填写作废原因'); return; }
+  if (!reason) { toast('请填写作废原因', 'info'); return; }
   try {
     await api(`/invoices/admin/${id}/void`, { method: 'POST', body: JSON.stringify({ reason }) });
     closeModal();
     loadInvoiceList();
     loadInvoiceStats();
-  } catch(e) { alert('操作失败: ' + e.message); }
+  } catch(e) { toast('操作失败: ' + e.message, 'error'); }
 }
 
 // --- 售后工单管理 ---
@@ -5136,7 +5213,7 @@ async function submitTicketReply(id) {
   const content = document.getElementById('ticket-reply-content')?.value.trim();
   const status = document.getElementById('ticket-status-select')?.value;
   const isInternal = document.getElementById('ticket-internal')?.checked;
-  if (!content) { alert('请输入回复内容'); return; }
+  if (!content) { toast('请输入回复内容', 'error'); return; }
   try {
     await api(`/tickets/admin/${id}/reply`, { method: 'POST', body: JSON.stringify({ content, is_internal: isInternal }) });
     if (status) {
@@ -5144,7 +5221,7 @@ async function submitTicketReply(id) {
     }
     closeModal();
     loadTicketList(ticketPage);
-  } catch(e) { alert('操作失败: ' + e.message); }
+  } catch(e) { toast('操作失败: ' + e.message, 'error'); }
 }
 
 // --- Partners ---
@@ -5318,7 +5395,7 @@ async function loadPartnerStats() {
 }
 function showPartnerDetail(id) {
   const p = window._partnerCache?.[id];
-  if (!p) { alert('数据未缓存，请刷新'); return; }
+  if (!p) { toast('数据未缓存，请刷新', 'info'); return; }
   const levelOpts = ['standard','silver','gold','platinum'];
   const statusOpts = ['pending','approved','rejected','suspended'];
   let html = `<div class="modal-header"><h2>合作伙伴管理 - ${p.name}</h2><span class="modal-close" onclick="closeModal()">✕</span></div>`;
@@ -5350,35 +5427,35 @@ async function updatePartner(id) {
   const rate = parseInt(document.getElementById('partner-rate-input').value);
   try {
     await api(`/partners/admin/${id}`, { method: 'PUT', body: JSON.stringify({ level, status, commission_rate: rate }) });
-    alert('更新成功');
+    toast('更新成功', 'success');
     closeModal();
     loadPartnerList();
-  } catch(e) { alert('更新失败: ' + e.message); }
+  } catch(e) { toast('更新失败: ' + e.message, 'error'); }
 }
 async function confirmCommission(id) {
   if (!confirm('确认此佣金记录？')) return;
   try {
     await api(`/partners/admin/commissions/${id}`, { method: 'PUT', body: JSON.stringify({ status: 'confirmed' }) });
-    alert('确认成功');
+    toast('确认成功', 'success');
     loadPartnerCommissions();
-  } catch(e) { alert('操作失败: ' + e.message); }
+  } catch(e) { toast('操作失败: ' + e.message, 'error'); }
 }
 async function processWithdrawal(id, action) {
   if (action === 'rejected') {
     const reason = prompt('拒绝原因：');
     if (!reason) return;
     try { await api(`/partners/admin/withdrawals/${id}`, { method: 'PUT', body: JSON.stringify({ status: 'rejected', reject_reason: reason }) }); }
-    catch(e) { alert('操作失败'); return; }
+    catch(e) { toast('操作失败', 'error'); return; }
   } else {
     const txn = prompt('银行流水号（选填）：') || '';
     try { await api(`/partners/admin/withdrawals/${id}`, { method: 'PUT', body: JSON.stringify({ status: 'paid', transaction_no: txn }) }); }
-    catch(e) { alert('操作失败'); return; }
+    catch(e) { toast('操作失败', 'error'); return; }
   }
-  alert('处理成功');
+  toast('处理成功', 'success');
   loadPartnerWithdrawals();
 }
 function showReferralDetail(id) {
-  alert('推荐详情ID: ' + id + '\n请使用状态更新功能跟进此推荐');
+  toast('推荐详情ID: ' + id + '\n请使用状态更新功能跟进此推荐', 'info');
 }
 
 // ==================== 智能客服机器人 ====================
@@ -5511,7 +5588,7 @@ async function viewChatbotSession(id) {
     showModal(`会话 #${id} 详情`, `<div style="max-height:500px;overflow-y:auto">${html}${takeoverHtml}</div>`);
   } catch(e) {
     console.error('viewChatbotSession error', e);
-    alert('加载失败');
+    toast('加载失败', 'error');
   }
 }
 
@@ -5524,11 +5601,11 @@ async function takeoverChatbotSession(id) {
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ session_id: id, admin_message: msg || '人工客服已接管，请稍候~' })
   });
-    alert('接管成功');
+    toast('接管成功', 'success');
     closeModal();
     loadChatbotSessions();
   } catch(e) {
-    alert('接管失败');
+    toast('接管失败', 'error');
   }
 }
 
@@ -5708,20 +5785,20 @@ async function viewContractDetail(id) {
 async function sendContractSign(id) {
   if (!confirm('确认发起签署流程？将通知甲方进行签署。')) return;
   const res = await api(`/contracts/admin/${id}/status`, 'PUT', { status: 'pending_sign' });
-  if (res.code === 0) { alert('已发起签署'); loadContracts(); } else { alert(res.error || '操作失败'); }
+  if (res.code === 0) { toast('已发起签署', 'info'); loadContracts(); } else { toast(res.error || '操作失败', 'error'); }
 }
 
 async function signContractB(id) {
   if (!confirm('确认乙方签署？如甲方已签署，合同将自动生效。')) return;
   const res = await api(`/contracts/admin/${id}/sign-b`, 'POST', {});
-  if (res.code === 0) { alert(res.message || '签署成功'); loadContracts(); } else { alert(res.error || '操作失败'); }
+  if (res.code === 0) { toast(res.message || '签署成功', 'success'); loadContracts(); } else { toast(res.error || '操作失败', 'error'); }
 }
 
 async function terminateContract(id) {
   const reason = prompt('请输入终止原因：');
   if (!reason) return;
   const res = await api(`/contracts/admin/${id}/status`, 'PUT', { status: 'terminated', terminate_reason: reason });
-  if (res.code === 0) { alert('合同已终止'); loadContracts(); } else { alert(res.error || '操作失败'); }
+  if (res.code === 0) { toast('合同已终止', 'info'); loadContracts(); } else { toast(res.error || '操作失败', 'error'); }
 }
 
 async function loadContractTemplates() {
@@ -5759,13 +5836,13 @@ async function loadContractTemplates() {
 
 async function toggleTemplateStatus(id, currentStatus) {
   const res = await api(`/contracts/templates/${id}`, 'PUT', { status: currentStatus === 1 ? 0 : 1 });
-  if (res.code === 0) { loadContractTemplates(); } else { alert(res.error || '操作失败'); }
+  if (res.code === 0) { loadContractTemplates(); } else { toast(res.error || '操作失败', 'error'); }
 }
 
 async function deleteTemplate(id) {
   if (!confirm('确认删除此模板？')) return;
   const res = await api(`/contracts/templates/${id}`, 'DELETE');
-  if (res.code === 0) { alert('已删除'); loadContractTemplates(); } else { alert(res.error || '删除失败'); }
+  if (res.code === 0) { toast('已删除', 'success'); loadContractTemplates(); } else { toast(res.error || '删除失败', 'error'); }
 }
 
 function showTemplateCreateForm() {
@@ -5794,7 +5871,7 @@ function showTemplateCreateForm() {
 
 async function submitNewTemplate() {
   const name = document.getElementById('tpl-name').value.trim();
-  if (!name) { alert('请输入模板名称'); return; }
+  if (!name) { toast('请输入模板名称', 'error'); return; }
   const res = await api('/contracts/templates', 'POST', {
     name,
     code: document.getElementById('tpl-code').value.trim(),
@@ -5803,11 +5880,11 @@ async function submitNewTemplate() {
     content: document.getElementById('tpl-content').value
   });
   if (res.code === 0) {
-    alert('模板创建成功');
+    toast('模板创建成功', 'success');
     document.querySelector('div[style*=fixed]').remove();
     loadContractTemplates();
   } else {
-    alert(res.error || '创建失败');
+    toast(res.error || '创建失败', 'error');
   }
 }
 
@@ -5854,9 +5931,9 @@ async function submitCreateContract() {
   const title = document.getElementById('ct-title').value.trim();
   const paName = document.getElementById('ct-pa-name').value.trim();
   const paPhone = document.getElementById('ct-pa-phone').value.trim();
-  if (!title) { alert('请输入合同标题'); return; }
-  if (!paName) { alert('请输入甲方名称'); return; }
-  if (!paPhone) { alert('请输入甲方电话'); return; }
+  if (!title) { toast('请输入合同标题', 'error'); return; }
+  if (!paName) { toast('请输入甲方名称', 'error'); return; }
+  if (!paPhone) { toast('请输入甲方电话', 'error'); return; }
 
   const res = await api('/contracts/admin/create', 'POST', {
     title,
@@ -5874,11 +5951,11 @@ async function submitCreateContract() {
   });
 
   if (res.code === 0) {
-    alert('合同创建成功：' + res.data.contract_no);
+    toast('合同创建成功：' + res.data.contract_no, 'success');
     document.querySelector('div[style*=fixed]').remove();
     loadContracts();
   } else {
-    alert(res.error || '创建失败');
+    toast(res.error || '创建失败', 'error');
   }
 }
 
@@ -6067,7 +6144,7 @@ async function createCampaign() {
   const name = document.getElementById('cp-name').value.trim();
   const startTime = document.getElementById('cp-start').value;
   const endTime = document.getElementById('cp-end').value;
-  if (!name || !startTime || !endTime) { alert('请填写必填项'); return; }
+  if (!name || !startTime || !endTime) { toast('请填写必填项', 'error'); return; }
   
   const rules = document.getElementById('cp-rules').value.trim().split('\n').filter(Boolean);
   const res = await api('/campaigns/admin/create', 'POST', {
@@ -6088,11 +6165,11 @@ async function createCampaign() {
     rules
   });
   if (res.code === 0) {
-    alert('活动创建成功：' + res.data.campaign_no);
+    toast('活动创建成功：' + res.data.campaign_no, 'success');
     document.querySelector('div[style*=fixed]').remove();
     loadCampaignList();
   } else {
-    alert(res.message || '创建失败');
+    toast(res.message || '创建失败', 'error');
   }
 }
 
@@ -6101,7 +6178,7 @@ async function setCampaignStatus(id, status) {
   if (res.code === 0) {
     loadCampaignList();
   } else {
-    alert(res.message || '操作失败');
+    toast(res.message || '操作失败', 'error');
   }
 }
 
@@ -6111,14 +6188,14 @@ async function deleteCampaign(id) {
   if (res.code === 0) {
     loadCampaignList();
   } else {
-    alert(res.message || '删除失败');
+    toast(res.message || '删除失败', 'error');
   }
 }
 
 async function showCampaignDetail(id) {
   const res = await api('/campaigns/admin/' + id + '/records?page=1&pageSize=20');
   const campaignRes = await api('/campaigns/' + id);
-  if (campaignRes.code !== 0) { alert('活动不存在'); return; }
+  if (campaignRes.code !== 0) { toast('活动不存在', 'info'); return; }
   const c = campaignRes.data;
   const records = res.code === 0 ? res.data : { list: [], total: 0, stats: {} };
   
@@ -6289,7 +6366,7 @@ async function showProjectEditor(id) {
   let isEdit = false;
   if (id) {
     isEdit = true;
-    try { proj = await api('/projects/' + id); } catch(e) { alert('加载项目失败'); return; }
+    try { proj = await api('/projects/' + id); } catch(e) { toast('加载项目失败', 'error'); return; }
   }
 
   const modal = document.createElement('div');
@@ -6399,7 +6476,7 @@ async function showProjectEditor(id) {
 
 async function saveProject(id) {
   const name = document.getElementById('prj-name').value.trim();
-  if (!name) { alert('项目名称不能为空'); return; }
+  if (!name) { toast('项目名称不能为空', 'error'); return; }
   const tags = document.getElementById('prj-tags').value.split(',').map(s=>s.trim()).filter(Boolean);
   const body = {
     name,
@@ -6430,7 +6507,7 @@ async function saveProject(id) {
     document.querySelector('div[style*="position:fixed"]').remove();
     loadProjectsList();
   } catch(e) {
-    alert('保存失败: ' + (e.message||''));
+    toast('保存失败: ' + (e.message||'', 'error'));
   }
 }
 
@@ -6440,7 +6517,7 @@ async function deleteProject(id) {
     await api('/projects/' + id, { method: 'DELETE' });
     loadProjectsList();
   } catch(e) {
-    alert('删除失败: ' + (e.message||''));
+    toast('删除失败: ' + (e.message||'', 'error'));
   }
 }
 
@@ -6448,7 +6525,7 @@ async function viewProjectDetail(id) {
   let proj;
   try {
     proj = await api('/projects/' + id);
-  } catch(e) { alert('加载失败'); return; }
+  } catch(e) { toast('加载失败', 'error'); return; }
 
   const modal = document.createElement('div');
   modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:1000;display:flex;align-items:center;justify-content:center;overflow-y:auto;padding:20px';
@@ -6550,7 +6627,7 @@ async function showMilestoneEditor(projId, msId) {
 
 async function saveMilestone(projId, msId) {
   const body = { name: document.getElementById('ms-name').value.trim(), planned_date: document.getElementById('ms-planned').value, actual_date: document.getElementById('ms-actual').value, status: document.getElementById('ms-status').value, remark: document.getElementById('ms-remark').value.trim() };
-  if (!body.name) { alert('名称不能为空'); return; }
+  if (!body.name) { toast('名称不能为空', 'error'); return; }
   try {
     if (msId) {
       await api(`/projects/${projId}/milestones/${msId}`, { method: 'PUT', body: JSON.stringify(body) });
@@ -6559,7 +6636,7 @@ async function saveMilestone(projId, msId) {
     }
     document.querySelectorAll('div[style*="position:fixed"]').forEach(el=>el.remove());
     viewProjectDetail(projId);
-  } catch(e) { alert('保存失败: ' + (e.message||'')); }
+  } catch(e) { toast('保存失败: ' + (e.message||'', 'error')); }
 }
 
 async function showMemberEditor(projId) {
@@ -6581,12 +6658,12 @@ async function showMemberEditor(projId) {
 
 async function saveMember(projId) {
   const body = { name: document.getElementById('mem-name').value.trim(), role: document.getElementById('mem-role').value, workload: parseInt(document.getElementById('mem-workload').value)||100 };
-  if (!body.name) { alert('姓名不能为空'); return; }
+  if (!body.name) { toast('姓名不能为空', 'error'); return; }
   try {
     await api(`/projects/${projId}/members`, { method: 'POST', body: JSON.stringify(body) });
     document.querySelectorAll('div[style*="position:fixed"]').forEach(el=>el.remove());
     viewProjectDetail(projId);
-  } catch(e) { alert('保存失败: ' + (e.message||'')); }
+  } catch(e) { toast('保存失败: ' + (e.message||'', 'error')); }
 }
 
 async function removeProjectMember(projId, memId) {
@@ -6595,7 +6672,7 @@ async function removeProjectMember(projId, memId) {
     await api(`/projects/${projId}/members/${memId}`, { method: 'DELETE' });
     document.querySelectorAll('div[style*="position:fixed"]').forEach(el=>el.remove());
     viewProjectDetail(projId);
-  } catch(e) { alert('移除失败: ' + (e.message||'')); }
+  } catch(e) { toast('移除失败: ' + (e.message||'', 'error')); }
 }
 
 // --- Policies (政策追踪) ---
@@ -6737,7 +6814,7 @@ async function showPolicyEditor(id) {
     isEdit = true;
     try {
       policy = await api('/policies/' + id);
-    } catch(e) { alert('加载政策失败'); return; }
+    } catch(e) { toast('加载政策失败', 'error'); return; }
   }
   
   const modal = document.createElement('div');
@@ -6825,7 +6902,7 @@ async function showPolicyEditor(id) {
 
 async function savePolicy(id) {
   const title = document.getElementById('pol-title').value.trim();
-  if (!title) { alert('标题不能为空'); return; }
+  if (!title) { toast('标题不能为空', 'error'); return; }
   
   const keyPoints = document.getElementById('pol-keypoints').value.split('\n').map(s=>s.trim()).filter(Boolean);
   const measures = document.getElementById('pol-measures').value.split('\n').map(s=>s.trim()).filter(Boolean);
@@ -6858,7 +6935,7 @@ async function savePolicy(id) {
     document.querySelector('div[style*="position:fixed"]').remove();
     loadPoliciesList();
   } catch(e) {
-    alert('保存失败: ' + (e.message||''));
+    toast('保存失败: ' + (e.message||'', 'error'));
   }
 }
 
@@ -6868,7 +6945,7 @@ async function deletePolicy(id) {
     await api('/policies/' + id, { method: 'DELETE' });
     loadPoliciesList();
   } catch(e) {
-    alert('删除失败: ' + (e.message||''));
+    toast('删除失败: ' + (e.message||'', 'error'));
   }
 }
 
@@ -7101,19 +7178,19 @@ async function saveMilestone(msId, projId) {
     actual_date: document.getElementById('ms-actual').value,
     deliverables: document.getElementById('ms-deliverables').value.split(',').map(s=>s.trim()).filter(Boolean)
   };
-  if (!body.title) { alert('请输入标题'); return; }
+  if (!body.title) { toast('请输入标题', 'error'); return; }
   try {
     if (msId) await api('/projects/'+projId+'/milestones/'+msId, 'PUT', body);
     else await api('/projects/'+projId+'/milestones', 'POST', body);
     document.querySelector('div[style*="fixed"]').remove();
     loadProjectMilestones(projId);
-  } catch(e) { alert('保存失败: ' + (e.message||'')); }
+  } catch(e) { toast('保存失败: ' + (e.message||'', 'error')); }
 }
 
 async function deleteMilestone(msId, projId) {
   if (!confirm('确定删除此里程碑？')) return;
   try { await api('/projects/'+projId+'/milestones/'+msId, 'DELETE'); loadProjectMilestones(projId); }
-  catch(e) { alert('删除失败'); }
+  catch(e) { toast('删除失败', 'error'); }
 }
 
 // --- 成员 ---
@@ -7197,19 +7274,19 @@ async function saveMember(memId, projId) {
     responsibility: document.getElementById('mem-resp').value.trim(),
     join_date: document.getElementById('mem-join').value
   };
-  if (!body.name) { alert('请输入姓名'); return; }
+  if (!body.name) { toast('请输入姓名', 'error'); return; }
   try {
     if (memId) await api('/projects/'+projId+'/members/'+memId, 'PUT', body);
     else await api('/projects/'+projId+'/members', 'POST', body);
     document.querySelector('div[style*="fixed"]').remove();
     loadProjectMembers(projId);
-  } catch(e) { alert('保存失败: ' + (e.message||'')); }
+  } catch(e) { toast('保存失败: ' + (e.message||'', 'error')); }
 }
 
 async function deleteMember(memId, projId) {
   if (!confirm('确定删除此成员？')) return;
   try { await api('/projects/'+projId+'/members/'+memId, 'DELETE'); loadProjectMembers(projId); }
-  catch(e) { alert('删除失败'); }
+  catch(e) { toast('删除失败', 'error'); }
 }
 
 // --- 日报 ---
@@ -7275,12 +7352,12 @@ async function saveReport(rptId, projId) {
     issues: document.getElementById('rpt-issues').value.trim(),
     plan: document.getElementById('rpt-plan').value.trim()
   };
-  if (!body.content) { alert('请输入工作内容'); return; }
+  if (!body.content) { toast('请输入工作内容', 'error'); return; }
   try {
     await api('/projects/'+projId+'/reports', 'POST', body);
     document.querySelector('div[style*="fixed"]').remove();
     loadProjectReports(projId);
-  } catch(e) { alert('提交失败: ' + (e.message||'')); }
+  } catch(e) { toast('提交失败: ' + (e.message||'', 'error')); }
 }
 
 async function reviewReport(rptId, projId, action) {
@@ -7288,13 +7365,13 @@ async function reviewReport(rptId, projId, action) {
   try {
     await api('/projects/'+projId+'/reports/'+rptId+'/review', 'PUT', { status: action, review_comment: comment });
     loadProjectReports(projId);
-  } catch(e) { alert('操作失败'); }
+  } catch(e) { toast('操作失败', 'error'); }
 }
 
 async function deleteReport(rptId, projId) {
   if (!confirm('确定删除此日报？')) return;
   try { await api('/projects/'+projId+'/reports/'+rptId, 'DELETE'); loadProjectReports(projId); }
-  catch(e) { alert('删除失败'); }
+  catch(e) { toast('删除失败', 'error'); }
 }
 
 // --- 审批 ---
@@ -7352,12 +7429,12 @@ async function saveApproval(apprId, projId) {
     content: document.getElementById('appr-content').value.trim(),
     requester: document.getElementById('appr-requester').value.trim()
   };
-  if (!body.title) { alert('请输入标题'); return; }
+  if (!body.title) { toast('请输入标题', 'error'); return; }
   try {
     await api('/projects/'+projId+'/approvals', 'POST', body);
     document.querySelector('div[style*="fixed"]').remove();
     loadProjectApprovals(projId);
-  } catch(e) { alert('提交失败: ' + (e.message||'')); }
+  } catch(e) { toast('提交失败: ' + (e.message||'', 'error')); }
 }
 
 async function processApproval(apprId, projId, action) {
@@ -7366,13 +7443,13 @@ async function processApproval(apprId, projId, action) {
   try {
     await api('/projects/'+projId+'/approvals/'+apprId+'/process', 'PUT', { status: action, approver_comment: comment, approver: approver });
     loadProjectApprovals(projId);
-  } catch(e) { alert('操作失败'); }
+  } catch(e) { toast('操作失败', 'error'); }
 }
 
 async function deleteApproval(apprId, projId) {
   if (!confirm('确定删除此审批记录？')) return;
   try { await api('/projects/'+projId+'/approvals/'+apprId, 'DELETE'); loadProjectApprovals(projId); }
-  catch(e) { alert('删除失败'); }
+  catch(e) { toast('删除失败', 'error'); }
 }
 
 // --- 项目新建/编辑 ---
@@ -7478,19 +7555,19 @@ async function saveProject(id) {
     tags: document.getElementById('prj-tags').value.split(',').map(s=>s.trim()).filter(Boolean),
     remark: document.getElementById('prj-remark').value.trim()
   };
-  if (!body.name) { alert('请输入项目名称'); return; }
+  if (!body.name) { toast('请输入项目名称', 'error'); return; }
   try {
     if (id) await api('/projects/'+id, 'PUT', body);
     else await api('/projects', 'POST', body);
     document.querySelector('div[style*="fixed"]').remove();
     loadProjectList();
-  } catch(e) { alert('保存失败: ' + (e.message||'')); }
+  } catch(e) { toast('保存失败: ' + (e.message||'', 'error')); }
 }
 
 async function deleteProject(id) {
   if (!confirm('确定删除此项目？相关里程碑、成员、日报、审批也将删除。')) return;
   try { await api('/projects/'+id, 'DELETE'); loadProjectList(); }
-  catch(e) { alert('删除失败'); }
+  catch(e) { toast('删除失败', 'error'); }
 }
 
 // ==================== 企业画像 (Enterprise Profiles) ====================
@@ -7661,21 +7738,21 @@ async function saveEp(id) {
     else await api('/enterprise', 'POST', body);
     document.querySelector('div[style*="fixed"]').remove();
     loadEpList();
-  } catch(e) { alert('保存失败: '+e.message); }
+  } catch(e) { toast('保存失败: '+e.message, 'error'); }
 }
 
 async function assessCredit(id) {
   try {
     const result = await api('/enterprise/'+id+'/assess', 'POST');
-    alert('信用评估完成！\n信用分: '+result.score+'\n等级: '+result.grade);
+    toast('信用评估完成！\n信用分: '+result.score+'\n等级: '+result.grade, 'success');
     loadEpList();
-  } catch(e) { alert('评估失败: '+e.message); }
+  } catch(e) { toast('评估失败: '+e.message, 'error'); }
 }
 
 async function deleteEp(id) {
   if (!confirm('确定删除此画像？')) return;
   try { await api('/enterprise/'+id, 'DELETE'); loadEpList(); }
-  catch(e) { alert('删除失败'); }
+  catch(e) { toast('删除失败', 'error'); }
 }
 
 function openCertModal(epId, certId) {
@@ -7723,19 +7800,19 @@ async function saveCert(epId, certId) {
     issue_date: document.getElementById('cert-issue').value,
     expire_date: document.getElementById('cert-expire').value
   };
-  if (!body.name) { alert('请输入证书名称'); return; }
+  if (!body.name) { toast('请输入证书名称', 'error'); return; }
   try {
     if (certId) await api('/enterprise/'+epId+'/certificates/'+certId, 'PUT', body);
     else await api('/enterprise/'+epId+'/certificates', 'POST', body);
     document.querySelector('div[style*="fixed"]').remove();
     loadEpCerts(epId);
-  } catch(e) { alert('保存失败'); }
+  } catch(e) { toast('保存失败', 'error'); }
 }
 
 async function deleteCert(epId, certId) {
   if (!confirm('确定删除此证书？')) return;
   try { await api('/enterprise/'+epId+'/certificates/'+certId, 'DELETE'); loadEpCerts(epId); }
-  catch(e) { alert('删除失败'); }
+  catch(e) { toast('删除失败', 'error'); }
 }
 
 // ==================== 服务撮合 (Service Matching) ====================
@@ -7857,14 +7934,14 @@ async function loadSmMatches() {
 async function autoMatch(demandId) {
   try {
     const result = await api('/services/matches/suggest/'+demandId, 'POST');
-    alert('智能匹配完成！找到 '+result.matches.length+' 个匹配服务');
+    toast('智能匹配完成！找到 '+result.matches.length+' 个匹配服务', 'success');
     switchSmTab('matches');
-  } catch(e) { alert('匹配失败: '+e.message); }
+  } catch(e) { toast('匹配失败: '+e.message, 'error'); }
 }
 
 async function updateMatch(matchId, status) {
   try { await api('/services/matches/'+matchId, 'PUT', {status}); loadSmMatches(); }
-  catch(e) { alert('操作失败'); }
+  catch(e) { toast('操作失败', 'error'); }
 }
 
 function openDemandModal() {
@@ -7909,9 +7986,9 @@ async function saveDemand() {
     description: document.getElementById('dm-desc').value.trim(),
     requirements: document.getElementById('dm-reqs').value.split(',').map(s=>s.trim()).filter(Boolean)
   };
-  if (!body.title) { alert('请输入标题'); return; }
+  if (!body.title) { toast('请输入标题', 'error'); return; }
   try { await api('/services/demands', 'POST', body); document.querySelector('div[style*="fixed"]').remove(); loadSmDemands(); }
-  catch(e) { alert('发布失败: '+e.message); }
+  catch(e) { toast('发布失败: '+e.message, 'error'); }
 }
 
 function openOfferModal() {
@@ -7950,21 +8027,21 @@ async function saveOffer() {
     description: document.getElementById('of-desc').value.trim(),
     capabilities: document.getElementById('of-caps').value.split(',').map(s=>s.trim()).filter(Boolean)
   };
-  if (!body.title) { alert('请输入服务名称'); return; }
+  if (!body.title) { toast('请输入服务名称', 'error'); return; }
   try { await api('/services/offers', 'POST', body); document.querySelector('div[style*="fixed"]').remove(); loadSmOffers(); }
-  catch(e) { alert('发布失败: '+e.message); }
+  catch(e) { toast('发布失败: '+e.message, 'error'); }
 }
 
 async function deleteDemand(id) {
   if (!confirm('确定删除此需求？')) return;
   try { await api('/services/demands/'+id, 'DELETE'); loadSmDemands(); }
-  catch(e) { alert('删除失败'); }
+  catch(e) { toast('删除失败', 'error'); }
 }
 
 async function deleteOffer(id) {
   if (!confirm('确定删除此服务？')) return;
   try { await api('/services/offers/'+id, 'DELETE'); loadSmOffers(); }
-  catch(e) { alert('删除失败'); }
+  catch(e) { toast('删除失败', 'error'); }
 }
 
 // ==================== 营销中心 (Marketing Center) ====================
@@ -8163,20 +8240,20 @@ async function saveArticle() {
     style: document.getElementById('ar-style').value,
     content: document.getElementById('ar-content').value.trim()
   };
-  if (!body.title || !body.product_id) { alert('请输入标题和产品ID'); return; }
+  if (!body.title || !body.product_id) { toast('请输入标题和产品ID', 'error'); return; }
   try { await api('/marketing/articles', 'POST', body); document.querySelector('div[style*="fixed"]').remove(); loadMkArticles(); }
-  catch(e) { alert('保存失败: '+e.message); }
+  catch(e) { toast('保存失败: '+e.message, 'error'); }
 }
 
 async function publishArticle(id) {
   try { await api('/marketing/articles/'+id+'/publish', 'POST'); loadMkArticles(); }
-  catch(e) { alert('发布失败'); }
+  catch(e) { toast('发布失败', 'error'); }
 }
 
 async function deleteArticle(id) {
   if (!confirm('确定删除此软文？')) return;
   try { await api('/marketing/articles/'+id, 'DELETE'); loadMkArticles(); }
-  catch(e) { alert('删除失败'); }
+  catch(e) { toast('删除失败', 'error'); }
 }
 
 function openWechatModal() {
@@ -8205,15 +8282,15 @@ async function saveWechat() {
     industry: document.getElementById('wa-industry').value.trim(),
     follower_count: parseInt(document.getElementById('wa-followers').value)||0
   };
-  if (!body.account_name || !body.client_id) { alert('请输入公众号名称和客户ID'); return; }
+  if (!body.account_name || !body.client_id) { toast('请输入公众号名称和客户ID', 'error'); return; }
   try { await api('/marketing/wechat', 'POST', body); document.querySelector('div[style*="fixed"]').remove(); loadMkWechat(); }
-  catch(e) { alert('保存失败'); }
+  catch(e) { toast('保存失败', 'error'); }
 }
 
 async function deleteWechat(id) {
   if (!confirm('确定删除此公众号记录？')) return;
   try { await api('/marketing/wechat/'+id, 'DELETE'); loadMkWechat(); }
-  catch(e) { alert('删除失败'); }
+  catch(e) { toast('删除失败', 'error'); }
 }
 
 function openCampaignModal() {
@@ -8250,26 +8327,26 @@ async function saveCampaign() {
     start_date: document.getElementById('cp-start').value,
     end_date: document.getElementById('cp-end').value
   };
-  if (!body.title) { alert('请输入活动名称'); return; }
+  if (!body.title) { toast('请输入活动名称', 'error'); return; }
   try { await api('/marketing/campaigns', 'POST', body); document.querySelector('div[style*="fixed"]').remove(); loadMkCampaigns(); }
-  catch(e) { alert('创建失败'); }
+  catch(e) { toast('创建失败', 'error'); }
 }
 
 async function deleteCampaign(id) {
   if (!confirm('确定删除此活动？')) return;
   try { await api('/marketing/campaigns/'+id, 'DELETE'); loadMkCampaigns(); }
-  catch(e) { alert('删除失败'); }
+  catch(e) { toast('删除失败', 'error'); }
 }
 
 async function publishStar(id) {
   try { await api('/marketing/weekly-star/'+id+'/publish', 'POST'); loadMkStar(); }
-  catch(e) { alert('发布失败'); }
+  catch(e) { toast('发布失败', 'error'); }
 }
 
 async function deleteStar(id) {
   if (!confirm('确定删除此星级客户记录？')) return;
   try { await api('/marketing/weekly-star/'+id, 'DELETE'); loadMkStar(); }
-  catch(e) { alert('删除失败'); }
+  catch(e) { toast('删除失败', 'error'); }
 }
 
 // ==================== SKU管理 ====================
@@ -8378,19 +8455,19 @@ async function saveSku(skuId, productId) {
     },
     sort_order: parseInt(document.getElementById('sku-order').value)||0
   };
-  if (!body.name) { alert('请输入SKU名称'); return; }
+  if (!body.name) { toast('请输入SKU名称', 'error'); return; }
   try {
     if (skuId) await api('/commerce/'+productId+'/skus/'+skuId, 'PUT', body);
     else await api('/commerce/'+productId+'/skus', 'POST', body);
     document.querySelector('div[style*="fixed"]').remove();
     loadSkuList();
-  } catch(e) { alert('保存失败: '+e.message); }
+  } catch(e) { toast('保存失败: '+e.message, 'error'); }
 }
 
 async function deleteSku(skuId, productId) {
   if (!confirm('确定删除此SKU？')) return;
   try { await api('/commerce/'+productId+'/skus/'+skuId, 'DELETE'); loadSkuList(); }
-  catch(e) { alert('删除失败'); }
+  catch(e) { toast('删除失败', 'error'); }
 }
 
 // ==================== 退款管理 ====================
@@ -8439,7 +8516,7 @@ async function processRefund(refundId, status) {
   const comment = prompt(status==='approved'?'审批意见（可选）：':'驳回原因：') || '';
   const approver = prompt('审批人姓名：') || '';
   try { await api('/commerce/refunds/'+refundId+'/process', 'PUT', {status, approver, approver_comment: comment}); loadRefundList(); }
-  catch(e) { alert('操作失败: '+e.message); }
+  catch(e) { toast('操作失败: '+e.message, 'error'); }
 }
 
 // ==================== 代理商管理 ====================
@@ -8599,19 +8676,19 @@ async function saveAgent(id) {
     region: document.getElementById('ag-region').value.trim(),
     description: document.getElementById('ag-desc').value.trim()
   };
-  if (!body.name) { alert('请输入姓名'); return; }
+  if (!body.name) { toast('请输入姓名', 'error'); return; }
   try {
     if (id) await api('/agents/'+id, { method: 'PUT', body: JSON.stringify(body) });
     else await api('/agents', { method: 'POST', body: JSON.stringify(body) });
     document.querySelector('div[style*="fixed"]').remove();
     loadAgentManage();
-  } catch(e) { alert('保存失败'); }
+  } catch(e) { toast('保存失败', 'error'); }
 }
 
 async function deleteAgent(id) {
   if (!confirm('确定删除此代理商？')) return;
   try { await api('/agents/'+id, { method: 'DELETE' }); loadAgentManage(); }
-  catch(e) { alert('删除失败'); }
+  catch(e) { toast('删除失败', 'error'); }
 }
 
 function openPushModal() {
@@ -8640,12 +8717,12 @@ async function savePush() {
     content: document.getElementById('pu-content').value.trim(),
     materials: document.getElementById('pu-materials').value.split(',').map(s=>s.trim()).filter(Boolean)
   };
-  if (!body.title) { alert('请输入标题'); return; }
+  if (!body.title) { toast('请输入标题', 'error'); return; }
   try {
     await api('/agents/push', { method: 'POST', body: JSON.stringify(body) });
     document.querySelector('div[style*="fixed"]').remove();
     toast('新品已推送给全体代理商');
-  } catch(e) { alert('推送失败'); }
+  } catch(e) { toast('推送失败', 'error'); }
 }
 
 // ==================== 交付跟踪 ====================
@@ -8737,7 +8814,7 @@ async function updatePhase(deliveryId, phaseKey, status) {
     const data = await api('/delivery/'+deliveryId+'/phase/'+phaseKey, { method: 'PUT', body: JSON.stringify({ status }) });
     toast('阶段已更新，进度：'+data.progress+'%');
     showDeliveryDetail(deliveryId);
-  } catch(e) { alert('更新失败'); }
+  } catch(e) { toast('更新失败', 'error'); }
 }
 
 function openDeliveryModal() {
@@ -8777,12 +8854,12 @@ async function saveDelivery() {
     planned_end_date: document.getElementById('dt-end').value,
     payment_amount: parseFloat(document.getElementById('dt-amount').value) || 0
   };
-  if (!body.project_name) { alert('请输入项目名称'); return; }
+  if (!body.project_name) { toast('请输入项目名称', 'error'); return; }
   try {
     await api('/delivery', { method: 'POST', body: JSON.stringify(body) });
     document.querySelector('div[style*="fixed"]').remove();
     loadDeliveryTrack();
-  } catch(e) { alert('创建失败'); }
+  } catch(e) { toast('创建失败', 'error'); }
 }
 
 // ==================== 企业管家 ====================
@@ -8873,19 +8950,19 @@ async function saveService(id) {
     expire_date: document.getElementById('sv-end').value,
     description: document.getElementById('sv-desc').value.trim()
   };
-  if (!body.service_title) { alert('请输入服务名称'); return; }
+  if (!body.service_title) { toast('请输入服务名称', 'error'); return; }
   try {
     if (id) await api('/steward/'+id, { method: 'PUT', body: JSON.stringify(body) });
     else await api('/steward', { method: 'POST', body: JSON.stringify(body) });
     document.querySelector('div[style*="fixed"]').remove();
     loadStewardService();
-  } catch(e) { alert('保存失败'); }
+  } catch(e) { toast('保存失败', 'error'); }
 }
 
 async function deleteService(id) {
   if (!confirm('确定删除此服务？')) return;
   try { await api('/steward/'+id, { method: 'DELETE' }); loadStewardService(); }
-  catch(e) { alert('删除失败'); }
+  catch(e) { toast('删除失败', 'error'); }
 }
 
 // ==================== 服务商管理 ====================
@@ -8996,20 +9073,20 @@ async function saveProvider() {
     capabilities: document.getElementById('pv-caps').value.split(',').map(s=>s.trim()).filter(Boolean),
     description: document.getElementById('pv-desc').value.trim()
   };
-  if (!body.name) { alert('请输入名称'); return; }
+  if (!body.name) { toast('请输入名称', 'error'); return; }
   try { await api('/providers', { method: 'POST', body: JSON.stringify(body) }); document.querySelector('div[style*="fixed"]').remove(); loadProviderManage(); }
-  catch(e) { alert('保存失败'); }
+  catch(e) { toast('保存失败', 'error'); }
 }
 
 async function deleteProvider(id) {
   if (!confirm('确定删除此服务商？')) return;
   try { await api('/providers/'+id, { method: 'DELETE' }); loadProviderManage(); }
-  catch(e) { alert('删除失败'); }
+  catch(e) { toast('删除失败', 'error'); }
 }
 
 async function purgeProviders() {
-  try { const r = await api('/providers/purge', { method: 'POST' }); alert(r.message); loadProviderManage(); }
-  catch(e) { alert('操作失败'); }
+  try { const r = await api('/providers/purge', { method: 'POST' }); toast(r.message, 'info'); loadProviderManage(); }
+  catch(e) { toast('操作失败', 'error'); }
 }
 
 // ==================== 资金池看板 ====================
@@ -9114,13 +9191,13 @@ async function submitDiagnosis() {
     contact_phone: document.getElementById('dg-phone').value.trim(),
     demand_desc: document.getElementById('dg-demand').value.trim()
   };
-  if (!body.client_name || !body.demand_desc) { alert('请填写企业名称和需求描述'); return; }
+  if (!body.client_name || !body.demand_desc) { toast('请填写企业名称和需求描述', 'info'); return; }
   try {
     const data = await api('/platform/diagnoses', { method: 'POST', body: JSON.stringify(body) });
     document.querySelector('div[style*="fixed"]').remove();
-    alert(data.message);
+    toast(data.message, 'info');
     loadAIDiagnosis();
-  } catch(e) { alert('诊断失败'); }
+  } catch(e) { toast('诊断失败', 'error'); }
 
 // ==================== 角色权限管理 ====================
 
@@ -9219,17 +9296,17 @@ function openRoleModal(id) {
 
 async function saveRole(id) {
   const body = { name: document.getElementById('rl-name').value.trim(), code: document.getElementById('rl-code').value.trim(), description: document.getElementById('rl-desc').value.trim() };
-  if (!body.name) { alert('请输入角色名称'); return; }
+  if (!body.name) { toast('请输入角色名称', 'error'); return; }
   try {
     if (id) await api('/admin/roles/'+id, { method: 'PUT', body: JSON.stringify(body) });
     else await api('/admin/roles', { method: 'POST', body: JSON.stringify(body) });
     document.querySelector('div[style*="fixed"]').remove(); loadRolesList();
-  } catch(e) { alert('保存失败'); }
+  } catch(e) { toast('保存失败', 'error'); }
 }
 
 async function deleteRole(id) {
   if (!confirm('确定删除此角色？')) return;
-  try { await api('/admin/roles/'+id, { method: 'DELETE' }); loadRolesList(); } catch(e) { alert('删除失败'); }
+  try { await api('/admin/roles/'+id, { method: 'DELETE' }); loadRolesList(); } catch(e) { toast('删除失败', 'error'); }
 }
 
 function openAdminModal(id) {
@@ -9273,17 +9350,17 @@ async function saveAdmin(id) {
   const body = { display_name: document.getElementById('ad-display').value.trim(), role_id: parseInt(document.getElementById('ad-role').value)||0, department: document.getElementById('ad-dept').value.trim(), phone: document.getElementById('ad-phone').value.trim() };
   const pwd = document.getElementById('ad-password').value.trim();
   if (pwd) body.password = pwd;
-  if (!id && !pwd) { alert('请输入密码'); return; }
+  if (!id && !pwd) { toast('请输入密码', 'error'); return; }
   try {
     if (id) await api('/admin/admins/'+id, { method: 'PUT', body: JSON.stringify(body) });
     else { body.username = document.getElementById('ad-username').value.trim(); body.password = pwd; await api('/admin/admins', { method: 'POST', body: JSON.stringify(body) }); }
     document.querySelector('div[style*="fixed"]').remove(); loadAdminsList();
-  } catch(e) { alert('保存失败'); }
+  } catch(e) { toast('保存失败', 'error'); }
 }
 
 async function deleteAdmin(id) {
   if (!confirm('确定删除此管理员？')) return;
-  try { await api('/admin/admins/'+id, { method: 'DELETE' }); loadAdminsList(); } catch(e) { alert('删除失败'); }
+  try { await api('/admin/admins/'+id, { method: 'DELETE' }); loadAdminsList(); } catch(e) { toast('删除失败', 'error'); }
 }
 }
 
@@ -9422,9 +9499,9 @@ async function saveAllConfig() {
   });
   try {
     const data = await api('/config/batch', { method: 'PUT', body: JSON.stringify({ configs }) });
-    alert(data.message);
+    toast(data.message, 'info');
     loadSysConfig();
-  } catch(e) { alert('保存失败'); }
+  } catch(e) { toast('保存失败', 'error'); }
 }
 
 // ==================== H5用户管理 ====================
@@ -9469,7 +9546,7 @@ async function loadH5Users() {
 
 async function approveH5User(id) {
   try { await api('/h5auth/'+id, { method: 'PUT', body: JSON.stringify({ status: 'active' }) }); loadH5Users(); }
-  catch(e) { alert('操作失败'); }
+  catch(e) { toast('操作失败', 'error'); }
 }
 
 function editH5User(id) {
@@ -9517,13 +9594,13 @@ async function saveH5User(id) {
   const pwd = document.getElementById('h5-pwd').value.trim();
   if (pwd) body.password = pwd;
   try { await api('/h5auth/'+id, { method: 'PUT', body: JSON.stringify(body) }); document.querySelector('div[style*="fixed"]').remove(); loadH5Users(); }
-  catch(e) { alert('保存失败'); }
+  catch(e) { toast('保存失败', 'error'); }
 }
 
 async function deleteH5User(id) {
   if (!confirm('确定删除此用户？')) return;
   try { await api('/h5auth/'+id, { method: 'DELETE' }); loadH5Users(); }
-  catch(e) { alert('删除失败'); }
+  catch(e) { toast('删除失败', 'error'); }
 }
 
 // ==================== 运营看板 ====================
@@ -9656,11 +9733,11 @@ function openFunnelModal(id) {
 
 async function saveFunnel(id) {
   const body = {client_name:document.getElementById('fn-client').value.trim(),product_title:document.getElementById('fn-product').value.trim(),stage:document.getElementById('fn-stage').value,stage_label:document.getElementById('fn-stage').selectedOptions[0].text,amount:parseFloat(document.getElementById('fn-amount').value)||0,source:document.getElementById('fn-source').value.trim(),notes:document.getElementById('fn-notes').value.trim()};
-  if(!body.client_name){alert('请输入客户名称');return}
-  try{if(id)await api('/analytics-v2/funnel/'+id,{method:'PUT',body:JSON.stringify(body)});else await api('/analytics-v2/funnel',{method:'POST',body:JSON.stringify(body)});document.querySelector('div[style*="fixed"]').remove();loadSalesFunnel()}catch(e){alert('保存失败')}
+  if(!body.client_name){toast('请输入客户名称', 'error');return}
+  try{if(id)await api('/analytics-v2/funnel/'+id,{method:'PUT',body:JSON.stringify(body)});else await api('/analytics-v2/funnel',{method:'POST',body:JSON.stringify(body)});document.querySelector('div[style*="fixed"]').remove();loadSalesFunnel()}catch(e){toast('保存失败', 'error')}
 }
 
-async function deleteFunnel(id){if(!confirm('确定删除?'))return;try{await api('/analytics-v2/funnel/'+id,{method:'DELETE'});loadSalesFunnel()}catch(e){alert('删除失败')}}
+async function deleteFunnel(id){if(!confirm('确定删除?'))return;try{await api('/analytics-v2/funnel/'+id,{method:'DELETE'});loadSalesFunnel()}catch(e){toast('删除失败', 'error')}}
 
 // ==================== 客户入驻 ====================
 
@@ -9707,7 +9784,7 @@ function editOnboarding(id){
 
 async function saveOnboarding(id){
   const body={status:document.getElementById('onb-status').value,assigned_consultant:document.getElementById('onb-consultant').value.trim(),notes:document.getElementById('onb-notes').value.trim()};
-  try{await api('/analytics-v2/onboarding/'+id,{method:'PUT',body:JSON.stringify(body)});document.querySelector('div[style*="fixed"]').remove();loadClientOnboarding()}catch(e){alert('保存失败')}
+  try{await api('/analytics-v2/onboarding/'+id,{method:'PUT',body:JSON.stringify(body)});document.querySelector('div[style*="fixed"]').remove();loadClientOnboarding()}catch(e){toast('保存失败', 'error')}
 }
 
 // ==================== 营销素材 ====================
@@ -9753,11 +9830,11 @@ function openMaterialModal(){
 
 async function saveMaterial(){
   const body={title:document.getElementById('mt-title').value.trim(),type:document.getElementById('mt-type').value,category:document.getElementById('mt-category').value.trim(),product_title:document.getElementById('mt-product').value.trim(),file_url:document.getElementById('mt-url').value.trim()};
-  if(!body.title){alert('请输入标题');return}
-  try{await api('/analytics-v2/materials',{method:'POST',body:JSON.stringify(body)});document.querySelector('div[style*="fixed"]').remove();loadMarketingMaterials()}catch(e){alert('保存失败')}
+  if(!body.title){toast('请输入标题', 'error');return}
+  try{await api('/analytics-v2/materials',{method:'POST',body:JSON.stringify(body)});document.querySelector('div[style*="fixed"]').remove();loadMarketingMaterials()}catch(e){toast('保存失败', 'error')}
 }
 
-async function deleteMaterial(id){if(!confirm('确定删除?'))return;try{await api('/analytics-v2/materials/'+id,{method:'DELETE'});loadMarketingMaterials()}catch(e){alert('删除失败')}}
+async function deleteMaterial(id){if(!confirm('确定删除?'))return;try{await api('/analytics-v2/materials/'+id,{method:'DELETE'});loadMarketingMaterials()}catch(e){toast('删除失败', 'error')}}
 </script>
 </body>
 </html>

@@ -241,6 +241,20 @@ td{padding:9px 12px;font-size:12px;border-bottom:1px solid #f1f5f9}tr:last-child
 [data-theme="dark"] table tr:hover td{background:rgba(212,160,23,.05)}
 [data-theme="dark"] input,[data-theme="dark"] select{background:#0f172a;color:#e2e8f0;border-color:#334155}
 </style>
+
+<script>
+function toast(msg, type, duration) {
+  type = type || 'info'; duration = duration || 3000;
+  var c = document.querySelector('.toast-container');
+  if (!c) { c = document.createElement('div'); c.className = 'toast-container'; c.style.cssText = 'position:fixed;top:20px;right:20px;z-index:99999;display:flex;flex-direction:column;gap:8px;pointer-events:none'; document.body.appendChild(c); }
+  var t = document.createElement('div');
+  t.className = 'toast-item toast-' + type;
+  t.style.cssText = 'padding:12px 20px;border-radius:8px;font-size:14px;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.15);pointer-events:auto;max-width:360px;word-break:break-word;background:' + (type==='success'?'#10b981':type==='error'?'#ef4444':type==='warning'?'#f59e0b':'#3b82f6');
+  t.textContent = msg; c.appendChild(t);
+  setTimeout(function() { t.style.transition='opacity .3s,transform .3s'; t.style.opacity='0'; t.style.transform='translateX(100%)'; setTimeout(function() { t.remove(); }, 300); }, duration);
+}
+</script>
+
 </head>
 <body>
 <div class="bb"></div>
@@ -864,7 +878,7 @@ td{padding:9px 12px;font-size:12px;border-bottom:1px solid #f1f5f9}tr:last-child
 function toggleV4Theme(){var t=document.documentElement.getAttribute('data-theme');if(t==='dark'){document.documentElement.removeAttribute('data-theme');localStorage.setItem('v4_theme','light');var e=document.getElementById('v4ThemeToggle');if(e)e.textContent='🌙'}else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('v4_theme','dark');var e=document.getElementById('v4ThemeToggle');if(e)e.textContent='☀️'}}
 function playVideo(){var m=document.getElementById('videoModal');m.style.display='flex'}
 function showProductDetail(el){var name=el.querySelector('.pn')?.textContent||'';var price=el.querySelector('.pp')?.textContent||'';var desc=el.querySelector('.ps')?.textContent||'';var tags=Array.from(el.querySelectorAll('.pf')).map(t=>t.textContent).join(' / ')||'';document.getElementById('pmContent').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3 style="font-size:18px;color:#0a1628">'+name+'</h3><span onclick="document.getElementById(\'productModal\').style.display=\'none\'" style="cursor:pointer;font-size:20px;color:#9ca3af">✕</span></div><div style="font-size:13px;color:#6b7280;margin-bottom:8px">'+desc+'</div><div style="font-size:22px;font-weight:800;color:#d4a017;margin-bottom:12px">'+price+'</div><div style="margin-bottom:16px">'+tags.split('/').map(t=>'<span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;background:#f0f4ff;color:#2563eb;margin-right:4px">'+t+'</span>').join('')+'</div><div style="border-top:1px solid #e5e7eb;padding-top:12px;margin-bottom:12px"><div style="font-size:12px;font-weight:700;color:#0a1628;margin-bottom:6px">产品详情</div><div style="font-size:12px;color:#6b7280;line-height:1.8">宁夏马季食用油有限公司出品，采用北纬38°黄金亚麻籽，物理压榨工艺，保留天然营养。α-亚麻酸含量≥55%，远超国家标准。</div></div><div style="border-top:1px solid #e5e7eb;padding-top:12px;margin-bottom:16px"><div style="font-size:12px;font-weight:700;color:#0a1628;margin-bottom:6px">资质认证</div><div style="font-size:11px;color:#6b7280">宁夏好粮油 · 清真认证 · SC食品生产许可 · ISO22000</div></div><button onclick="document.getElementById(\'productModal\').style.display=\'none\';document.getElementById(\'consultName\').scrollIntoView({behavior:\'smooth\'})" style="width:100%;padding:10px;border:none;border-radius:10px;background:#d4a017;color:#fff;font-size:14px;font-weight:700;cursor:pointer">咨询购买</button>';document.getElementById('productModal').style.display='flex'}
-function submitConsult(){var n=document.getElementById('consultName').value;var p=document.getElementById('consultPhone').value;if(!n||!p){alert('请填写姓名和电话');return}alert('提交成功！演示版不会真实提交。\n正式版将自动创建咨询工单并通知客服。');document.getElementById('consultName').value='';document.getElementById('consultPhone').value='';document.getElementById('consultMsg').value=''}
+function submitConsult(){var n=document.getElementById('consultName').value;var p=document.getElementById('consultPhone').value;if(!n||!p){toast('请填写姓名和电话', 'info');return}toast('提交成功！演示版不会真实提交。\n正式版将自动创建咨询工单并通知客服。', 'success');document.getElementById('consultName').value='';document.getElementById('consultPhone').value='';document.getElementById('consultMsg').value=''}
 (function(){var t=localStorage.getItem('v4_theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');setTimeout(function(){var e=document.getElementById('v4ThemeToggle');if(e)e.textContent='☀️'},500)}})();
 </script>
 </body>
