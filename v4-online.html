@@ -873,6 +873,37 @@ function toast(msg, type, duration) {
   });
   activate('brand',tabs[0]);
   // 加载动画
+
+  // ========== 语音助手 ==========
+  var TTS_BASE='http://127.0.0.1:8912';
+  var va={listening:false,rec:null,audio:null,
+    speak:function(t){if(!t)return;if(this.audio){this.audio.pause();this.audio=null}this.audio=new Audio(TTS_BASE+'/api/tts?text='+encodeURIComponent(t.substring(0,500))+'&voice=female');this.audio.play().catch(function(){});return this.audio},
+    stopSpeak:function(){if(this.audio){this.audio.pause();this.audio=null}},
+    startListen:function(){
+      if(this.listening){this.stopListen();return}
+      var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+      if(!SR){toast('请使用 Chrome 或 Edge 浏览器','error');return}
+      this.rec=new SR();this.rec.lang='zh-CN';this.rec.continuous=false;this.rec.interimResults=true;
+      var self=this,finalText='',fab=document.getElementById('voiceFab');
+      if(fab){fab.classList.add('on');fab.textContent='⏹'}
+      this.listening=true;toast('正在聆听...','info');
+      this.rec.onresult=function(e){var im='';for(var i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal)finalText+=e.results[i][0].transcript;else im+=e.results[i][0].transcript}if(im)toast('识别中: '+im,'info')};
+      this.rec.onend=function(){self.listening=false;if(fab){fab.classList.remove('on');fab.textContent='🎤'}if(finalText){toast('你说: '+finalText,'success');self.cmd(finalText)}};
+      this.rec.onerror=function(){self.listening=false;if(fab){fab.classList.remove('on');fab.textContent='🎤'}toast('语音识别失败','error')};
+      this.rec.start()
+    },
+    stopListen:function(){if(this.rec){this.rec.stop();this.rec=null}this.listening=false;var fab=document.getElementById('voiceFab');if(fab){fab.classList.remove('on');fab.textContent='🎤'}},
+    cmd:function(text){
+      text=text.toLowerCase().replace(/\s/g,'');var m=false;
+      if(text.match(/品牌|宣传/)){activate('brand',tabs[0]);m=true}
+      else if(text.match(/甄选|源头|好货/)){activate('source',tabs[1]);m=true}
+      else if(text.match(/撮合|产业链/)){activate('match',tabs[2]);m=true}
+      else if(text.match(/产品|推广/)){activate('product',tabs[3]);m=true}
+      if(text.match(/朗读|播报/)){var c=document.querySelector('.tab-panel.act')||document.body;this.speak(c.innerText.substring(0,500));m=true}
+      if(text.match(/停止|暂停/)){this.stopSpeak();toast('已停止播报','info');m=true}
+      if(!m)toast('可说: 品牌/甄选/撮合/产品/朗读/停止','info')
+    }
+  };
   window.addEventListener('load',function(){setTimeout(function(){var l=document.getElementById('loader');if(l){l.classList.add('hide');setTimeout(function(){l.remove()},600)}},300)});
 })();
 function toggleV4Theme(){var t=document.documentElement.getAttribute('data-theme');if(t==='dark'){document.documentElement.removeAttribute('data-theme');localStorage.setItem('v4_theme','light');var e=document.getElementById('v4ThemeToggle');if(e)e.textContent='🌙'}else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('v4_theme','dark');var e=document.getElementById('v4ThemeToggle');if(e)e.textContent='☀️'}}
@@ -881,5 +912,7 @@ function showProductDetail(el){var name=el.querySelector('.pn')?.textContent||''
 function submitConsult(){var n=document.getElementById('consultName').value;var p=document.getElementById('consultPhone').value;if(!n||!p){toast('请填写姓名和电话', 'info');return}toast('提交成功！演示版不会真实提交。\n正式版将自动创建咨询工单并通知客服。', 'success');document.getElementById('consultName').value='';document.getElementById('consultPhone').value='';document.getElementById('consultMsg').value=''}
 (function(){var t=localStorage.getItem('v4_theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');setTimeout(function(){var e=document.getElementById('v4ThemeToggle');if(e)e.textContent='☀️'},500)}})();
 </script>
+<button id="voiceFab" onclick="va.startListen()" style="position:fixed;bottom:80px;right:16px;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#d4a017,#b8860b);border:none;color:#fff;font-size:22px;cursor:pointer;z-index:9998;box-shadow:0 4px 16px rgba(212,160,23,.4);transition:all .25s" title="语音助手">🎤</button>
+<style>#voiceFab.on{background:linear-gradient(135deg,#ef4444,#f87171);animation:pulse 1s infinite}@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(239,68,68,.4)}70%{box-shadow:0 0 0 12px rgba(239,68,68,0)}100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}}</style>
 </body>
 </html>
