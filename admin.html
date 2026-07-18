@@ -41,6 +41,14 @@
 .nav-group-count { display: inline-block; margin-left: auto; margin-right: 8px; padding: 1px 6px; background: rgba(255,255,255,.08); border-radius: 8px; font-size: 10px; font-weight: 400; opacity: .7; }
   .nav-item { display: block; padding: 10px 20px; color: rgba(255,255,255,.65); cursor: pointer; font-size: 14px; text-decoration: none; transition: all .2s; }
   .nav-item:hover, .nav-item.active { color: #fff; background: rgba(255,255,255,.1); }
+.nav-item.parent { position: relative; }
+.nav-item.parent::after { content: '▸'; position: absolute; right: 16px; opacity: .4; transition: transform .2s; }
+.nav-item.parent.expanded::after { transform: rotate(90deg); }
+.nav-sub { display: none; background: rgba(0,0,0,.15); }
+.nav-sub.expanded { display: block; }
+.nav-sub .nav-item { padding-left: 38px; font-size: 13px; padding-top: 7px; padding-bottom: 7px; color: rgba(255,255,255,.55); }
+.nav-sub .nav-item:hover, .nav-sub .nav-item.active { color: #fff; background: rgba(255,255,255,.08); }
+.nav-sub .nav-item::before { content: '·'; margin-right: 6px; opacity: .5; }
   .main { flex: 1; overflow-y: auto; padding: 24px; }
   .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
   .header h1 { font-size: 22px; }
@@ -218,26 +226,50 @@ function confirmDialog(msg, callback) {
     <nav class="sidebar-nav">
       <a class="nav-item active" data-page="dashboard">📊 仪表盘</a>
       <a class="nav-item" data-page="analytics-dashboard">📈 数据分析</a>
-      <div class="nav-section-label" onclick="toggleNavGroup(this)">客户与CRM<span class="nav-group-count">12</span></div><div class="nav-group">
-      <a class="nav-item" data-page="contacts">📞 咨询管理</a>
-      <a class="nav-item" data-page="leads-pipeline">🔧 线索管线</a>
-      <a class="nav-item" data-page="onboardings">🤝 入驻管理</a>
-      <a class="nav-item" data-page="crm-customers">🏢 客户管理</a>
-      <a class="nav-item" data-page="crm-projects">📁 CRM项目管理</a>
-      <a class="nav-item" data-page="projects">📂 项目管理</a>
-      <a class="nav-item" data-page="crm-leads">🎯 商机管理</a>
-      <a class="nav-item" data-page="crm-finance">💰 财务管理</a>
-      <a class="nav-item" data-page="crm-team">👥 团队管理</a>
-      <a class="nav-item" data-page="crm-reports">📝 日报审核</a>
-      <a class="nav-item" data-page="crm-quote">💼 报价工具</a>
-      <a class="nav-item" data-page="crm-kb">📚 内部知识库</a></div><div class="nav-section-label" onclick="toggleNavGroup(this)">产品与交易<span class="nav-group-count">6</span></div><div class="nav-group">
+      <div class="nav-section-label" onclick="toggleNavGroup(this)">客户与CRM<span class="nav-group-count">4</span></div><div class="nav-group">
+      <a class="nav-item parent" data-page="contacts">📞 咨询线索</a>
+      <div class="nav-sub">
+        <a class="nav-item" data-page="contacts">📞 咨询管理</a>
+        <a class="nav-item" data-page="leads-pipeline">🔧 线索管线</a>
+        <a class="nav-item" data-page="crm-leads">🎯 商机管理</a>
+      </div>
+      <a class="nav-item parent" data-page="onboardings">🤝 入驻客户</a>
+      <div class="nav-sub">
+        <a class="nav-item" data-page="onboardings">🤝 入驻管理</a>
+        <a class="nav-item" data-page="crm-customers">🏢 客户管理</a>
+      </div>
+      <a class="nav-item parent" data-page="crm-projects">📂 项目管理</a>
+      <div class="nav-sub">
+        <a class="nav-item" data-page="crm-projects">📁 CRM项目管理</a>
+        <a class="nav-item" data-page="projects">📂 项目管理</a>
+      </div>
+      <a class="nav-item parent" data-page="crm-finance">💼 运营工具</a>
+      <div class="nav-sub">
+        <a class="nav-item" data-page="crm-finance">💰 财务管理</a>
+        <a class="nav-item" data-page="crm-team">👥 团队管理</a>
+        <a class="nav-item" data-page="crm-reports">📝 日报审核</a>
+        <a class="nav-item" data-page="crm-quote">💼 报价工具</a>
+        <a class="nav-item" data-page="crm-kb">📚 内部知识库</a>
+      </div></div><div class="nav-section-label" onclick="toggleNavGroup(this)">产品与交易<span class="nav-group-count">6</span></div><div class="nav-group">
       <a class="nav-item" data-page="products">📦 产品管理</a>
       <a class="nav-item" data-page="client-products">🏢 甲方产品</a>
       <a class="nav-item" data-page="commerce-sku">📦 SKU管理</a>
       <a class="nav-item" data-page="clients">🏗️ 甲方企业</a>
-      <a class="nav-item" data-page="orders">🛒 订单管理</a>
-      <a class="nav-item" data-page="commerce-refunds">💰 退款管理</a></div><div class="nav-section-label" onclick="toggleNavGroup(this)">代理与交付<span class="nav-group-count">11</span></div><div class="nav-group">
-      <a class="nav-item" data-page="agent-manage">🤝 代理商管理</a>
+      <a class="nav-item parent" data-page="orders">🛒 订单交易</a>
+    <div class="nav-sub">
+      <a class="nav-item" data-page="orders">🛒 订单列表</a>
+      <a class="nav-item" data-page="commerce-refunds">💰 退款管理</a>
+    </div>
+    </div><div class="nav-section-label" onclick="toggleNavGroup(this)">代理与交付<span class="nav-group-count">11</span></div><div class="nav-group">
+      <a class="nav-item parent" data-page="agent-manage">🤝 代理商管理</a>
+    <div class="nav-sub">
+      <a class="nav-item" data-page="agent-manage">📋 代理列表</a>
+      <a class="nav-item" data-page="agent-commissions">💰 佣金记录</a>
+      <a class="nav-item" data-page="agent-leads">🎯 代理线索</a>
+      <a class="nav-item" data-page="agent-push">📢 推送历史</a>
+      <a class="nav-item" data-page="agent-stats">📊 业绩看板</a>
+    </div>
+    
       <a class="nav-item" data-page="delivery-track">📦 交付跟踪</a>
       <a class="nav-item" data-page="steward-service">🏢 企业管家</a>
       <a class="nav-item" data-page="provider-manage">🏪 服务商管理</a>
@@ -254,27 +286,14 @@ function confirmDialog(msg, callback) {
       <a class="nav-item" data-page="service-tracker">🛠️ 服务追踪</a>
       <a class="nav-item" data-page="quotes">🧮 报价查询</a>
       <a class="nav-item" data-page="assessments">📋 数字化评估</a></div><div class="nav-section-label" onclick="toggleNavGroup(this)">营销与内容<span class="nav-group-count">5</span></div><div class="nav-group">
-      <a class="nav-item" data-page="marketing-center">📢 营销中心</a>
-      <a class="nav-item" data-page="campaigns">🎉 营销活动</a>
+      <a class="nav-item parent" data-page="campaigns">🎉 营销管理</a>
+    <div class="nav-sub">
+      <a class="nav-item" data-page="campaigns">🎯 营销活动</a>
       <a class="nav-item" data-page="banners">🖼️ Banner管理</a>
       <a class="nav-item" data-page="partners">🤝 合作伙伴</a>
-      <a class="nav-item" data-page="policies">📜 政策追踪</a></div><div class="nav-section-label" onclick="toggleNavGroup(this)">微信与消息<span class="nav-group-count">5</span></div><div class="nav-group">
-      <a class="nav-item" data-page="wechat-accounts">📱 公众号管理</a>
-      <a class="nav-item" data-page="push-history">📤 推送管理</a>
-      <a class="nav-item" data-page="template-msg">📣 模板消息</a>
-      <a class="nav-item" data-page="faqs">❓ 帮助中心</a>
-      <a class="nav-item" data-page="chatbot">🤖 智能客服</a></div><div class="nav-section-label" onclick="toggleNavGroup(this)">用户与系统<span class="nav-group-count">7</span></div><div class="nav-group">
-      <a class="nav-item" data-page="users">👥 用户管理</a>
-      <a class="nav-item" data-page="reports">📊 运营报告</a>
-      <a class="nav-item" data-page="audit-logs">🔒 审计日志</a>
-      <a class="nav-item" data-page="scheduler">⏰ 定时任务</a>
-      <a class="nav-item" data-page="role-manage">🔐 角色权限</a>
-      <a class="nav-item" data-page="sys-config">⚙️ 系统配置</a>
-      <a class="nav-item" data-page="h5-users">👤 H5用户</a></div><div class="nav-section-label" onclick="toggleNavGroup(this)">运营分析<span class="nav-group-count">5</span></div><div class="nav-group">
-      <a class="nav-item" data-page="ops-dashboard">📊 运营看板</a>
-      <a class="nav-item" data-page="sales-funnel">📈 销售漏斗</a>
-      <a class="nav-item" data-page="client-onboarding">🤝 客户入驻</a>
       <a class="nav-item" data-page="marketing-materials">📚 营销素材</a>
+    </div>
+    
       <a class="nav-item" onclick="window.open('/admin/screen.html','_blank')" style="color:#00d4ff">📺 运营大屏</a></div></nav>
     <a class="nav-item" onclick="doLogout()" style="border-top:1px solid rgba(255,255,255,.1)">退出登录</a>
   </div>
@@ -369,6 +388,10 @@ function filterNav(q) {
 }
 
 function toggleNavGroup(el){var g=el.nextElementSibling;var c=g.classList.toggle('collapsed');el.classList.toggle('collapsed',c);var n=el.textContent.replace(/\d/g,'').trim();try{var s=JSON.parse(localStorage.getItem('nav_state')||'{}');s[n]=c;localStorage.setItem('nav_state',JSON.stringify(s))}catch(e){}}
+function toggleSubNav(el){el.classList.toggle('expanded');var s=el.nextElementSibling;if(s&&s.classList.contains('nav-sub')){s.classList.toggle('expanded')}var k='sub_'+el.dataset.page;try{localStorage.setItem(k,el.classList.contains('expanded')?'1':'0')}catch(e){}}
+function restoreSubNav(){try{document.querySelectorAll('.nav-item.parent').forEach(function(el){var k='sub_'+el.dataset.page;if(localStorage.getItem(k)==='1'){el.classList.add('expanded');var s=el.nextElementSibling;if(s)s.classList.add('expanded')}})}catch(e){}}
+// 父菜单点击拦截：首次点击展开，再次点击跳转到第一个子页
+document.addEventListener('click',function(e){var p=e.target.closest('.nav-item.parent');if(!p)return;if(!p.classList.contains('expanded')){e.preventDefault();e.stopPropagation();toggleSubNav(p)}else{var sub=p.nextElementSibling;var first=sub&&sub.querySelector('.nav-item[data-page]');if(first){e.preventDefault();e.stopPropagation();first.click()}}})
 function restoreNavState(){try{var s=JSON.parse(localStorage.getItem('nav_state')||'{}');document.querySelectorAll('.nav-section-label').forEach(function(l){var n=l.textContent.replace(/\d/g,'').trim();if(s[n]){var g=l.nextElementSibling;if(g){g.classList.add('collapsed');l.classList.add('collapsed')}}})}catch(e){}}
 
 function toggleSidebar() {
