@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="description" content="数造工坊·企业管家 — 企业画像/工单/诊断">
+<meta name="theme-color" content="#2563eb">
+<title>数造工坊 · 企业服务管家</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#0891b2;--bg:#f5f6fa;--card:#fff;--border:#e5e7eb;--text:#1f2937;--text2:#6b7280;--success:#22c55e;--warning:#f59e0b;--danger:#ef4444}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px;-webkit-tap-highlight-color:transparent;padding-bottom:60px}
+.loading{text-align:center;padding:40px;color:#9ca3af;font-size:13px}
+.empty{text-align:center;padding:40px;color:#9ca3af;font-size:13px}
+.header{background:linear-gradient(135deg,#0e7490,#0891b2);color:#fff;padding:48px 20px 20px;position:sticky;top:0;z-index:100}
+.header-row{display:flex;justify-content:space-between;align-items:center}
+.header-title{font-size:18px;font-weight:700}
+.header-sub{font-size:12px;opacity:.7;margin-top:2px}
+.tabs{display:flex;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:90px;z-index:99;overflow-x:auto}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:12px 14px;font-size:13px;color:var(--text2);white-space:nowrap;cursor:pointer;position:relative}
+.tab.active{color:var(--primary);font-weight:600}
+.tab.active::after{content:'';position:absolute;bottom:0;left:20%;right:20%;height:2px;background:var(--primary)}
+.page{display:none;min-height:50vh}.page.active{display:block}
+.stats{display:flex;gap:8px;padding:12px;overflow-x:auto}.stats::-webkit-scrollbar{display:none}
+.stat{flex-shrink:0;background:#fff;border-radius:10px;padding:12px 16px;text-align:center;min-width:80px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.stat-num{font-size:20px;font-weight:700;color:var(--primary)}.stat-label{font-size:10px;color:var(--text2);margin-top:2px}
+.card{background:#fff;margin:10px 12px;border-radius:12px;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.04);cursor:pointer}
+.card:active{transform:scale(.98)}
+.card-title{font-size:14px;font-weight:600;margin-bottom:6px}
+.card-desc{font-size:12px;color:var(--text2);line-height:1.5}
+.card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:1px solid #f3f4f6}
+.tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:3px;margin-right:4px}
+.tag-cyan{background:#cffafe;color:#0e7490}.tag-green{background:#d1fae5;color:#059669}.tag-orange{background:#fef3c7;color:#92400e}.tag-red{background:#fee2e2;color:#dc2626}
+.btn{display:block;width:100%;padding:12px;border:none;border-radius:24px;font-size:14px;font-weight:600;text-align:center;cursor:pointer}
+.btn-primary{background:var(--primary);color:#fff}.btn-outline{background:#fff;color:var(--primary);border:1px solid var(--primary)}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;border-top:1px solid var(--border);z-index:100}
+.nav-item{flex:1;text-align:center;padding:8px 0;cursor:pointer;color:var(--text2)}
+.nav-item.active{color:var(--primary)}
+.nav-icon{font-size:20px}.nav-label{font-size:10px;margin-top:2px}
+.overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#fff;z-index:1000;overflow-y:auto;display:none}
+.overlay.active{display:block}
+.overlay-header{position:sticky;top:0;background:#fff;padding:14px 16px;display:flex;align-items:center;border-bottom:1px solid var(--border);z-index:10}
+.back-btn{font-size:22px;cursor:pointer;margin-right:12px}
+.overlay-title{font-size:16px;font-weight:600}
+.overlay-content{padding:16px}
+.form-group{margin-bottom:14px}.form-label{font-size:12px;color:var(--text2);margin-bottom:4px;display:block}
+.form-input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px}
+.form-textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;min-height:80px;resize:vertical}
+.form-select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:#fff}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.75);color:#fff;padding:8px 20px;border-radius:20px;font-size:13px;z-index:9999}
+.quick-entry{display:flex;flex-wrap:wrap;gap:8px;padding:12px}
+.quick-item{flex:1;min-width:45%;border-radius:10px;padding:14px;cursor:pointer}
+
+[data-theme="dark"]{--primary:#3b82f6;--primary-dark:#2563eb;--bg:#0f172a;--card:#1e293b;--border:#334155;--text:#e2e8f0;--text2:#94a3b8;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--info:#3b82f6}
+[data-theme="dark"] .h5-header{background:linear-gradient(135deg,#1e293b,#0f172a)}
+[data-theme="dark"] .nav-tabs,[data-theme="dark"] .stat-box,[data-theme="dark"] .card{background:#1e293b!important;border-color:#334155!important}
+[data-theme="dark"] input,[data-theme="dark"] select,[data-theme="dark"] textarea{background:#0f172a;color:#e2e8f0;border-color:#334155}
+[data-theme="dark"] table th{background:#334155}
+</style>
+<script>
+function toggleH5Theme(){var t=document.documentElement.getAttribute('data-theme');if(t==='dark'){document.documentElement.removeAttribute('data-theme');localStorage.setItem('h5_theme','light');var e=document.getElementById('h5ThemeToggle');if(e)e.textContent='🌙'}else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('h5_theme','dark');var e=document.getElementById('h5ThemeToggle');if(e)e.textContent='☀️'}}
+(function(){var t=localStorage.getItem('h5_theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');setTimeout(function(){var e=document.getElementById('h5ThemeToggle');if(e)e.textContent='☀️'},500)}})();
+</script>
+<script>
+(function(){
+  var isLocal = location.hostname.includes("localhost") || location.hostname.includes("127.0.0.1") || location.hostname.includes("0.0.0.0");
+  if (!isLocal) {
+    window.__DEMO_MODE__ = true;
+    var origFetch = window.fetch;
+    window.fetch = function(url, opts) {
+      if (typeof url === "string" && (url.includes("/api/") || url.includes("/api"))) {
+        return Promise.resolve(new Response(JSON.stringify({list:[],data:[],items:[],total:0,ok:true,stats:{},config:{},dashboard:{}}), {
+          status: 200, headers: {"Content-Type":"application/json"}
+        }));
+      }
+      return origFetch.apply(this, arguments);
+    };
+    document.addEventListener("DOMContentLoaded", function(){
+      var b = document.createElement("div");
+      b.style.cssText = "position:fixed;top:0;left:0;right:0;background:#d4a017;color:#fff;text-align:center;font-size:12px;padding:6px;z-index:99999;font-family:sans-serif";
+      b.innerHTML = '演示模式 · API数据需本地后端运行 · <a href="https://github.com/sgmt-taojing/shuzhi-workshop-v4" style="color:#fff;text-decoration:underline">GitHub</a>';
+      document.body.insertBefore(b, document.body.firstChild);
+      var h = document.createElement("style");
+      h.textContent = "body{padding-top:32px!important}";
+      document.head.appendChild(h);
+    });
+  }
+})();
+</script>
+</head>
+<body>
+<div class="header">
+  <div class="header-row">
+    <div><div class="header-title">🏢 企业服务管家</div><div class="header-sub">全生命周期一站式服务</div></div>
+    <div style="font-size:28px">🏢</div>
+  </div>
+</div>
+<div class="tabs" id="tabs">
+  <div class="tab active" data-page="home">🏠 首页</div>
+  <div class="tab" data-page="services">🛎️ 增值服务</div>
+  <div class="tab" data-page="tickets">🎫 运维工单</div>
+  <div class="tab" data-page="diagnosis">🤖 AI诊断</div>
+  <div class="tab" data-page="profile">👤 我的</div>
+</div>
+<div id="page-home" class="page active"></div>
+<div id="page-services" class="page"></div>
+<div id="page-tickets" class="page"></div>
+<div id="page-diagnosis" class="page"></div>
+<div id="page-profile" class="page"></div>
+<div class="overlay" id="overlay">
+  <div class="overlay-header"><span class="back-btn" onclick="closeOverlay()">‹</span><span class="overlay-title" id="ovTitle">详情</span></div>
+  <div class="overlay-content" id="ovContent"></div>
+  <div style="padding:0 16px 20px" id="ovAction"></div>
+</div>
+<div class="bottom-nav">
+  <div class="nav-item active" data-nav="home"><div class="nav-icon">🏠</div><div class="nav-label">首页</div></div>
+  <div class="nav-item" data-nav="services"><div class="nav-icon">🛎️</div><div class="nav-label">服务</div></div>
+  <div class="nav-item" data-nav="tickets"><div class="nav-icon">🎫</div><div class="nav-label">工单</div></div>
+  <div class="nav-item" data-nav="diagnosis"><div class="nav-icon">🤖</div><div class="nav-label">诊断</div></div>
+  <div class="nav-item" data-nav="profile"><div class="nav-icon">👤</div><div class="nav-label">我的</div></div>
+</div>
+<script>
+const API=window.location.origin+'/api';
+async function api(p,o){const r=await fetch(API+p,o?{...o,headers:{'Content-Type':'application/json'}}:{});return r.json()}
+function $(s){return document.querySelector(s)}function $$(s){return document.querySelectorAll(s)}
+$$('.tab').forEach(t=>t.onclick=()=>switchPage(t.dataset.page));
+$$('.nav-item').forEach(t=>t.onclick=()=>switchPage(t.dataset.nav));
+function switchPage(p){$$('.tab').forEach(t=>t.classList.toggle('active',t.dataset.page===p));$$('.nav-item').forEach(t=>t.classList.toggle('active',t.dataset.nav===p));$$('.page').forEach(pg=>pg.classList.toggle('active',pg.id==='page-'+p));window.scrollTo(0,0);if(p==='home')loadHome();else if(p==='services')loadServices();else if(p==='tickets')loadTickets();else if(p==='diagnosis')loadDiagnosis();else if(p==='profile')loadProfile()}
+function openOverlay(t,c,a){$('#ovTitle').textContent=t;$('#ovContent').innerHTML=c;$('#ovAction').innerHTML=a||'';$('#overlay').classList.add('active');document.body.style.overflow='hidden'}
+function closeOverlay(){$('#overlay').classList.remove('active');document.body.style.overflow=''}
+function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2000)}
+
+// 八大增值服务
+const SVC_TYPES=[
+  {type:'digital',icon:'💻',label:'数字化配套',desc:'MES/WMS/CRM/OA/BI、系统集成、上云迁移'},
+  {type:'brand',icon:'📸',label:'品牌宣传',desc:'宣传片、官网定制、短视频代运营'},
+  {type:'certification',icon:'🏆',label:'政策资质',desc:'高新企业、专精特新、ISO体系、软著专利'},
+  {type:'finance',icon:'💰',label:'财税法务',desc:'代账报税、审计、股权设计、工商变更'},
+  {type:'hr',icon:'👥',label:'人力资源',desc:'招聘、劳务派遣、薪酬代发、企业内训'},
+  {type:'it',icon:'☁️',label:'IT云基建',desc:'云服务器、企业邮箱、视频会议、安全巡检'},
+  {type:'supply',icon:'📦',label:'供应链',desc:'原料集采、劳保礼品、渠道展销'},
+  {type:'consulting',icon:'📊',label:'产业咨询',desc:'智能工厂方案、投融资对接、厂房租赁'}
+];
+
+async function loadHome(){
+  const el=$('#page-home');
+  try{
+    const[svcData,ticketData]=await Promise.all([api('/steward').catch(()=>({list:[]})),api('/steward/tickets/all').catch(()=>({list:[]}))]);
+    const services=svcData.list||[];const tickets=ticketData.list||[];
+    el.innerHTML=`
+      <div style="background:linear-gradient(135deg,#0e7490,#0891b2);padding:16px;color:#fff;margin-bottom:12px">
+        <div style="font-size:14px;font-weight:600;margin-bottom:8px">👋 欢迎使用企业服务管家</div>
+        <div style="font-size:12px;opacity:.8">项目验收后自动开通，享受全生命周期增值服务</div>
+      </div>
+      <div style="padding:0 12px;font-size:14px;font-weight:600;margin-bottom:10px">⚡ 快捷服务</div>
+      <div class="quick-entry">
+        <div class="quick-item" style="background:linear-gradient(135deg,#cffafe,#a5f3fc)" onclick="switchPage('diagnosis');setTimeout(openDiagForm,100)"><div style="font-size:22px">🤖</div><div style="font-size:13px;font-weight:600;color:#0e7490">AI诊断</div></div>
+        <div class="quick-item" style="background:linear-gradient(135deg,#fef3c7,#fde68a)" onclick="switchPage('tickets');setTimeout(openTicketForm,100)"><div style="font-size:22px">🎫</div><div style="font-size:13px;font-weight:600;color:#92400e">提交工单</div></div>
+        <div class="quick-item" style="background:linear-gradient(135deg,#dbeafe,#bfdbfe)" onclick="switchPage('services')"><div style="font-size:22px">🛎️</div><div style="font-size:13px;font-weight:600;color:#1e40af">增值服务</div></div>
+        <div class="quick-item" style="background:linear-gradient(135deg,#d1fae5,#a7f3d0)" onclick="switchPage('profile')"><div style="font-size:22px">📋</div><div style="font-size:13px;font-weight:600;color:#059669">我的服务</div></div>
+      </div>
+      <div style="padding:0 12px;font-size:14px;font-weight:600;margin-bottom:10px;margin-top:8px">🛎️ 八大增值服务</div>
+      ${SVC_TYPES.map(s=>`<div class="card" onclick="showServiceType('${s.type}')"><div style="display:flex;gap:10px;align-items:start"><span style="font-size:22px">${s.icon}</span><div style="flex:1"><div class="card-title">${s.label}</div><div class="card-desc">${s.desc}</div></div></div></div>`).join('')}
+      ${services.length?`<div style="padding:0 12px;font-size:14px;font-weight:600;margin-bottom:10px;margin-top:8px">📋 我的服务（${services.length}）</div>${services.map(s=>`<div class="card" onclick="showServiceDetail(${s.id})"><div class="card-title">${s.service_title}</div><div class="card-desc">${s.type_label||s.service_type} · ¥${(s.amount||0).toLocaleString()} · ${s.start_date||'?'} ~ ${s.expire_date||'?'}</div><div class="card-footer"><span class="tag ${s.status==='active'?'tag-green':'tag-red'}">${s.status==='active'?'进行中':'已过期'}</span><span style="font-size:12px;color:#0891b2">详情 ›</span></div></div>`).join('')}`:''}
+    `;
+  }catch(e){el.innerHTML='<div class="empty">加载失败</div>'}
+}
+
+function showServiceType(type){
+  const s=SVC_TYPES.find(t=>t.type===type);if(!s)return;
+  openOverlay(s.label,`<div style="text-align:center;padding:20px"><div style="font-size:40px;margin-bottom:12px">${s.icon}</div><h2 style="font-size:16px;margin-bottom:8px">${s.label}</h2><div style="font-size:13px;color:#6b7280;line-height:1.6;margin-bottom:16px">${s.desc}</div></div><div style="background:#f9fafb;border-radius:8px;padding:12px;font-size:13px;color:#4b5563;line-height:1.6">我们的服务管家已为您提供${s.label}服务，如需咨询或购买，请提交工单或联系客服。</div>`);
+  $('#ovAction').innerHTML='<button class="btn btn-primary" onclick="toast(\'客服将尽快联系您\')">📞 咨询此服务</button>';
+  $('#ovAction').style.display='block';
+}
+
+async function showServiceDetail(id){
+  openOverlay('服务详情','<div class="loading">加载中...</div>');
+  try{
+    const data=await api('/steward');const s=(data.list||[]).find(r=>r.id===id);if(!s)return;
+    $('#ovContent').innerHTML=`<div style="margin-bottom:12px"><h2 style="font-size:16px;margin-bottom:6px">${s.service_title}</h2><div style="font-size:12px;color:#6b7280">${s.type_label||s.service_type} · ${s.client_name||''}</div></div><div style="background:#f9fafb;border-radius:8px;padding:12px;margin-bottom:12px;font-size:13px;line-height:1.8"><strong>金额：</strong>¥${(s.amount||0).toLocaleString()}<br><strong>周期：</strong>${s.start_date||'?'} ~ ${s.expire_date||'?'}<br><strong>状态：</strong>${s.status==='active'?'进行中':'已过期'}</div>${s.description?'<div style="font-size:13px;color:#4b5563;line-height:1.6">'+s.description+'</div>':''}`;
+    $('#ovAction').style.display='none';
+  }catch(e){$('#ovContent').innerHTML='<div class="empty">加载失败</div>'}
+}
+
+async function loadServices(){
+  const el=$('#page-services');
+  el.innerHTML='<div class="loading">加载中...</div>';
+  try{
+    const data=await api('/steward');const rows=data.list||[];
+    el.innerHTML=`<div style="padding:8px 12px;font-size:12px;color:#6b7280">我的增值服务（${rows.length}项）</div>${rows.map(s=>`<div class="card" onclick="showServiceDetail(${s.id})"><div class="card-title">${s.service_title}</div><div class="card-desc">${s.type_label||s.service_type} · ¥${(s.amount||0).toLocaleString()}</div><div class="card-footer"><span class="tag ${s.status==='active'?'tag-green':'tag-red'}">${s.status==='active'?'进行中':'已过期'}</span><span style="font-size:11px;color:#9ca3af">${s.start_date||'?'}</span></div></div>`).join('')||'<div class="empty">暂无增值服务</div>'}`;
+  }catch(e){el.innerHTML='<div class="empty">加载失败</div>'}
+}
+
+async function loadTickets(){
+  const el=$('#page-tickets');el.innerHTML='<div class="loading">加载中...</div>';
+  try{
+    const data=await api('/steward/tickets/all');const rows=data.list||[];
+    const stLabel={open:'待处理',in_progress:'处理中',resolved:'已解决',closed:'已关闭'};
+    const stColor={open:'#ef4444',in_progress:'#f59e0b',resolved:'#22c55e',closed:'#9ca3af'};
+    el.innerHTML=`<div style="padding:12px"><button class="btn btn-primary" onclick="openTicketForm()">+ 提交工单</button></div>${rows.map(t=>`<div class="card"><div class="card-title">${t.title}</div><div class="card-desc">${t.type||''} · ${t.client_name||''} · ${(t.description||'').slice(0,50)}</div><div class="card-footer"><span class="tag" style="background:${stColor[t.status]||'#d1d5db'}20;color:${stColor[t.status]||'#6b7280'}">${stLabel[t.status]||t.status}</span><span style="font-size:11px;color:#9ca3af">${(t.created_at||'').slice(0,10)}</span></div></div>`).join('')||'<div class="empty">暂无工单</div>'}`;
+  }catch(e){el.innerHTML='<div class="empty">加载失败</div>'}
+}
+
+function openTicketForm(){
+  openOverlay('提交运维工单',`
+    <div class="form-group"><label class="form-label">工单标题 *</label><input class="form-input" id="tk-title" placeholder="简要描述问题"></div>
+    <div class="form-group"><label class="form-label">工单类型</label><select class="form-select" id="tk-type"><option value="bug">系统故障</option><option value="feature">功能需求</option><option value="consult">咨询服务</option><option value="complaint">投诉建议</option></select></div>
+    <div class="form-group"><label class="form-label">优先级</label><select class="form-select" id="tk-priority"><option value="normal">普通</option><option value="urgent">紧急</option><option value="critical">严重</option></select></div>
+    <div class="form-group"><label class="form-label">问题描述</label><textarea class="form-textarea" id="tk-desc" placeholder="详细描述您的问题..."></textarea></div>
+    <button class="btn btn-primary" onclick="submitTicket()">提交工单</button>
+  `);$('#ovAction').style.display='none';
+}
+
+async function submitTicket(){
+  const title=$('#tk-title').value.trim();if(!title){toast('请输入标题');return}
+  const body={client_id:1,client_name:'老挝国家电力公司',type:$('#tk-type').value,priority:$('#tk-priority').value,title,description:$('#tk-desc').value.trim()};
+  try{await api('/steward/tickets',{method:'POST',body:JSON.stringify(body)});toast('工单已提交');closeOverlay();loadTickets()}catch(e){toast('提交失败')}
+}
+
+async function loadDiagnosis(){
+  const el=$('#page-diagnosis');el.innerHTML='<div class="loading">加载中...</div>';
+  try{
+    const data=await api('/platform/diagnoses');const rows=data.list||[];
+    el.innerHTML=`<div style="padding:12px"><button class="btn btn-primary" onclick="openDiagForm()">🤖 AI智能诊断</button></div>
+    <div style="padding:0 12px;font-size:12px;color:#6b7280;margin-bottom:8px">AI自动识别企业需求，推荐数字化产品方案</div>
+    ${rows.map(r=>`<div class="card" onclick="showDiagDetail(${r.id})"><div class="card-title">${r.client_name}</div><div class="card-desc">${r.industry||''} · ${(r.demand_desc||'').slice(0,50)}</div><div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:6px">${(r.recommended_products||[]).map(p=>'<span class="tag tag-cyan">'+p.title+'</span>').join('')}</div><div class="card-footer"><span style="font-weight:600;color:#22c55e">预估¥${(r.estimated_budget||0).toLocaleString()}</span><span style="font-size:11px;color:#9ca3af">${(r.created_at||'').slice(0,10)}</span></div></div>`).join('')||'<div class="empty">暂无诊断记录</div>'}`;
+  }catch(e){el.innerHTML='<div class="empty">加载失败</div>'}
+}
+
+function openDiagForm(){
+  openOverlay('AI智能诊断',`
+    <div style="background:#cffafe;border-radius:8px;padding:10px;margin-bottom:14px;font-size:12px;color:#0e7490;line-height:1.6">🤖 填写企业信息和需求，AI自动识别并推荐适合的数字化产品方案。</div>
+    <div class="form-group"><label class="form-label">企业名称 *</label><input class="form-input" id="dg-client" placeholder="企业全称"></div>
+    <div class="form-group"><label class="form-label">行业</label><input class="form-input" id="dg-industry" placeholder="如：智能制造"></div>
+    <div class="form-group"><label class="form-label">联系人</label><input class="form-input" id="dg-contact" placeholder="联系人"></div>
+    <div class="form-group"><label class="form-label">需求描述 *</label><textarea class="form-textarea" id="dg-demand" placeholder="如：需要MES系统、设备联网、生产管理数字化"></textarea></div>
+    <button class="btn btn-primary" onclick="submitDiag()">🤖 开始AI诊断</button>
+  `);$('#ovAction').style.display='none';
+}
+
+async function submitDiag(){
+  const client=$('#dg-client').value.trim();const demand=$('#dg-demand').value.trim();
+  if(!client||!demand){toast('请填写企业名称和需求');return}
+  try{
+    const data=await api('/platform/diagnoses',{method:'POST',body:JSON.stringify({client_name:client,industry:$('#dg-industry').value.trim(),contact_name:$('#dg-contact').value.trim(),demand_desc:demand})});
+    closeOverlay();toast(data.message||'诊断完成');loadDiagnosis();
+  }catch(e){toast('诊断失败')}
+}
+
+async function showDiagDetail(id){
+  const data=await api('/platform/diagnoses');const r=(data.list||[]).find(d=>d.id===id);if(!r)return;
+  const res=r.diagnosis_result||{};
+  openOverlay('诊断详情',`<div style="margin-bottom:12px"><h2 style="font-size:16px;margin-bottom:6px">${r.client_name}</h2><div style="font-size:12px;color:#6b7280">${r.industry||''} · ${(r.created_at||'').slice(0,10)}</div></div><div style="background:#f9fafb;border-radius:8px;padding:12px;margin-bottom:12px;font-size:13px;line-height:1.6"><strong>需求：</strong>${r.demand_desc}</div>${res.pain_points?`<div style="margin-bottom:12px"><div style="font-size:13px;font-weight:600;margin-bottom:6px">痛点分析</div><ul style="padding-left:16px;font-size:13px;line-height:1.8">${res.pain_points.map(p=>'<li>'+p+'</li>').join('')}</ul></div>`:''}<div style="margin-bottom:12px"><div style="font-size:13px;font-weight:600;margin-bottom:6px">推荐产品</div>${(r.recommended_products||[]).map(p=>'<div style="background:#f9fafb;border-radius:8px;padding:10px;margin-bottom:6px;display:flex;justify-content:space-between"><span style="font-weight:600">'+p.title+'</span><span style="color:#ef4444;font-weight:600">¥'+(p.price||0).toLocaleString()+'</span></div>').join('')}</div><div style="font-size:18px;font-weight:700;color:#22c55e;text-align:center">预估预算：¥${(r.estimated_budget||0).toLocaleString()}</div>`);
+  $('#ovAction').innerHTML='<button class="btn btn-primary" onclick="toast(\'方案已申请，顾问将尽快联系\')">📞 联系顾问</button>';$('#ovAction').style.display='block';
+}
+
+async function loadProfile(){
+  const el=$('#page-profile');
+  try{
+    const[svcData,ticketData]=await Promise.all([api('/steward').catch(()=>({list:[]})),api('/steward/tickets/all').catch(()=>({list:[]}))]);
+    const services=svcData.list||[];const tickets=ticketData.list||[];
+    const activeSvc=services.filter(s=>s.status==='active').length;
+    const openTickets=tickets.filter(t=>t.status==='open').length;
+    el.innerHTML=`<div style="background:linear-gradient(135deg,#0e7490,#0891b2);padding:20px;color:#fff;text-align:center;margin-bottom:12px"><div style="font-size:40px;margin-bottom:8px">🏢</div><div style="font-size:16px;font-weight:700">老挝国家电力公司</div><div style="font-size:12px;opacity:.7;margin-top:4px">企业服务管家</div></div><div class="stats"><div class="stat"><div class="stat-num">${activeSvc}</div><div class="stat-label">活跃服务</div></div><div class="stat"><div class="stat-num" style="color:#ef4444">${openTickets}</div><div class="stat-label">待处理工单</div></div><div class="stat"><div class="stat-num">¥${(services.reduce((s,r)=>s+(r.amount||0),0)).toLocaleString()}</div><div class="stat-label">服务总额</div></div></div><div style="padding:0 12px;font-size:14px;font-weight:600;margin-bottom:10px;margin-top:8px">📋 我的服务</div>${services.map(s=>`<div class="card" onclick="showServiceDetail(${s.id})"><div class="card-title">${s.service_title}</div><div class="card-desc">${s.type_label||s.service_type} · ¥${(s.amount||0).toLocaleString()}</div><div class="card-footer"><span class="tag ${s.status==='active'?'tag-green':'tag-red'}">${s.status==='active'?'进行中':'已过期'}</span><span style="font-size:11px;color:#9ca3af">${s.expire_date||''}</span></div></div>`).join('')||'<div class="empty">暂无服务</div>'}`;
+  }catch(e){el.innerHTML='<div class="empty">加载失败</div>'}
+}
+
+loadHome();
+</script>
+
+<script>
+var ai={open:false,messages:[],
+toggle:function(){var p=document.getElementById('aiPanel');if(!p){this.init();return this.toggle()}this.open=!this.open;p.style.display=this.open?'flex':'none';if(this.open&&this.messages.length===0){this.add('bot','您好！我是企业服务AI助手，可以帮您管理服务订单、提交工单、查询合同。请问有什么需要？');this.loadQuick()}},
+init:function(){var p=document.createElement('div');p.id='aiPanel';p.style.cssText='position:fixed;bottom:0;left:0;right:0;height:65vh;flex-direction:column;background:#fff;z-index:99997;border-radius:16px 16px 0 0;box-shadow:0 -4px 24px rgba(0,0,0,.12);display:none';p.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #f0f0f0;background:linear-gradient(135deg,#0891b2,#0e7490);border-radius:16px 16px 0 0"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">🤖</span><div><div style="color:#fff;font-weight:700;font-size:15px">企业服务AI助手</div><div style="color:rgba(255,255,255,.8);font-size:11px">企业管家顾问</div></div></div><span onclick="ai.toggle()" style="color:#fff;font-size:22px;cursor:pointer;line-height:1">✕</span></div><div id="aiMsgs" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;background:#f9fafb"></div><div id="aiQuick" style="padding:8px 16px;display:flex;gap:8px;overflow-x:auto;background:#fff;border-top:1px solid #f0f0f0"></div><div style="display:flex;gap:8px;padding:12px 16px;border-top:1px solid #f0f0f0;background:#fff"><input id="aiInput" type="text" placeholder="输入您的问题..." style="flex:1;padding:10px 14px;border:1px solid #e5e7eb;border-radius:22px;font-size:14px;outline:none" onkeydown="if(event.key===\'Enter\')ai.send()"><button onclick="ai.send()" style="width:40px;height:40px;border:none;border-radius:50%;background:#0891b2;color:#fff;font-size:16px;cursor:pointer;flex-shrink:0">➤</button></div>';document.body.appendChild(p)},
+add:function(role,text,sugg){var c=document.getElementById('aiMsgs');if(!c)return;var d=document.createElement('div');d.style.cssText='display:flex;justify-content:'+(role==='user'?'flex-end':'flex-start');var b=document.createElement('div');b.style.cssText='max-width:80%;padding:10px 14px;border-radius:'+(role==='user'?'18px 18px 4px 18px':'18px 18px 18px 4px')+';background:'+(role==='user'?'#0891b2':'#fff')+';color:'+(role==='user'?'#fff':'#1f2937')+';font-size:14px;line-height:1.6;box-shadow:0 1px 2px rgba(0,0,0,.06);white-space:pre-wrap;word-break:break-word';b.textContent=text;d.appendChild(b);c.appendChild(d);c.scrollTop=c.scrollHeight;this.messages.push({role:role,text:text});if(sugg&&sugg.length){var s=document.createElement('div');s.style.cssText='display:flex;flex-wrap:wrap;gap:6px;margin-top:4px';sugg.forEach(function(t){var btn=document.createElement('button');btn.textContent=t;btn.style.cssText='padding:4px 12px;border:1px solid #e5e7eb;border-radius:14px;background:#fff;color:#0891b2;font-size:12px;cursor:pointer';btn.onclick=function(){ai.send(t)};s.appendChild(btn)});c.appendChild(s);c.scrollTop=c.scrollHeight}},
+loadQuick:function(){var q=document.getElementById('aiQuick');if(!q)return;var qs=['服务订单', '工单提交', '合同查询', '企业入驻', '服务商'];q.innerHTML='';qs.forEach(function(t){var b=document.createElement('button');b.textContent=t;b.style.cssText='padding:6px 12px;border:1px solid #e5e7eb;border-radius:16px;background:#fff;color:#374151;font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0';b.onclick=function(){ai.send(t)};q.appendChild(b)})},
+send:function(msg){var inp=document.getElementById('aiInput');if(!msg&&inp){msg=inp.value.trim();inp.value=''}if(!msg)return;this.add('user',msg);var c=document.getElementById('aiMsgs');var tp=document.createElement('div');tp.id='aiTyping';tp.style.cssText='display:flex;justify-content:flex-start';tp.innerHTML='<div style="padding:10px 14px;border-radius:18px 18px 18px 4px;background:#fff;color:#9ca3af;font-size:14px;box-shadow:0 1px 2px rgba(0,0,0,.06)">AI正在思考...</div>';c.appendChild(tp);c.scrollTop=c.scrollHeight;var self=this;setTimeout(function(){var t=document.getElementById('aiTyping');if(t)t.remove();var r=self.reply(msg);self.add('bot',r.text,r.sugg)},600)},
+reply:function(msg){msg=msg.toLowerCase();if(msg.match(/订单/))return{text:'服务订单管理：\n\n📋 进行中：3个\n✅ 已完成：12个\n⏸️ 待处理：2个\n\n建议定期跟进进行中的订单，确保按时交付。',sugg:[]};if(msg.match(/工单/))return{text:'提交工单流程：\n\n1. 选择工单类型（bug/需求/咨询）\n2. 填写问题描述\n3. 上传截图（可选）\n4. 设置优先级\n5. 提交\n\n紧急问题请同时电话联系客服。',sugg:[]};if(msg.match(/合同/))return{text:'合同查询：\n\n📄 活跃合同：2份\n📄 已到期：1份\n📄 待签署：1份\n\n即将到期的合同建议提前30天续签。',sugg:[]};if(msg.match(/入驻/))return{text:'企业入驻流程：\n\n1. 填写企业基本信息\n2. 上传营业执照\n3. 选择服务需求\n4. 平台审核（1-3工作日）\n5. 签署合作协议\n\n入驻后可享受平台所有服务。',sugg:[]};if(msg.match(/服务商/))return{text:'服务商入驻：\n\n1. 提交企业资质\n2. 展示服务能力\n3. 平台审核\n4. 发布服务产品\n5. 开始接单\n\n优质服务商可获平台推荐流量。',sugg:[]};return{text:'我是企业服务AI助手，可以为您解答相关问题。请点击下方快捷按钮或直接提问。',sugg:['服务订单', '工单提交', '合同查询', '企业入驻', '服务商']}}
+};
+</script>
+<button id="aiFab" onclick="ai.toggle()" style="position:fixed;bottom:24px;right:16px;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#0891b2,#0e7490);border:none;color:#fff;font-size:22px;cursor:pointer;z-index:99998;box-shadow:0 4px 16px rgba(0,0,0,.2);transition:all .25s" title="AI助手">🤖</button>
+
+</body>
+</html>

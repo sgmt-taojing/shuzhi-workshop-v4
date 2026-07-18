@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="数造工坊·数字化转型一站式服务平台 — 产品库/政策追踪/服务撮合/企业管家/AI诊断">
+<meta name="keywords" content="数造工坊,数字化转型,企业服务,产品库,政策追踪,服务撮合,AI诊断,马季粮油">
+<meta property="og:title" content="数造工坊 · 数字化转型一站式服务平台">
+<meta property="og:description" content="产品库/政策追踪/服务撮合/企业管家/AI诊断">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="zh_CN">
+<meta name="theme-color" content="#2563eb">
+<title>数造工坊 · 数字化转型一站式服务平台</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#2563eb;--primary-dark:#1d4ed8;--bg:#f5f6fa;--card:#fff;--border:#e5e7eb;--text:#1f2937;--text2:#6b7280;--success:#22c55e;--warning:#f59e0b;--danger:#ef4444;--info:#3b82f6}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px;-webkit-tap-highlight-color:transparent}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+.hidden{display:none!important}
+.loading{text-align:center;padding:40px;color:#9ca3af;font-size:13px}.skel{background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:skel 1.5s infinite;border-radius:6px}@keyframes skel{0%{background-position:200% 0}100%{background-position:-200% 0}}.skel-card{height:80px;margin-bottom:12px;border-radius:10px}.skel-line{height:14px;margin-bottom:8px;border-radius:4px}.skel-line.short{width:60%}
+.empty{text-align:center;padding:40px;color:#9ca3af;font-size:13px}html{scroll-behavior:smooth}
+
+/* Voice FAB */
+#voiceFab{position:fixed;bottom:80px;right:16px;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#6366f1);border:none;color:#fff;font-size:22px;cursor:pointer;z-index:9998;box-shadow:0 4px 16px rgba(37,99,235,.4);transition:all .25s}
+#voiceFab:active{transform:scale(.9)}
+#voiceFab.listening{background:linear-gradient(135deg,#ef4444,#f87171);animation:pulse 1s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(239,68,68,.4)}70%{box-shadow:0 0 0 12px rgba(239,68,68,0)}100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}}
+
+/* Header */
+.h5-header{background:linear-gradient(135deg,#2563eb,#6366f1);color:#fff;padding:48px 20px 24px;text-align:center;position:relative;overflow:hidden}
+.h5-header::after{content:'';position:absolute;top:-50%;right:-20%;width:300px;height:300px;background:rgba(255,255,255,.08);border-radius:50%}
+.h5-logo{font-size:22px;font-weight:800;margin-bottom:6px;position:relative;z-index:1}
+.h5-slogan{font-size:13px;opacity:.85;position:relative;z-index:1}
+
+/* Nav Tabs */
+.nav-tabs{display:flex;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.nav-tabs::-webkit-scrollbar{display:none}
+.nav-tab{flex-shrink:0;padding:14px 16px;font-size:14px;color:var(--text2);white-space:nowrap;position:relative;transition:color .2s}
+.nav-tab.active{color:var(--primary);font-weight:600}
+.nav-tab.active::after{content:'';position:absolute;bottom:0;left:20%;right:20%;height:3px;background:var(--primary);border-radius:2px}
+
+/* Pages */
+.page{display:none;min-height:60vh}
+.page.active{display:block}
+
+/* Cards */
+.card{background:#fff;border-radius:12px;margin:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.card-body{padding:16px}
+
+/* Stats */
+.stats-row{display:flex;gap:8px;padding:12px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.stats-row::-webkit-scrollbar{display:none}
+.stat-box{flex-shrink:0;background:#fff;border-radius:10px;padding:12px 16px;text-align:center;min-width:90px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.stat-num{font-size:22px;font-weight:700;color:var(--primary)}
+.stat-label{font-size:11px;color:var(--text2);margin-top:2px}
+
+/* Product Grid */
+.prod-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
+.prod-card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);cursor:pointer;transition:transform .15s}
+.prod-card:active{transform:scale(.97)}
+.prod-icon{height:80px;display:flex;align-items:center;justify-content:center;font-size:36px;background:linear-gradient(135deg,#eff6ff,#e0e7ff)}
+.prod-info{padding:10px}
+.prod-title{font-size:14px;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:4px}
+.prod-sub{font-size:11px;color:var(--text2);margin-bottom:6px}
+.prod-price{font-size:16px;font-weight:700;color:var(--danger)}
+.prod-tag{display:inline-block;font-size:10px;padding:2px 6px;background:#dbeafe;color:#1e40af;border-radius:3px;margin-right:3px}
+
+/* Policy List */
+.policy-item{background:#fff;margin:10px 12px;border-radius:10px;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.04);cursor:pointer}
+.policy-item:active{background:#f9fafb}
+.policy-level{display:inline-block;font-size:10px;padding:2px 8px;border-radius:3px;margin-right:6px;font-weight:600}
+.level-national{background:#dbeafe;color:#1e40af}
+.level-shandong{background:#d1fae5;color:#059669}
+.level-ningxia{background:#fef3c7;color:#92400e}
+.policy-title{font-size:14px;font-weight:600;margin:6px 0;color:var(--text)}
+.policy-meta{font-size:11px;color:var(--text2)}
+.policy-cat{display:inline-block;font-size:10px;padding:1px 6px;border-radius:3px;background:#f3f4f6;color:#6b7280;margin-right:4px}
+
+/* Filter */
+.filter-bar{display:flex;gap:6px;padding:10px 12px;overflow-x:auto;-webkit-overflow-scrolling:touch;background:#fff;border-bottom:1px solid var(--border)}
+.filter-bar::-webkit-scrollbar{display:none}
+.filter-chip{flex-shrink:0;padding:6px 14px;font-size:12px;border-radius:16px;background:#f3f4f6;color:var(--text2);cursor:pointer;transition:all .2s}
+.filter-chip.active{background:var(--primary);color:#fff}
+
+/* Client Card */
+.client-card{background:#fff;margin:10px 12px;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);cursor:pointer}
+.client-card:active{transform:scale(.98)}
+.client-banner{height:60px;background:linear-gradient(135deg,#3b82f6,#6366f1);position:relative}
+.client-avatar{position:absolute;bottom:-20px;left:16px;width:48px;height:48px;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.1)}
+.client-body{padding:28px 16px 14px}
+.client-name{font-size:15px;font-weight:600;margin-bottom:4px}
+.client-industry{font-size:12px;color:var(--text2)}
+.client-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.client-tag{font-size:10px;padding:2px 8px;background:#e0e7ff;color:#4338ca;border-radius:3px}
+.client-footer{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-top:1px solid #f3f4f6}
+.client-mutual{font-size:11px;color:var(--success);font-weight:600}
+
+/* Article Card */
+.article-card{background:#fff;margin:10px 12px;border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04);cursor:pointer}
+.article-card:active{background:#f9fafb}
+.article-title{font-size:15px;font-weight:600;padding:12px 14px 6px;color:var(--text)}
+.article-meta{font-size:11px;color:var(--text2);padding:0 14px 12px}
+
+/* Service Card */
+.svc-card{background:#fff;margin:10px 12px;border-radius:12px;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.svc-title{font-size:14px;font-weight:600;margin-bottom:6px}
+.svc-desc{font-size:12px;color:var(--text2);margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.svc-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.svc-tag{font-size:10px;padding:2px 6px;background:#ecfdf5;color:#059669;border-radius:3px}
+.svc-footer{display:flex;justify-content:space-between;align-items:center}
+.svc-price{font-size:15px;font-weight:700;color:var(--danger)}
+.svc-btn{background:var(--primary);color:#fff;font-size:12px;padding:6px 16px;border:none;border-radius:16px}
+
+/* Detail Page */
+.detail-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:#fff;z-index:1000;overflow-y:auto;display:none}
+.detail-overlay.active{display:block}
+.detail-header{position:sticky;top:0;background:#fff;padding:12px 16px;display:flex;align-items:center;border-bottom:1px solid var(--border);z-index:10}
+.back-btn{font-size:20px;color:var(--text);cursor:pointer;margin-right:12px}
+.detail-title{font-size:16px;font-weight:600}
+.detail-content{padding:16px}
+.detail-section{margin-bottom:20px}
+.detail-section-title{font-size:15px;font-weight:600;margin-bottom:10px;padding-left:8px;border-left:3px solid var(--primary)}
+.detail-text{font-size:14px;line-height:1.7;color:var(--text)}
+.detail-price{font-size:24px;font-weight:700;color:var(--danger);margin:10px 0}
+
+/* Wechat accounts */
+.wa-card{background:#fff;margin:10px 12px;border-radius:12px;padding:14px;display:flex;gap:12px;align-items:center;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.wa-avatar{width:44px;height:44px;border-radius:8px;background:#f0f4ff;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.wa-info{flex:1}
+.wa-name{font-size:14px;font-weight:600}
+.wa-meta{font-size:11px;color:var(--text2);margin-top:2px}
+.wa-follow{font-size:12px;padding:5px 14px;border-radius:14px;border:none;font-weight:600}
+.wa-follow.followed{background:#f3f4f6;color:#9ca3af}
+.wa-follow.not-followed{background:var(--success);color:#fff}
+
+/* Bottom Action */
+.bottom-action{position:fixed;bottom:0;left:0;right:0;background:#fff;padding:12px 16px;box-shadow:0 -2px 10px rgba(0,0,0,.06);display:flex;gap:8px;z-index:100}
+.btn-primary{flex:1;background:var(--primary);color:#fff;border:none;padding:12px;border-radius:24px;font-size:14px;font-weight:600}
+.btn-outline{flex:1;background:#fff;color:var(--primary);border:1px solid var(--primary);padding:12px;border-radius:24px;font-size:14px;font-weight:600}
+
+/* Footer */
+.h5-footer{text-align:center;padding:24px 16px 40px;color:#9ca3af;font-size:11px}
+.h5-footer a{color:var(--primary)}
+[data-theme="dark"]{--primary:#3b82f6;--primary-dark:#2563eb;--bg:#0f172a;--card:#1e293b;--border:#334155;--text:#e2e8f0;--text2:#94a3b8;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--info:#3b82f6}
+[data-theme="dark"] .h5-header{background:linear-gradient(135deg,#1e293b,#0f172a)}
+[data-theme="dark"] .nav-tabs{background:#1e293b;border-color:#334155}
+[data-theme="dark"] .nav-tab{color:#94a3b8}
+[data-theme="dark"] .nav-tab.active{color:#3b82f6}
+[data-theme="dark"] input,[data-theme="dark"] select,[data-theme="dark"] textarea{background:#0f172a;color:#e2e8f0;border-color:#334155}
+[data-theme="dark"] .stat-box{background:#1e293b}
+</style>
+<script>
+(function(){
+  var isLocal = location.hostname.includes("localhost") || location.hostname.includes("127.0.0.1") || location.hostname.includes("0.0.0.0");
+  if (!isLocal) {
+    window.__DEMO_MODE__ = true;
+    var origFetch = window.fetch;
+    window.fetch = function(url, opts) {
+      if (typeof url === "string" && (url.includes("/api/") || url.includes("/api"))) {
+        return Promise.resolve(new Response(JSON.stringify({list:[],data:[],items:[],total:0,ok:true,stats:{},config:{},dashboard:{}}), {
+          status: 200, headers: {"Content-Type":"application/json"}
+        }));
+      }
+      return origFetch.apply(this, arguments);
+    };
+    document.addEventListener("DOMContentLoaded", function(){
+      var b = document.createElement("div");
+      b.style.cssText = "position:fixed;top:0;left:0;right:0;background:#d4a017;color:#fff;text-align:center;font-size:12px;padding:6px;z-index:99999;font-family:sans-serif";
+      b.innerHTML = '演示模式 · API数据需本地后端运行 · <a href="https://github.com/sgmt-taojing/shuzhi-workshop-v4" style="color:#fff;text-decoration:underline">GitHub</a>';
+      document.body.insertBefore(b, document.body.firstChild);
+      var h = document.createElement("style");
+      h.textContent = "body{padding-top:32px!important}";
+      document.head.appendChild(h);
+    });
+  }
+})();
+</script>
+</head>
+<body>
+
+<!-- Header -->
+<div class="h5-header">
+  <div class="h5-logo" id="h5Logo">${SITE_CONFIG.site_icon||'🏭'} ${SITE_CONFIG.site_name||'数造工坊'} <span id="h5ThemeToggle" onclick="toggleH5Theme()" style="cursor:pointer;font-size:14px;opacity:.6;margin-left:8px">🌙</span></div>
+  <div class="h5-slogan" id="h5Slogan">${SITE_CONFIG.site_slogan||'企业数字化转型一站式服务平台'}</div>
+</div>
+
+<!-- Nav Tabs -->
+<div class="nav-tabs" id="navTabs">
+  <div class="nav-tab active" data-page="home">🏠 首页</div>
+  <div class="nav-tab" data-page="policy">📜 政策库</div>
+  <div class="nav-tab" data-page="products">📦 产品库</div>
+  <div class="nav-tab" data-page="articles">📖 数字洞察</div>
+  <div class="nav-tab" data-page="clients">🏢 客户展示</div>
+  <div class="nav-tab" data-page="service">🤝 服务撮合</div>
+  <div class="nav-tab" data-page="mall">🛒 商城</div>
+  <div class="nav-tab" data-page="groupbuy">👥 团购</div>
+  <div class="nav-tab" data-page="wechat">📱 公众号</div>
+</div>
+
+<!-- Pages -->
+<div id="page-home" class="page active"></div>
+<div id="page-policy" class="page"></div>
+<div id="page-products" class="page"></div>
+<div id="page-articles" class="page"></div>
+<div id="page-clients" class="page"></div>
+<div id="page-service" class="page"></div>
+<div id="page-mall" class="page"></div>
+<div id="page-groupbuy" class="page"></div>
+<div id="page-wechat" class="page"></div>
+
+<!-- Detail Overlay -->
+<div class="detail-overlay" id="detailOverlay">
+  <div class="detail-header">
+    <span class="back-btn" onclick="closeDetail()">‹</span>
+    <span class="detail-title" id="detailTitle">详情</span>
+  </div>
+  <div class="detail-content" id="detailContent"></div>
+  <div class="bottom-action" id="detailAction" style="display:none"></div>
+</div>
+
+<!-- Footer -->
+<div class="h5-footer">
+  <p id="h5Footer">数造工坊 · 数字化转型服务平台</p>
+  <p style="margin-top:4px"><a href="javascript:void(0)" onclick="switchPage('home')">回到首页</a></p>
+</div>
+
+<script>
+const API_BASE = window.location.origin + '/api';
+
+function toggleH5Theme(){var t=document.documentElement.getAttribute('data-theme');if(t==='dark'){document.documentElement.removeAttribute('data-theme');localStorage.setItem('h5_theme','light');var e=document.getElementById('h5ThemeToggle');if(e)e.textContent='🌙'}else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('h5_theme','dark');var e=document.getElementById('h5ThemeToggle');if(e)e.textContent='☀️'}}
+(function(){var t=localStorage.getItem('h5_theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');setTimeout(function(){var e=document.getElementById('h5ThemeToggle');if(e)e.textContent='☀️'},500)}})();
+
+async function api(path, opts) {
+  const r = await fetch(API_BASE + path, opts ? { ...opts, headers: { 'Content-Type': 'application/json' } } : {});
+  return r.json();
+}
+
+// 全局配置（运行时动态加载，可通过后台修改）
+let SITE_CONFIG = {};
+async function loadSiteConfig() {
+  try { const data = await api('/config'); SITE_CONFIG = data.config || {}; } catch(e) {}
+}
+
+function $(s) { return document.querySelector(s); }
+function $$(s) { return document.querySelectorAll(s); }
+
+// --- Nav ---
+$$('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', () => switchPage(tab.dataset.page));
+});
+
+function switchPage(page) {
+  $$('.nav-tab').forEach(t => t.classList.toggle('active', t.dataset.page === page));
+  $$('.page').forEach(p => p.classList.toggle('active', p.id === 'page-' + page));
+  // Scroll to top
+  window.scrollTo(0, 0);
+  // Load content
+  if (page === 'home') loadHome();
+  else if (page === 'policy') loadPolicy();
+  else if (page === 'products') loadProducts();
+  else if (page === 'articles') loadArticles();
+  else if (page === 'clients') loadClients();
+  else if (page === 'service') loadService();
+  else if (page === 'mall') loadMall();
+  else if (page === 'groupbuy') loadGroupBuy();
+  else if (page === 'wechat') loadWechat();
+}
+
+// --- Detail ---
+function openDetail(title, content, actionHtml) {
+  $('#detailTitle').textContent = title;
+  $('#detailContent').innerHTML = content;
+  if (actionHtml) {
+    $('#detailAction').innerHTML = actionHtml;
+    $('#detailAction').style.display = 'flex';
+  } else {
+    $('#detailAction').style.display = 'none';
+  }
+  $('#detailOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeDetail() {
+  $('#detailOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// ==================== 首页 ====================
+async function loadHome() {
+  const el = $('#page-home');
+  el.innerHTML = '<div class="skel skel-card"></div><div class="skel skel-card"></div><div class="skel skel-line"></div><div class="skel skel-line short"></div>';
+  try {
+    const [dashData, products, policies, articles, charityData] = await Promise.all([
+      api('/admin/dashboard').catch(() => ({})),
+      api('/products?page=1&limit=4').catch(() => ({list:[]})),
+      api('/policies?page=1&limit=3').catch(() => ({list:[]})),
+      api('/articles?page=1&limit=3').catch(() => ({list:[]})),
+      api('/charity/dashboard').catch(() => ({}))
+    ]);
+
+    const prodList = products.list || products || [];
+    const polList = policies.list || policies || [];
+    const artList = articles.list || articles || [];
+
+    el.innerHTML = `
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-num">${dashData.products || prodList.length || 16}</div><div class="stat-label">数字化产品</div></div>
+        <div class="stat-box"><div class="stat-num">${dashData.clients || 32}</div><div class="stat-label">服务客户</div></div>
+        <div class="stat-box"><div class="stat-num">${polList.length || 17}</div><div class="stat-label">政策收录</div></div>
+        <div class="stat-box"><div class="stat-num">${artList.length}</div><div class="stat-label">数字洞察</div></div>
+      </div>
+
+      <!-- Quick Entries -->
+      <div style="display:flex;flex-wrap:wrap;gap:8px;padding:12px">
+        <div style="flex:1;min-width:45%;background:linear-gradient(135deg,#eff6ff,#dbeafe);border-radius:10px;padding:14px;cursor:pointer" onclick="switchPage('products')">
+          <div style="font-size:24px">📦</div>
+          <div style="font-size:13px;font-weight:600;margin-top:4px">数字化产品库</div>
+          <div style="font-size:11px;color:#6b7280;margin-top:2px">16个标准方案</div>
+        </div>
+        <div style="flex:1;min-width:45%;background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-radius:10px;padding:14px;cursor:pointer" onclick="switchPage('policy')">
+          <div style="font-size:24px">📜</div>
+          <div style="font-size:13px;font-weight:600;margin-top:4px">政策追踪</div>
+          <div style="font-size:11px;color:#6b7280;margin-top:2px">国家/山东/宁夏</div>
+        </div>
+        <div style="flex:1;min-width:45%;background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:10px;padding:14px;cursor:pointer" onclick="switchPage('service')">
+          <div style="font-size:24px">🤝</div>
+          <div style="font-size:13px;font-weight:600;margin-top:4px">服务撮合</div>
+          <div style="font-size:11px;color:#6b7280;margin-top:2px">供需智能匹配</div>
+        </div>
+        <div style="flex:1;min-width:45%;background:linear-gradient(135deg,#f3e8ff,#e9d5ff);border-radius:10px;padding:14px;cursor:pointer" onclick="showOnboarding()">
+          <div style="font-size:24px">🏢</div>
+          <div style="font-size:13px;font-weight:600;margin-top:4px">企业入驻</div>
+          <div style="font-size:11px;color:#6b7280;margin-top:2px">快速注册·开通服务</div>
+        </div>
+        <div style="flex:1;min-width:45%;background:linear-gradient(135deg,#fff7ed,#fed7aa);border-radius:10px;padding:14px;cursor:pointer" onclick="showQuickOrder()">
+          <div style="font-size:24px">⚡</div>
+          <div style="font-size:13px;font-weight:600;margin-top:4px">快速下单</div>
+          <div style="font-size:11px;color:#6b7280;margin-top:2px">选品·下单·支付</div>
+        </div>
+      </div>
+      <!-- Business Flow Guide -->
+      <div style="margin:0 12px 16px;background:linear-gradient(135deg,#0f172a,#1e293b);border-radius:12px;padding:16px;color:#fff">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px">三条链路·一站式服务</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div style="flex:1;min-width:30%;background:rgba(255,255,255,.1);border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:11px;opacity:.7;margin-bottom:4px">链路1</div>
+            <div style="font-size:12px;font-weight:600">入驻→诊断→方案</div>
+          </div>
+          <div style="flex:1;min-width:30%;background:rgba(255,255,255,.1);border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:11px;opacity:.7;margin-bottom:4px">链路2</div>
+            <div style="font-size:12px;font-weight:600">选品→下单→支付</div>
+          </div>
+          <div style="flex:1;min-width:30%;background:rgba(255,255,255,.1);border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:11px;opacity:.7;margin-bottom:4px">链路3</div>
+            <div style="font-size:12px;font-weight:600">需求→撮合→交付</div>
+          </div>
+        </div>
+      </div>
+          <div style="font-size:13px;font-weight:600;margin-top:4px">客户商城</div>
+          <div style="font-size:11px;color:#6b7280;margin-top:2px">生鲜特产·扶贫助农</div>
+        </div>
+      </div>
+
+        <div style="flex:1;min-width:45%;background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:10px;padding:14px;cursor:pointer" onclick="switchPage('groupbuy')">
+          <div style="font-size:24px">👥</div>
+          <div style="font-size:13px;font-weight:600;margin-top:4px">团购专区</div>
+          <div style="font-size:11px;color:#6b7280;margin-top:2px">食堂·福利·供销社</div>
+        </div>
+
+      <!-- Charity Banner -->
+      <div id="charityBanner" style="margin:12px;background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:12px;padding:14px;cursor:pointer" onclick="switchPage('mall')">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:14px;font-weight:700;color:#92400e">🤝 扶贫助农 · 慈善捐赠</div>
+            <div style="font-size:12px;color:#92400e;margin-top:3px" id="charityBannerText">购买生鲜特产，自动签发电子捐赠证书</div>
+          </div>
+          <span style="font-size:28px">❤️</span>
+        </div>
+      </div>
+
+      <!-- Latest Products -->
+      <div style="padding:0 12px;margin-top:8px">
+        <div style="font-size:15px;font-weight:600;margin-bottom:10px">热门产品</div>
+      </div>
+      <div class="prod-grid">
+        ${prodList.slice(0, 4).map(p => `
+          <div class="prod-card" onclick="showProductDetail(${p.id})">
+            <div class="prod-icon">${p.icon || (p.category || '').charAt(0) || '📦'}</div>
+            <div class="prod-info">
+              <div class="prod-title">${p.title}</div>
+              <div class="prod-sub">${p.subtitle || p.category || ''}</div>
+              <div class="prod-price">¥${(p.price||0).toLocaleString()}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <!-- Latest Policies -->
+      <div style="padding:0 12px;margin-top:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div style="font-size:15px;font-weight:600">最新政策</div>
+          <span style="font-size:12px;color:#3b82f6" onclick="switchPage('policy')">查看全部 ›</span>
+        </div>
+      </div>
+      ${polList.map(p => {
+        const levelMap = {national:'国家',shandong:'山东',ningxia:'宁夏'};
+        const levelClass = {national:'level-national',shandong:'level-shandong',ningxia:'level-ningxia'};
+        return `<div class="policy-item" onclick="showPolicyDetail(${p.id})">
+          <span class="policy-level ${levelClass[p.level]||''}">${levelMap[p.level]||p.level}</span>
+          <span class="policy-cat">${{digital:'数字化',tax:'财税',industry:'产业',talent:'人才',other:'其他'}[p.category]||p.category}</span>
+          <div class="policy-title">${p.title}</div>
+          <div class="policy-meta">${p.publish_date || ''} · ${p.source || p.issuing_authority || ''}</div>
+        </div>`;
+      }).join('')}
+
+      <!-- Latest Articles -->
+      <div style="padding:0 12px;margin-top:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div style="font-size:15px;font-weight:600">数字洞察</div>
+          <span style="font-size:12px;color:#3b82f6" onclick="switchPage('articles')">查看全部 ›</span>
+        </div>
+      </div>
+      ${artList.map(a => `
+        <div class="article-card" onclick="showArticleDetail(${a.id})">
+          <div class="article-title">${a.title}</div>
+          <div class="article-meta">${a.category || ''} · ${a.views || 0} 阅读 · ${(a.created_at||'').slice(0,10)}</div>
+        </div>
+      `).join('')}
+    `;
+    if (charityData && charityData.totalDonation > 0) {
+      const bt = document.getElementById("charityBannerText");
+      if (bt) bt.textContent = "累计捐赠 ¥"+charityData.totalDonation.toLocaleString()+" · "+charityData.certificateCount+"张证书已签发 · 点击支持";
+    }
+  } catch(e) {
+    el.innerHTML = '<div class="empty">加载失败，请稍后重试</div>';
+  }
+}
+
+// ==================== 政策库 ====================
+let policyFilter = { level: '', category: '', search: '' };
+
+async function loadPolicy() {
+  const el = $('#page-policy');
+  el.innerHTML = '<div class="loading">加载中...</div>';
+  try {
+    let url = '/policies?page=1&limit=100';
+    if (policyFilter.level) url += '&level=' + policyFilter.level;
+    if (policyFilter.category) url += '&category=' + policyFilter.category;
+    const data = await api(url);
+    let rows = data.list || data || [];
+    
+    // 客户端搜索（标题/摘要/标签）
+    if (policyFilter.search) {
+      const kw = policyFilter.search.toLowerCase();
+      rows = rows.filter(r => 
+        (r.title||'').toLowerCase().includes(kw) || 
+        (r.summary||'').toLowerCase().includes(kw) ||
+        (r.subtitle||'').toLowerCase().includes(kw) ||
+        JSON.stringify(r.tags||[]).toLowerCase().includes(kw)
+      );
+    }
+    
+    const levelMap = {national:'国家',shandong:'山东',ningxia:'宁夏'};
+    const levelClass = {national:'level-national',shandong:'level-shandong',ningxia:'level-ningxia'};
+    const catMap = {digital:'数字化',tax:'财税',industry:'产业',talent:'人才',other:'其他'};
+
+    el.innerHTML = `
+      <div class="filter-bar">
+        <div class="filter-chip ${!policyFilter.level?'active':''}" onclick="filterPolicy('level','')">全部</div>
+        <div class="filter-chip ${policyFilter.level==='national'?'active':''}" onclick="filterPolicy('level','national')">国家级</div>
+        <div class="filter-chip ${policyFilter.level==='shandong'?'active':''}" onclick="filterPolicy('level','shandong')">山东省</div>
+        <div class="filter-chip ${policyFilter.level==='ningxia'?'active':''}" onclick="filterPolicy('level','ningxia')">宁夏</div>
+      </div>
+      <div class="filter-bar">
+        <div class="filter-chip ${!policyFilter.category?'active':''}" onclick="filterPolicy('category','')">全部分类</div>
+        <div class="filter-chip ${policyFilter.category==='digital'?'active':''}" onclick="filterPolicy('category','digital')">数字化</div>
+        <div class="filter-chip ${policyFilter.category==='tax'?'active':''}" onclick="filterPolicy('category','tax')">财税</div>
+        <div class="filter-chip ${policyFilter.category==='industry'?'active':''}" onclick="filterPolicy('category','industry')">产业</div>
+        <div class="filter-chip ${policyFilter.category==='talent'?'active':''}" onclick="filterPolicy('category','talent')">人才</div>
+      </div>
+      <div style="padding:10px 12px;background:#fff;border-bottom:1px solid var(--border)">
+        <input id="policySearchInput" value="${policyFilter.search}" placeholder="搜索省份/城市/关键词..." style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:20px;font-size:13px" onkeyup="if(event.key==='Enter')filterPolicy('search',this.value)">
+      </div>
+      <div id="policyList"></div>
+    `;
+    const listEl = $('#policyList');
+    if (rows.length === 0) {
+      listEl.innerHTML = '<div class="empty">暂无政策数据</div>';
+    } else {
+      listEl.innerHTML = rows.map(p => `
+        <div class="policy-item" onclick="showPolicyDetail(${p.id})">
+          <span class="policy-level ${levelClass[p.level]||''}">${levelMap[p.level]||p.level}</span>
+          <span class="policy-cat">${catMap[p.category]||p.category}</span>
+          <div class="policy-title">${p.title}</div>
+          <div class="policy-meta">${p.publish_date || ''} · ${p.source || p.issuing_authority || ''}</div>
+        </div>
+      `).join('');
+    }
+  } catch(e) {
+    el.innerHTML = '<div class="empty">加载失败</div>';
+  }
+}
+
+function filterPolicy(type, val) {
+  policyFilter[type] = val;
+  loadPolicy();
+}
+
+async function showPolicyDetail(id) {
+  $('#detailTitle').textContent = '政策详情';
+  $('#detailContent').innerHTML = '<div class="loading">加载中...</div>';
+  $('#detailAction').style.display = 'none';
+  openDetail('政策详情', '');
+  try {
+    const p = await api('/policies/' + id);
+    const levelMap = {national:'国家级',shandong:'山东省级',ningxia:'宁夏级'};
+    const catMap = {digital:'数字化转型',tax:'财税',industry:'产业',talent:'人才',other:'其他'};
+    const content = `
+      <div class="detail-section">
+        <div style="display:flex;gap:6px;margin-bottom:10px">
+          <span class="policy-level ${levelClass(p.level)}">${levelMap[p.level]||p.level}</span>
+          <span class="policy-cat">${catMap[p.category]||p.category}</span>
+        </div>
+        <h2 style="font-size:18px;margin-bottom:10px">${p.title}</h2>
+        <div style="font-size:12px;color:#6b7280;margin-bottom:16px">
+          发布机构：${p.source || p.issuing_authority || '-'}<br>
+          发布日期：${p.publish_date || '-'}<br>
+          ${p.effective_date ? '生效日期：'+p.effective_date+'<br>' : ''}
+          ${p.expire_date ? '有效期至：'+p.expire_date : ''}
+        </div>
+      </div>
+      ${p.summary ? `<div class="detail-section"><div class="detail-section-title">政策摘要</div><div class="detail-text">${p.summary}</div></div>` : ''}
+      ${p.key_points && p.key_points.length ? `<div class="detail-section"><div class="detail-section-title">核心要点</div><ul style="padding-left:16px;line-height:1.8">${p.key_points.map(k=>'<li>'+k+'</li>').join('')}</ul></div>` : ''}
+      ${p.support_measures && p.support_measures.length ? `<div class="detail-section"><div class="detail-section-title">支持措施</div><ul style="padding-left:16px;line-height:1.8">${p.support_measures.map(s=>'<li>'+s+'</li>').join('')}</ul></div>` : ''}
+      ${p.applicable_industries && p.applicable_industries.length ? `<div class="detail-section"><div class="detail-section-title">适用行业</div><div>${p.applicable_industries.map(i=>'<span class="policy-cat">'+i+'</span>').join(' ')}</div></div>` : ''}
+      ${p.content ? `<div class="detail-section"><div class="detail-section-title">政策全文</div><div class="detail-text" style="white-space:pre-wrap">${p.content}</div></div>` : ''}
+      ${p.apply_conditions ? `<div class="detail-section"><div class="detail-section-title">申报条件</div><div class="detail-text">${p.apply_conditions}</div></div>` : ''}
+      ${p.subsidy_max ? `<div class="detail-section"><div class="detail-section-title">最高补贴</div><div class="detail-price" style="color:#22c55e">¥${p.subsidy_max.toLocaleString()}</div></div>` : ''}
+      ${p.apply_url ? `<div class="detail-section"><a href="${p.apply_url}" target="_blank" style="color:#3b82f6;font-size:14px">点击查看申报链接 ›</a></div>` : ''}
+    `;
+    $('#detailContent').innerHTML = content;
+  } catch(e) {
+    $('#detailContent').innerHTML = '<div class="empty">加载失败</div>';
+  }
+}
+
+function levelClass(level) {
+  return {national:'level-national',shandong:'level-shandong',ningxia:'level-ningxia'}[level] || '';
+}
+
+// ==================== 产品库 ====================
+async function loadProducts() {
+  const el = $('#page-products');
+  el.innerHTML = '<div class="loading">加载中...</div>';
+  try {
+    const data = await api('/products?page=1&limit=100');
+    const rows = data.list || data || [];
+    el.innerHTML = `
+      <div style="padding:12px;font-size:13px;color:#6b7280">${rows.length}个数字化产品，按需组合，一站式赋能</div>
+      <div class="prod-grid">
+        ${rows.map(p => `
+          <div class="prod-card" onclick="showProductDetail(${p.id})">
+            <div class="prod-icon">${p.icon || (p.category||'').charAt(0) || '📦'}</div>
+            <div class="prod-info">
+              <div class="prod-title">${p.title}</div>
+              <div class="prod-sub">${p.subtitle || p.category || ''}</div>
+              <div class="prod-price">¥${(p.price||0).toLocaleString()}</div>
+              <div style="margin-top:4px">${(p.tags||[]).slice(0,2).map(t=>'<span class="prod-tag">'+t+'</span>').join('')}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } catch(e) {
+    el.innerHTML = '<div class="empty">加载失败</div>';
+  }
+}
+
+async function showProductDetail(id) {
+  openDetail('产品详情', '<div class="loading">加载中...</div>');
+  try {
+    const p = await api('/products/' + id);
+    // Also load SKUs and soft articles
+    const [skuData, artData] = await Promise.all([
+      api('/commerce/'+id+'/skus').catch(() => ({list:[]})),
+      api('/marketing/articles?productId='+id).catch(() => ({list:[]}))
+    ]);
+    const skus = skuData.list || [];
+    const articles = artData.list || [];
+
+    const content = `
+      <div class="detail-section">
+        <div style="font-size:36px;text-align:center;padding:20px;background:linear-gradient(135deg,#eff6ff,#e0e7ff);border-radius:12px;margin-bottom:16px">${p.icon || '📦'}</div>
+        <h2 style="font-size:18px;margin-bottom:6px">${p.title}</h2>
+        <div style="font-size:13px;color:#6b7280;margin-bottom:10px">${p.subtitle || p.category || ''}</div>
+        <div class="detail-price">¥${(p.price||0).toLocaleString()}${p.price_unit ? '/'+p.price_unit : ''}</div>
+        <div style="margin-top:8px">${(p.tags||[]).map(t=>'<span class="prod-tag">'+t+'</span>').join('')}</div>
+      </div>
+      ${p.description ? `<div class="detail-section"><div class="detail-section-title">产品介绍</div><div class="detail-text">${p.description}</div></div>` : ''}
+      ${p.features ? `<div class="detail-section"><div class="detail-section-title">核心功能</div><div class="detail-text" style="white-space:pre-wrap;line-height:1.8">${p.features}</div></div>` : ''}
+      ${p.highlights && p.highlights.length ? `<div class="detail-section"><div class="detail-section-title">产品亮点</div><ul style="padding-left:16px;line-height:1.8">${p.highlights.map(h=>'<li>'+h+'</li>').join('')}</ul></div>` : ''}
+      ${p.cases && p.cases.length ? `<div class="detail-section"><div class="detail-section-title">客户案例</div><ul style="padding-left:16px;line-height:1.8">${p.cases.map(c=>'<li>'+c+'</li>').join('')}</ul></div>` : ''}
+      ${skus.length ? `<div class="detail-section"><div class="detail-section-title">版本选择</div>${skus.map(s=>{
+        const specs = s.specs||{};
+        return '<div style="background:#f9fafb;border-radius:8px;padding:12px;margin-bottom:8px"><div style="font-weight:600;font-size:14px">'+s.name+'</div><div style="font-size:12px;color:#6b7280;margin:4px 0">'+Object.entries(specs).map(([k,v])=>k+': '+v).join('，')+'</div><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:700;color:#ef4444">¥'+(s.price||0).toLocaleString()+'</span><span style="font-size:11px;color:#9ca3af;text-decoration:line-through">¥'+(s.original_price||0).toLocaleString()+'</span></div></div>';
+      }).join('')}</div>` : ''}
+      ${articles.length ? `<div class="detail-section"><div class="detail-section-title">相关阅读</div>${articles.map(a=>'<div class="article-card" onclick="showArticleDetail('+a.id+')" style="margin:0 0 8px"><div class="article-title" style="padding:8px 0">'+a.title+'</div><div class="article-meta" style="padding:0">'+(a.style==='pain_point'?'痛点引入':a.style==='story'?'故事型':a.style==='data'?'数据型':'对比型')+' · '+(a.views||0)+'阅读</div></div>').join('')}</div>` : ''}
+    `;
+    $('#detailContent').innerHTML = content;
+    // Bottom action
+    $('#detailAction').innerHTML = `
+      <button class="btn-outline" onclick="contactUs('产品咨询：${p.title}')">📞 咨询</button>
+      <button class="btn-primary" onclick="contactUs('产品购买：${p.title}')">立即选购</button>
+    `;
+    $('#detailAction').style.display = 'flex';
+  } catch(e) {
+    $('#detailContent').innerHTML = '<div class="empty">加载失败</div>';
+  }
+}
+
+// ==================== 数字洞察 ====================
+async function loadArticles() {
+  const el = $('#page-articles');
+  el.innerHTML = '<div class="loading">加载中...</div>';
+  try {
+    const data = await api('/articles?page=1&limit=50');
+    const rows = data.list || data || [];
+    el.innerHTML = rows.map(a => `
+      <div class="article-card" onclick="showArticleDetail(${a.id})">
+        <div class="article-title">${a.title}</div>
+        <div class="article-meta">${a.category || ''} · ${a.views || 0} 阅读 · ${(a.created_at||'').slice(0,10)}</div>
+      </div>
+    `).join('') || '<div class="empty">暂无文章</div>';
+  } catch(e) {
+    el.innerHTML = '<div class="empty">加载失败</div>';
+  }
+}
+
+async function showArticleDetail(id) {
+  openDetail('文章详情', '<div class="loading">加载中...</div>');
+  try {
+    const a = await api('/articles/' + id);
+    const content = `
+      <div class="detail-section">
+        <h2 style="font-size:18px;margin-bottom:8px">${a.title}</h2>
+        <div style="font-size:12px;color:#6b7280;margin-bottom:16px">${a.category || ''} · ${a.author || ''} · ${(a.created_at||'').slice(0,10)} · ${a.views||0} 阅读</div>
+        ${a.summary ? `<div style="background:#f0f4ff;padding:12px;border-radius:8px;margin-bottom:16px;font-size:13px;color:#4338ca">${a.summary}</div>` : ''}
+      </div>
+      <div class="detail-section">
+        <div class="detail-text" style="white-space:pre-wrap;line-height:1.8;font-size:15px">${a.content || '暂无内容'}</div>
+      </div>
+      ${a.product_id ? `<div class="detail-section"><div class="detail-section-title">推荐产品</div><div style="background:#f9fafb;padding:12px;border-radius:8px;cursor:pointer" onclick="showProductDetail(${a.product_id})">📦 查看关联产品 ›</div></div>` : ''}
+    `;
+    $('#detailContent').innerHTML = content;
+    $('#detailAction').style.display = 'none';
+  } catch(e) {
+    $('#detailContent').innerHTML = '<div class="empty">加载失败</div>';
+  }
+}
+
+// ==================== 客户展示 ====================
+async function loadClients() {
+  const el = $('#page-clients');
+  el.innerHTML = '<div class="loading">加载中...</div>';
+  try {
+    const [clientData, epData, featuredData] = await Promise.all([
+      api('/clients?page=1&limit=100'),
+      api('/enterprise?page=1&limit=100').catch(() => ({list:[]})),
+      api('/clients/featured/today').catch(() => ({client:null}))
+    ]);
+    const clients = clientData.list || clientData || [];
+    const profiles = epData.list || [];
+    const profileMap = {};
+    profiles.forEach(p => profileMap[p.client_id] = p);
+    const featured = featuredData.client;
+    const gradeColor = {AAA:'#22c55e',AA:'#3b82f6',A:'#06b6d4',BBB:'#f59e0b',BB:'#f97316',B:'#ef4444',C:'#991b1b'};
+    
+    el.innerHTML = `
+      ${featured ? `
+      <div style="margin:12px;background:linear-gradient(135deg,#1e3a5f,#2563eb);border-radius:14px;padding:18px;color:#fff">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div style="font-size:12px;opacity:0.8">⭐ 今日推荐客户</div>
+          <div style="font-size:11px;opacity:0.6">${new Date().toLocaleDateString('zh-CN')}</div>
+        </div>
+        <div style="display:flex;gap:14px">
+          <div style="width:56px;height:56px;border-radius:12px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700">${(featured.name||'?').charAt(0)}</div>
+          <div style="flex:1">
+            <div style="font-size:16px;font-weight:700">${featured.name}</div>
+            <div style="font-size:12px;opacity:0.8;margin-top:3px">${featured.industry||''} · 成立${featured.founded||'-'}年 · ${featured.team_size||'-' }人</div>
+            <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:6px">
+              ${(featured.advantages||[]).slice(0,2).map(a=>'<span style="font-size:10px;background:rgba(255,255,255,.2);padding:2px 8px;border-radius:3px">'+a+'</span>').join('')}
+            </div>
+          </div>
+        </div>
+        ${featured.product_intro ? '<div style="font-size:12px;opacity:0.85;margin-top:10px;line-height:1.6">'+featured.product_intro+'</div>' : ''}
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn-primary" style="flex:1;background:rgba(255,255,255,.2);color:#fff;border:none;padding:8px;border-radius:20px;font-size:12px" onclick="showClientDetail(${featured.id})">查看详情</button>
+          <button class="btn-primary" style="flex:1;background:#22c55e;border:none;padding:8px;border-radius:20px;font-size:12px;color:#fff" onclick="initiateTrade(${featured.id}, '${(featured.name||'').replace(/'/g,'')}')">🤝 达成交易</button>
+        </div>
+      </div>` : ''}
+      <div style="padding:0 12px;margin-bottom:10px">
+        <div style="font-size:14px;font-weight:600">全部客户（${clients.length}家）</div>
+      </div>
+      ${clients.map(c => {
+        const ep = profileMap[c.id];
+        const grade = ep ? ep.credit_grade : null;
+        const score = ep ? ep.credit_score : null;
+        return `<div class="client-card" onclick="showClientDetail(${c.id})">
+          <div class="client-banner" style="background:linear-gradient(135deg,${randomGradient(c.id)})">
+            <div class="client-avatar">${(c.name||'?').charAt(0)}</div>
+            ${grade ? '<span style="position:absolute;top:8px;right:8px;background:'+gradeColor[grade]+'20;color:'+gradeColor[grade]+';padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700">'+grade+'</span>' : ''}
+          </div>
+          <div class="client-body">
+            <div class="client-name">${c.name}</div>
+            <div class="client-industry">${c.industry || '-'} ${c.founded ? '· 成立'+c.founded : ''} ${c.team_size ? '· '+c.team_size+'人' : ''}</div>
+            <div class="client-tags">
+              ${(c.qualifications||[]).slice(0,2).map(q => '<span class="client-tag">'+q+'</span>').join('')}
+              ${score ? '<span class="client-tag" style="background:#f0fdf4;color:#059669">信用'+score+'分</span>' : ''}
+            </div>
+          </div>
+          <div class="client-footer">
+            <span style="font-size:12px;color:#6b7280">${c.industry || ''}</span>
+            <span style="font-size:12px;color:#3b82f6">查看详情 ›</span>
+          </div>
+        </div>`;
+      }).join('')}
+    `;
+  } catch(e) {
+    el.innerHTML = '<div class="empty">加载失败</div>';
+  }
+}
+
+function randomGradient(seed) {
+  const gradients = [
+    '#3b82f6,#6366f1','#22c55e,#16a34a','#f59e0b,#f97316','#8b5cf6,#a855f7','#06b6d4,#0891b2','#ef4444,#f97316'
+  ];
+  return gradients[seed % gradients.length];
+}
+
+async function showClientDetail(id) {
+  openDetail('客户详情', '<div class="loading">加载中...</div>');
+  try {
+    const c = await api('/clients/' + id);
+    // Load client products, enterprise profile, certificates
+    const [cpData, epData] = await Promise.all([
+      api('/client-products?page=1&limit=100').catch(() => ({list:[]})),
+      api('/enterprise?page=1&limit=100').catch(() => ({list:[]}))
+    ]);
+    const allProducts = cpData.list || cpData || [];
+    const clientProducts = allProducts.filter(p => p.client_id == id || p.client_id == 'c'+id || p.clientName == c.name || (p.client_name||'') == c.name);
+    const profiles = epData.list || [];
+    const ep = profiles.find(p => p.client_id == id);
+    
+    const gradeColor = {AAA:'#22c55e',AA:'#3b82f6',A:'#06b6d4',BBB:'#f59e0b',BB:'#f97316',B:'#ef4444',C:'#991b1b'};
+    const rs = (ep && ep.radar_scores) || {};
+    const radarLabels = Object.keys(rs);
+    
+    // Load certificates if enterprise profile exists
+    let certs = [];
+    if (ep) {
+      try {
+        const certData = await api('/enterprise/' + ep.id + '/certificates');
+        certs = certData.list || [];
+      } catch(e) {}
+    }
+    const certTypeMap = {iso:'ISO',qualification:'资质',patent:'专利',trademark:'商标',other:'其他'};
+    
+    const content = `
+      <div class="detail-section">
+        <div style="height:100px;background:linear-gradient(135deg,${randomGradient(id)});border-radius:12px;margin-bottom:16px;display:flex;align-items:center;justify-content:center;font-size:40px;color:#fff;font-weight:700;position:relative">
+          ${(c.name||'?').charAt(0)}
+          ${ep ? '<span style="position:absolute;top:8px;right:8px;background:'+gradeColor[ep.credit_grade]+';color:#fff;padding:3px 10px;border-radius:4px;font-size:12px;font-weight:700">'+ep.credit_grade+'</span>' : ''}
+        </div>
+        <h2 style="font-size:18px;margin-bottom:6px">${c.name}</h2>
+        <div style="font-size:13px;color:#6b7280;margin-bottom:10px">${c.industry || '-'} ${c.founded ? '· 成立'+c.founded : ''} ${c.team_size ? '· 团队'+c.team_size+'人' : ''}</div>
+      </div>
+      ${ep ? `
+      <div class="detail-section">
+        <div class="detail-section-title">企业画像</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+          <div style="background:#f9fafb;border-radius:8px;padding:10px 14px;text-align:center;min-width:70px"><div style="font-size:20px;font-weight:700;color:${gradeColor[ep.credit_grade]||'#666'}">${ep.credit_score}</div><div style="font-size:10px;color:#6b7280">信用分</div></div>
+          <div style="background:#f9fafb;border-radius:8px;padding:10px 14px;text-align:center;min-width:70px"><div style="font-size:20px;font-weight:700;color:#22c55e">${ep.case_count}</div><div style="font-size:10px;color:#6b7280">案例数</div></div>
+          <div style="background:#f9fafb;border-radius:8px;padding:10px 14px;text-align:center;min-width:70px"><div style="font-size:20px;font-weight:700;color:#3b82f6">${ep.contract_fulfillment_rate}%</div><div style="font-size:10px;color:#6b7280">履约率</div></div>
+          <div style="background:#f9fafb;border-radius:8px;padding:10px 14px;text-align:center;min-width:70px"><div style="font-size:20px;font-weight:700;color:#f59e0b">${ep.avg_rating || '-'}</div><div style="font-size:10px;color:#6b7280">评分</div></div>
+        </div>
+        ${radarLabels.length ? `
+          <div style="margin-top:12px">${radarLabels.map(l => {
+            const v = rs[l];
+            const color = v >= 80 ? '#22c55e' : v >= 60 ? '#f59e0b' : '#ef4444';
+            return '<div style="display:flex;align-items:center;margin-bottom:6px"><span style="width:70px;font-size:11px;color:#6b7280">'+l+'</span><div style="flex:1;height:6px;background:#e5e7eb;border-radius:3px;overflow:hidden;margin:0 8px"><div style="width:'+v+'%;height:100%;background:'+color+';border-radius:3px"></div></div><span style="font-size:11px;font-weight:700;color:'+color+';width:28px;text-align:right">'+v+'</span></div>';
+          }).join('')}</div>
+        ` : ''}
+        ${ep.capability_tags && ep.capability_tags.length ? '<div style="margin-top:10px">'+ep.capability_tags.map(t=>'<span class="client-tag" style="margin-right:4px;margin-bottom:4px;display:inline-block">'+t+'</span>').join('')+'</div>' : ''}
+        ${ep.badges && ep.badges.length ? '<div style="margin-top:8px">'+ep.badges.map(b=>'<span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:4px;font-size:11px;margin-right:4px">🏅 '+b+'</span>').join('')+'</div>' : ''}
+      </div>
+      ${ep.intro ? '<div class="detail-section"><div class="detail-section-title">企业简介</div><div class="detail-text">'+ep.intro+'</div></div>' : ''}
+      ` : ''}
+      ${c.description && (!ep || !ep.intro) ? '<div class="detail-section"><div class="detail-section-title">企业简介</div><div class="detail-text">'+c.description+'</div></div>' : ''}
+      ${certs.length ? `<div class="detail-section"><div class="detail-section-title">资质证书（${certs.length}）</div>${certs.map(cert => '<div style="background:#f9fafb;border-radius:8px;padding:10px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:600;font-size:13px">'+cert.name+'</div><div style="font-size:11px;color:#6b7280;margin-top:2px">'+(certTypeMap[cert.type]||cert.type)+' · '+cert.issuer+' · '+cert.issue_date+'</div></div><span style="background:'+(cert.status==='valid'?'#d1fae5':'#fee2e2')+';color:'+(cert.status==='valid'?'#059669':'#dc2626')+';padding:2px 8px;border-radius:4px;font-size:10px">'+(cert.status==='valid'?'有效':'失效')+'</span></div>').join('')}</div>` : ''}
+      ${c.qualifications && c.qualifications.length ? '<div class="detail-section"><div class="detail-section-title">能力资质</div><div>'+c.qualifications.map(q=>'<span class="client-tag" style="margin-right:4px;margin-bottom:4px;display:inline-block">'+q+'</span>').join('')+'</div></div>' : ''}
+      ${c.product_intro ? '<div class="detail-section"><div class="detail-section-title">产品与服务</div><div class="detail-text">'+c.product_intro+'</div></div>' : ''}
+      ${c.business_scope ? '<div class="detail-section"><div class="detail-section-title">经营范围</div><div class="detail-text">'+c.business_scope+'</div></div>' : ''}
+      ${c.advantages && c.advantages.length ? '<div class="detail-section"><div class="detail-section-title">核心优势</div><ul style="padding-left:16px;line-height:1.8">'+c.advantages.map(a=>'<li>'+a+'</li>').join('')+'</ul></div>' : ''}
+      ${c.address || c.contact_phone || c.contact_person || c.contact_wechat || c.wechat_id ? '<div class="detail-section"><div class="detail-section-title">联系方式</div><div class="detail-text">'+(c.contact_person?'联系人：'+c.contact_person+'<br>':'')+(c.contact_phone?'电话：'+c.contact_phone+'<br>':'')+(c.contact_wechat?'微信：'+c.contact_wechat+'<br>':'')+(c.wechat_id?'公众号：'+c.wechat_id+'<br>':'')+(c.contact_email?'邮箱：'+c.contact_email+'<br>':'')+(c.address?'地址：'+c.address+'<br>':'')+(c.website?'官网：<a href="'+c.website+'" target="_blank">'+c.website+'</a>':'')+'</div></div>' : ''}
+      <div style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border-radius:12px;padding:14px;margin:12px 0;text-align:center">
+        <div style="font-size:13px;font-weight:600;color:#1e40af;margin-bottom:8px">🤝 有合作意向？</div>
+        <div style="font-size:12px;color:#3b82f6;margin-bottom:10px">点击下方按钮，将您的需求推送到服务撘合系统跟踪</div>
+        <button class="btn-primary" style="width:100%" onclick="initiateTrade(${c.id}, '${(c.name||'').replace(/'/g,'')}')">发起合作意向</button>
+      </div>
+      ${clientProducts.length ? `<div class="detail-section"><div class="detail-section-title">产品服务（${clientProducts.length}）</div>${clientProducts.map(p=>'<div style="background:#f9fafb;border-radius:8px;padding:10px;margin-bottom:6px;cursor:pointer" onclick="switchPage(\'mall\');closeDetail()"><div style="font-weight:600;font-size:13px">'+(p.title||'')+'</div><div style="font-size:12px;color:#6b7280">'+(p.subtitle||'')+(p.price>0?' · ¥'+p.price.toLocaleString():'')+'</div></div>').join('')}</div>` : ''}
+    `;
+    $('#detailContent').innerHTML = content;
+    $('#detailAction').innerHTML = `
+      <button class="btn-outline" onclick="switchPage('wechat');closeDetail()">📱 关注公众号</button>
+      <button class="btn-primary" onclick="switchPage('mall');closeDetail()">🛒 查看商城</button>
+    `;
+    $('#detailAction').style.display = 'flex';
+  } catch(e) {
+    $('#detailContent').innerHTML = '<div class="empty">加载失败</div>';
+  }
+}
+
+// ==================== 服务撮合 ====================
+// 交易意向转撘合
+async function initiateTrade(clientId, clientName) {
+  openOverlay('发起合作意向', `
+    <div class="form-group"><label class="form-label">您的需求</label>
+      <select class="form-select" id="trade-type">
+        <option value="development">软件开发</option>
+        <option value="digital">数字化转型</option>
+        <option value="consulting">咨询服务</option>
+        <option value="operations">运维服务</option>
+        <option value="other">其他</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">需求标题</label>
+      <input class="form-input" id="trade-title" placeholder="如：希望采购${clientName}的产品/服务">
+    </div>
+    <div class="form-group"><label class="form-label">预算范围</label>
+      <div style="display:flex;gap:8px">
+        <input class="form-input" id="trade-min" type="number" placeholder="最低" style="flex:1">
+        <input class="form-input" id="trade-max" type="number" placeholder="最高" style="flex:1">
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">需求描述</label>
+      <textarea class="form-textarea" id="trade-desc" placeholder="描述您的具体需求..."></textarea>
+    </div>
+    <div class="form-group"><label class="form-label">您的姓名</label>
+      <input class="form-input" id="trade-name" placeholder="姓名">
+    </div>
+    <div class="form-group"><label class="form-label">手机号</label>
+      <input class="form-input" id="trade-phone" type="tel" placeholder="手机号">
+    </div>
+    <button class="btn btn-primary" onclick="submitTrade(${clientId}, '${clientName.replace(/'/g,'')}')">提交需求，进入撘合跟踪</button>
+  `);
+  $('#overlayAction').style.display = 'none';
+}
+
+async function submitTrade(clientId, clientName) {
+  const title = $('#trade-title').value.trim();
+  const desc = $('#trade-desc').value.trim();
+  const name = $('#trade-name').value.trim();
+  const phone = $('#trade-phone').value.trim();
+  if (!title || !desc || !name || !phone) { toast('请填写完整信息'); return; }
+  const body = {
+    user_name: name + '（来自客户展示页）',
+    title: title,
+    category: $('#trade-type').value,
+    budget_min: parseFloat($('#trade-min').value) || 0,
+    budget_max: parseFloat($('#trade-max').value) || 0,
+    description: desc + '\n\n意向客户：' + clientName + '（ID:'+clientId+'）',
+    requirements: [clientName+'产品/服务'],
+    deadline: '',
+    location: ''
+  };
+  try {
+    const data = await api('/services/demands', { method: 'POST', body: JSON.stringify(body) });
+    toast('需求已提交，进入撘合跟踪！');
+    closeOverlay();
+    switchPage('service');
+  } catch(e) { toast('提交失败'); }
+}
+
+let svcTab = 'demands';
+async function loadService() {
+  const el = $('#page-service');
+  el.innerHTML = `
+    <div class="filter-bar">
+      <div class="filter-chip ${svcTab==='demands'?'active':''}" onclick="svcTab='demands';loadService()">需求大厅</div>
+      <div class="filter-chip ${svcTab==='offers'?'active':''}" onclick="svcTab='offers';loadService()">服务广场</div>
+    </div>
+    <div id="svcList"><div class="loading">加载中...</div></div>
+  `;
+  try {
+    const endpoint = svcTab === 'demands' ? '/services/demands?page=1&limit=50' : '/services/offers?page=1&limit=50';
+    const data = await api(endpoint);
+    const rows = data.list || [];
+    const catMap = {digital:'数字化转型',consulting:'咨询',development:'开发',operations:'运维',security:'安全',training:'培训',other:'其他'};
+    const stMap = {open:'待匹配',matched:'已匹配',active:'上架中',closed:'已关闭'};
+
+    $('#svcList').innerHTML = rows.length ? rows.map(r => `
+      <div class="svc-card" onclick="showServiceDetail('${svcTab}',${r.id})">
+        <div class="svc-title">${r.title}</div>
+        <div class="svc-desc">${r.description || ''}</div>
+        <div class="svc-tags">
+          <span class="svc-tag">${catMap[r.category]||r.category}</span>
+          ${svcTab==='demands' && r.budget_max ? '<span class="svc-tag">¥'+(r.budget_min||0).toLocaleString()+'-'+(r.budget_max||0).toLocaleString()+'</span>' : ''}
+          ${svcTab==='offers' && r.price ? '<span class="svc-tag">¥'+r.price.toLocaleString()+'/'+(r.price_unit||'次')+'</span>' : ''}
+        </div>
+        <div class="svc-footer">
+          <span style="font-size:11px;color:#9ca3af">${r.user_name || r.client_name || ''} · ${stMap[r.status]||r.status}</span>
+          ${svcTab==='demands' && r.status==='open' ? '<button class="svc-btn" onclick="event.stopPropagation();matchService(' + r.id + ')">智能匹配</button>' : ''}
+        </div>
+      </div>
+    `).join('') : '<div class="empty">暂无数据</div>';
+  } catch(e) {
+    $('#svcList').innerHTML = '<div class="empty">加载失败</div>';
+  }
+}
+
+async function showServiceDetail(type, id) {
+  openDetail('服务详情', '<div class="loading">加载中...</div>');
+  try {
+    const endpoint = type === 'demands' ? '/services/demands/' + id : '/services/offers/' + id;
+    const r = await api(endpoint);
+    const catMap = {digital:'数字化转型',consulting:'咨询',development:'开发',operations:'运维',security:'安全',training:'培训',other:'其他'};
+    const content = `
+      <div class="detail-section">
+        <h2 style="font-size:18px;margin-bottom:8px">${r.title}</h2>
+        <div style="font-size:12px;color:#6b7280;margin-bottom:10px">
+          ${catMap[r.category]||r.category} · ${r.user_name || r.client_name || '-'}
+        </div>
+        ${type === 'demands' && r.budget_max ? '<div class="detail-price" style="color:#22c55e">预算：¥'+(r.budget_min||0).toLocaleString()+' - ¥'+(r.budget_max||0).toLocaleString()+'</div>' : ''}
+        ${type === 'offers' && r.price ? '<div class="detail-price">¥'+r.price.toLocaleString()+'/' +(r.price_unit||'次')+'</div>' : ''}
+      </div>
+      ${r.description ? `<div class="detail-section"><div class="detail-section-title">详细描述</div><div class="detail-text">${r.description}</div></div>` : ''}
+      ${r.requirements && r.requirements.length ? `<div class="detail-section"><div class="detail-section-title">技术要求</div><ul style="padding-left:16px;line-height:1.8">${r.requirements.map(req=>'<li>'+req+'</li>').join('')}</ul></div>` : ''}
+      ${r.capabilities && r.capabilities.length ? `<div class="detail-section"><div class="detail-section-title">能力标签</div><div>${r.capabilities.map(c=>'<span class="svc-tag" style="margin-right:4px;margin-bottom:4px;display:inline-block">'+c+'</span>').join('')}</div></div>` : ''}
+      ${r.cases && r.cases.length ? `<div class="detail-section"><div class="detail-section-title">服务案例</div><ul style="padding-left:16px;line-height:1.8">${r.cases.map(c=>'<li>'+c+'</li>').join('')}</ul></div>` : ''}
+      ${r.deadline ? `<div class="detail-section"><div class="detail-section-title">截止日期</div><div class="detail-text">${r.deadline}</div></div>` : ''}
+      ${r.location ? `<div class="detail-section"><div class="detail-section-title">所在地</div><div class="detail-text">${r.location}</div></div>` : ''}
+      ${r.rating ? `<div class="detail-section"><div class="detail-section-title">服务评分</div><div class="detail-text" style="font-size:18px;font-weight:700;color:#f59e0b">${r.rating}★</div></div>` : ''}
+    `;
+    $('#detailContent').innerHTML = content;
+    if (type === 'demands' && r.status === 'open') {
+      $('#detailAction').innerHTML = '<button class="btn-primary" onclick="matchService('+id+')">🤝 智能匹配服务</button>';
+      $('#detailAction').style.display = 'flex';
+    } else if (type === 'offers') {
+      $('#detailAction').innerHTML = '<button class="btn-primary" onclick="contactUs(\'服务咨询：'+r.title+'\')">📞 咨询此服务</button>';
+      $('#detailAction').style.display = 'flex';
+    } else {
+      $('#detailAction').style.display = 'none';
+    }
+  } catch(e) {
+    $('#detailContent').innerHTML = '<div class="empty">加载失败</div>';
+  }
+}
+
+async function matchService(demandId) {
+  openDetail('智能匹配', '<div class="loading">正在匹配中...</div>');
+  try {
+    const data = await api('/services/matches/suggest/' + demandId);
+    const matches = data.matches || [];
+    if (matches.length === 0) {
+      $('#detailContent').innerHTML = '<div class="empty">暂未找到匹配的服务</div>';
+      return;
+    }
+    $('#detailContent').innerHTML = `
+      <div class="detail-section">
+        <div class="detail-section-title">为「${data.demand.title}」找到 ${matches.length} 个匹配服务</div>
+        ${matches.map((m, i) => `
+          <div class="svc-card" style="margin:0 0 10px" onclick="showServiceDetail('offers',${m.id})">
+            <div style="display:flex;justify-content:space-between;align-items:start">
+              <div class="svc-title">${m.title}</div>
+              <span style="background:${m.match_score>=70?'#22c55e':m.match_score>=50?'#f59e0b':'#ef4444'}20;color:${m.match_score>=70?'#22c55e':m.match_score>=50?'#f59e0b':'#ef4444'};padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700">${m.match_score}%</span>
+            </div>
+            <div class="svc-desc">${m.description || ''}</div>
+            <div style="font-size:11px;color:#6b7280;margin-top:4px">${(m.match_reasons||[]).join('；')}</div>
+            <div class="svc-footer" style="margin-top:6px">
+              <span style="font-size:13px;font-weight:700;color:#ef4444">¥${(m.price||0).toLocaleString()}</span>
+              <span style="font-size:11px;color:#9ca3af">${m.client_name||''}</span>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    $('#detailAction').style.display = 'none';
+  } catch(e) {
+    $('#detailContent').innerHTML = '<div class="empty">匹配失败</div>';
+  }
+}
+
+// ==================== 商城 ====================
+let mallFilter = '';
+async function loadMall() {
+  const el = $('#page-mall');
+  el.innerHTML = '<div class="loading">加载中...</div>';
+  try {
+    const [prodData, charityData] = await Promise.all([
+      api('/client-products?page=1&limit=100'),
+      api('/charity/dashboard').catch(() => ({}))
+    ]);
+    const allRows = prodData.list || prodData || [];
+    
+    // 优先排序：生鲜特产 > 西部特产 > 其他
+    const catOrder = {'生鲜特产':1,'西部特产':2};
+    allRows.sort((a,b) => (catOrder[a.category]||99) - (catOrder[b.category]||99));
+    
+    const categories = [...new Set(allRows.map(r => r.category).filter(Boolean))];
+    const rows = mallFilter ? allRows.filter(r => r.category === mallFilter) : allRows;
+    const donCount = rows.filter(r => r.donation_enabled === 1).length;
+    const povCount = rows.filter(r => r.poverty_alleviation === 1).length;
+    
+    el.innerHTML = `
+      ${charityData.totalDonation > 0 ? `
+      <div style="margin:12px;background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:12px;padding:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:14px;font-weight:700;color:#92400e">🤝 慈善捐赠</div>
+            <div style="font-size:12px;color:#92400e;margin-top:2px">已累计捐赠 ¥${charityData.totalDonation.toLocaleString()} · 扶贫产品${charityData.povertyProducts}个</div>
+          </div>
+          <span style="font-size:24px">❤️</span>
+        </div>
+      </div>` : ''}
+      <div class="filter-bar">
+        <div class="filter-chip ${!mallFilter?'active':''}" onclick="mallFilter='';loadMall()">全部(${allRows.length})</div>
+        ${categories.map(cat => {
+          const cnt = allRows.filter(r => r.category === cat).length;
+          return '<div class="filter-chip '+(mallFilter===cat?'active':'')+'" onclick="mallFilter=\''+cat+'\';loadMall()">'+cat+'('+cnt+')</div>';
+        }).join('')}
+      </div>
+      <div style="padding:4px 12px;font-size:11px;color:#6b7280">${rows.length}个产品${donCount>0?' · '+donCount+'个含慈善捐赠':''}${povCount>0?' · '+povCount+'个扶贫产品':''}</div>
+      <div class="prod-grid">
+        ${rows.map(p => {
+          const isFresh = p.category === '生鲜特产' || p.category === '西部特产';
+          const iconBg = isFresh ? 'linear-gradient(135deg,#fef3c7,#fde68a)' : 'linear-gradient(135deg,#ecfdf5,#d1fae5)';
+          const iconMap = {'生鲜特产':'🥬','西部特产':'🏔️','电力设备':'⚡','工程服务':'🏗️','软件产品':'💾','环保设备':'🌿','技术服务':'🔧','建筑材料':'🧱','安全设备':'🔒','咨询服务':'📋'};
+          return `<div class="prod-card" onclick="showMallDetail(${p.id})">
+            <div class="prod-icon" style="background:${iconBg}">${iconMap[p.category]||'📦'}</div>
+            <div class="prod-info">
+              <div class="prod-title">${p.title || '-'}</div>
+              <div class="prod-sub">${p.origin || p.client_name || ''}</div>
+              <div class="prod-price">${p.price > 0 ? '¥'+p.price.toLocaleString() : '面议'}</div>
+              <div style="margin-top:3px;display:flex;gap:3px;flex-wrap:wrap">
+                ${p.poverty_alleviation === 1 ? '<span style="font-size:9px;background:#fee2e2;color:#dc2626;padding:1px 5px;border-radius:3px">🚜扶贫</span>' : ''}
+                ${p.donation_enabled === 1 ? '<span style="font-size:9px;background:#fef3c7;color:#92400e;padding:1px 5px;border-radius:3px">❤️捐赠'+p.donation_percent+'%</span>' : ''}
+                ${p.rating && p.rating >= 4.8 ? '<span style="font-size:9px;background:#d1fae5;color:#059669;padding:1px 5px;border-radius:3px">⭐'+p.rating+'</span>' : ''}
+              </div>
+            </div>
+          </div>`;
+        }).join('') || ''}
+      </div>
+      ${rows.length === 0 ? '<div class="empty">暂无商品</div>' : ''}
+    `;
+  } catch(e) {
+    el.innerHTML = '<div class="empty">加载失败</div>';
+  }
+}
+
+async function showMallDetail(id) {
+  openDetail('商品详情', '<div class="loading">加载中...</div>');
+  try {
+    const data = await api('/client-products?page=1&limit=100');
+    const rows = data.list || data || [];
+    const p = rows.find(r => r.id == id);
+    if (!p) { $('#detailContent').innerHTML = '<div class="empty">未找到商品</div>'; return; }
+    
+    // Find client info
+    let clientInfo = null;
+    if (p.client_name) {
+      try {
+        const clients = await api('/clients?page=1&limit=100');
+        const allClients = clients.list || clients || [];
+        clientInfo = allClients.find(c => c.name === p.client_name);
+      } catch(e) {}
+    }
+    
+    const isFresh = p.category === '生鲜特产' || p.category === '西部特产';
+    const iconBg = isFresh ? 'linear-gradient(135deg,#fef3c7,#fde68a)' : 'linear-gradient(135deg,#ecfdf5,#d1fae5)';
+    const iconMap = {'生鲜特产':'🥬','西部特产':'🏔️','电力设备':'⚡','工程服务':'🏗️','软件产品':'💻','环保设备':'🌿','技术服务':'🔧','建筑材料':'🧱','安全设备':'🔒','咨询服务':'📋'};
+    const donationAmount = p.donation_enabled === 1 ? Math.round((p.price || 0) * (p.donation_percent || 0) / 100 * 100) / 100 : 0;
+    
+    // 加载产品背书
+    let endorsements = [];
+    try { const ed = await api('/commerce/'+id+'/endorsements'); endorsements = ed.list || []; } catch(e) {}
+    
+    const content = `
+      <div class="detail-section">
+        <div style="height:80px;background:${iconBg};border-radius:12px;margin-bottom:14px;display:flex;align-items:center;justify-content:center;font-size:32px">${iconMap[p.category]||'📦'}</div>
+        <h2 style="font-size:18px;margin-bottom:6px">${p.title || '-'}</h2>
+        <div style="font-size:13px;color:#6b7280;margin-bottom:8px">${p.subtitle || ''}</div>
+        <div class="detail-price">${p.price > 0 ? '¥'+p.price.toLocaleString()+(p.price_unit?'/'+p.price_unit:'') : '面议'}</div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:8px">
+          ${p.category ? '<span style="font-size:11px;background:#f3f4f6;color:#374151;padding:2px 8px;border-radius:4px">'+p.category+'</span>' : ''}
+          ${p.origin ? '<span style="font-size:11px;background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:4px">📍 '+p.origin+'</span>' : ''}
+          ${p.poverty_alleviation === 1 ? '<span style="font-size:11px;background:#fee2e2;color:#dc2626;padding:2px 8px;border-radius:4px">🚜 扶贫产品</span>' : ''}
+          ${p.rating ? '<span style="font-size:11px;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:4px">⭐ '+p.rating+'</span>' : ''}
+        </div>
+      </div>
+      ${p.donation_enabled === 1 ? `
+      <div style="background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:12px;padding:14px;margin-bottom:16px">
+        <div style="font-size:14px;font-weight:700;color:#92400e;margin-bottom:6px">❤️ 慈善捐赠</div>
+        <div style="font-size:13px;color:#92400e;line-height:1.6">每售出一份，将销售额的 <strong>${p.donation_percent}%</strong>（约 <strong>¥${donationAmount}</strong>）捐赠给「${p.donation_org}」
+        ${p.poverty_alleviation === 1 ? '<br>本产品为扶贫助农产品，您的购买直接帮助产地农户增收脱贫。' : ''}
+        </div>
+      </div>` : ''}
+      ${p.description ? `<div class="detail-section"><div class="detail-section-title">详细描述</div><div class="detail-text" style="white-space:pre-wrap;line-height:1.8">${p.description}</div></div>` : ''}
+      ${p.tags && p.tags.length ? `<div class="detail-section"><div class="detail-section-title">标签</div><div>${p.tags.map(t=>'<span class="prod-tag">'+t+'</span>').join('')}</div></div>` : ''}
+      ${endorsements.length ? `<div style="background:#f0fdf4;border-radius:12px;padding:14px;margin:12px 0">
+        <div style="font-size:14px;font-weight:700;color:#059669;margin-bottom:10px">🏅 资质背书（${endorsements.length}）</div>
+        ${endorsements.map(e => '<div style="background:#fff;border-radius:8px;padding:10px;margin-bottom:6px;border-left:3px solid '+(e.type==='geo_cert'?'#3b82f6':e.type==='brand_auth'?'#8b5cf6':e.type==='govt_rec'?'#f59e0b':e.type==='quality_test'?'#06b6d4':e.type==='organic_cert'?'#22c55e':'#ef4444')+'"><div style="display:flex;justify-content:space-between;align-items:start"><div style="flex:1"><div style="font-weight:600;font-size:13px;color:#1f2937">'+e.type_icon+' '+e.title+'</div><div style="font-size:11px;color:#6b7280;margin-top:2px">颁发：'+e.issuer+' · '+e.issue_date+(e.expire_date?' (有效期至'+e.expire_date+')':'')+'</div>'+e.description+'<div style="font-size:11px;color:#6b7280;margin-top:3px;line-height:1.5">'+e.description+'</div></div><span style="background:#d1fae5;color:#059669;padding:1px 6px;border-radius:3px;font-size:10px;white-space:nowrap">'+e.type_label+'</span></div></div>').join('')}
+      </div>` : ''}
+      ${(p.sales > 0 || p.stock >= 0) ? `<div class="detail-section"><div class="detail-section-title">销售信息</div><div class="detail-text">${p.sales > 0 ? '已售：'+p.sales+' 份<br>' : ''}${p.stock >= 0 ? '库存：'+p.stock+' '+(p.price_unit||'份') : ''}</div></div>` : ''}
+      ${(p.merchant_name || p.manufacturer) ? `<div style="background:#f0f9ff;border-radius:12px;padding:14px;margin:12px 0">
+        <div style="font-size:14px;font-weight:700;color:#1e40af;margin-bottom:10px">🔍 产品溯源信息</div>
+        ${p.merchant_name ? '<div style="font-size:12px;color:#4b5563;margin-bottom:4px"><strong>销售商户：</strong>'+p.merchant_name+'</div>' : ''}
+        ${p.manufacturer ? '<div style="font-size:12px;color:#4b5563;margin-bottom:4px"><strong>生产厂家：</strong>'+p.manufacturer+'</div>' : ''}
+        ${p.manufacturer_addr ? '<div style="font-size:12px;color:#4b5563;margin-bottom:4px"><strong>厂址：</strong>'+p.manufacturer_addr+'</div>' : ''}
+        ${p.manufacturer_license ? '<div style="font-size:12px;color:#4b5563;margin-bottom:4px"><strong>生产许可：</strong>'+p.manufacturer_license+'</div>' : ''}
+        ${p.quality_cert ? '<div style="font-size:12px;color:#4b5563;margin-bottom:4px"><strong>质量认证：</strong>'+p.quality_cert+'</div>' : ''}
+        ${p.logistics_company ? '<div style="font-size:12px;color:#4b5563;margin-bottom:4px;margin-top:8px;padding-top:6px;border-top:1px solid #e0f2fe"><strong>🚚 物流配送：</strong>'+p.logistics_company+'（'+(p.logistics_mode||'')+'）</div>' : ''}
+        ${p.logistics_area ? '<div style="font-size:12px;color:#4b5563;margin-bottom:4px"><strong>配送范围：</strong>'+p.logistics_area+'</div>' : ''}
+        ${p.delivery_time ? '<div style="font-size:12px;color:#4b5563;margin-bottom:4px"><strong>发货时间：</strong>'+p.delivery_time+'</div>' : ''}
+        ${p.storage_condition ? '<div style="font-size:12px;color:#4b5563;margin-bottom:4px;margin-top:6px;padding-top:6px;border-top:1px solid #e0f2fe"><strong>📦 仓储条件：</strong>'+p.storage_condition+'</div>' : ''}
+        ${p.shelf_life ? '<div style="font-size:12px;color:#4b5563;margin-bottom:4px"><strong>保质期：</strong>'+p.shelf_life+'</div>' : ''}
+        ${p.after_sales ? '<div style="font-size:12px;color:#4b5563;margin-bottom:4px;margin-top:6px;padding-top:6px;border-top:1px solid #e0f2fe"><strong>🛡️ 售后服务：</strong>'+p.after_sales+'</div>' : ''}
+        ${p.return_policy ? '<div style="font-size:12px;color:#4b5563;margin-bottom:4px"><strong>退换政策：</strong>'+p.return_policy+'</div>' : ''}
+        ${p.trace_code ? '<div style="font-size:11px;color:#9ca3af;margin-top:8px;padding-top:6px;border-top:1px solid #e0f2fe">溯源码：'+p.trace_code+'</div>' : ''}
+      </div>` : ''}
+      ${clientInfo ? `<div class="detail-section"><div class="detail-section-title">供应商</div><div style="background:#f9fafb;border-radius:8px;padding:12px;cursor:pointer" onclick="closeDetail();showClientDetail(${clientInfo.id})"><div style="display:flex;align-items:center;gap:10px"><div style="width:36px;height:36px;border-radius:8px;background:#e0e7ff;display:flex;align-items:center;justify-content:center;font-weight:700;color:#4338ca">${(clientInfo.name||'?').charAt(0)}</div><div><div style="font-weight:600;font-size:14px">${clientInfo.name}</div><div style="font-size:12px;color:#6b7280">${clientInfo.industry||''} · 查看企业画像 ›</div></div></div></div></div>` : (p.client_name ? '<div class="detail-section"><div class="detail-section-title">供应商</div><div class="detail-text">'+p.client_name+'</div></div>' : '')}
+    `;
+    $('#detailContent').innerHTML = content;
+    const buyMsg = '商城购买意向：'+(p.title||'').replace(/'/g,'')+'，价格'+(p.price>0?'¥'+p.price:'面议')+(p.donation_enabled===1?'，含慈善捐赠'+p.donation_percent+'%':'');
+    $('#detailAction').innerHTML = `
+      <button class="btn-outline" onclick="contactUs('${(p.title||'').replace(/'/g,'').replace(/\\/g,'')} 咨询')">📞 咨询</button>
+      <button class="btn-primary" onclick="contactUs('${buyMsg.replace(/'/g,'')}')">${p.donation_enabled === 1 ? '❤️ 购买(含捐赠)' : '立即购买'}</button>
+    `;
+    $('#detailAction').style.display = 'flex';
+    
+    // 如果有慈善捐赠，在详情底部展示证书说明
+    if (p.donation_enabled === 1) {
+      $('#detailContent').innerHTML += `<div style="background:linear-gradient(135deg,#fffbeb,#fef3c7);border-radius:12px;padding:14px;margin-top:16px;text-align:center"><div style="font-size:14px;font-weight:700;color:#92400e;margin-bottom:6px">📜 电子捐赠证书</div><div style="font-size:12px;color:#92400e;line-height:1.6">购买含捐赠产品后，系统将自动为您签发电子慈善捐赠证书，<br>可保存、分享、打印作为爱心见证。</div></div>`;
+    }
+  } catch(e) {
+    $('#detailContent').innerHTML = '<div class="empty">加载失败</div>';
+  }
+}
+
+// ==================== 团购 ====================
+let gbFilter = '';
+let gbTab = 'list';
+
+async function loadGroupBuy() {
+  const el = $('#page-groupbuy');
+  el.innerHTML = '<div class="loading">加载中...</div>';
+  try {
+    const [data, stats, buyersData] = await Promise.all([
+      api('/group-buy/buys?page=1&limit=50' + (gbFilter ? '&type='+gbFilter : '')),
+      api('/group-buy/stats').catch(() => ({})),
+      api('/group-buy/buyers').catch(() => ({list:[]}))
+    ]);
+    const rows = data.list || [];
+    const buyers = buyersData.list || [];
+    const typeMap = {welfare:'企业福利',canteen:'食堂',supply:'供销社',poverty:'扶贫机构'};
+    const typeIcon = {welfare:'🏢',canteen:'🍽️',supply:'🏪',poverty:'🤝'};
+    const totalAmount = rows.reduce((s,g) => s + (g.current_qty||0)*(g.group_price||0), 0);
+    const povCount = rows.filter(g => g.poverty_alleviation === 1).length;
+    const donTotal = rows.filter(g => g.donation_enabled===1).reduce((s,g) => s + (g.current_qty||0)*(g.group_price||0)*(g.donation_percent||0)/100, 0);
+    
+    el.innerHTML = `
+      <div style="background:linear-gradient(135deg,#1e3a5f,#2563eb);border-radius:0;padding:16px;margin:0 0 12px;color:#fff">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div style="font-size:16px;font-weight:700">👥 团购专区</div>
+          <div style="font-size:11px;opacity:0.7">${new Date().toLocaleDateString('zh-CN')}</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <div style="flex:1;background:rgba(255,255,255,.1);border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:20px;font-weight:700">${stats.activeBuys || 0}</div>
+            <div style="font-size:10px;opacity:0.7">进行中</div>
+          </div>
+          <div style="flex:1;background:rgba(255,255,255,.1);border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:20px;font-weight:700">¥${(totalAmount/10000).toFixed(1)}万</div>
+            <div style="font-size:10px;opacity:0.7">团购总额</div>
+          </div>
+          <div style="flex:1;background:rgba(255,255,255,.1);border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:20px;font-weight:700">${stats.activeBuyers || 0}</div>
+            <div style="font-size:10px;opacity:0.7">采购方</div>
+          </div>
+        </div>
+        ${donTotal > 0 ? '<div style="font-size:11px;opacity:0.8;margin-top:8px;text-align:center">❤️ 已产生慈善捐赠 ¥'+Math.round(donTotal).toLocaleString()+' · 扶贫产品'+povCount+'个</div>' : ''}
+      </div>
+      
+      <div class="filter-bar">
+        <div class="filter-chip ${gbTab==='list'?'active':''}" onclick="gbTab='list';loadGroupBuy()">📋 团购活动</div>
+        <div class="filter-chip ${gbTab==='buyers'?'active':''}" onclick="gbTab='buyers';loadGroupBuy()">🏢 采购方</div>
+      </div>
+      ${gbTab === 'list' ? `
+      <div class="filter-bar">
+        <div class="filter-chip ${!gbFilter?'active':''}" onclick="gbFilter='';loadGroupBuy()">全部</div>
+        <div class="filter-chip ${gbFilter==='welfare'?'active':''}" onclick="gbFilter='welfare';loadGroupBuy()">🏢 企业福利</div>
+        <div class="filter-chip ${gbFilter==='canteen'?'active':''}" onclick="gbFilter='canteen';loadGroupBuy()">🍽️ 食堂</div>
+        <div class="filter-chip ${gbFilter==='supply'?'active':''}" onclick="gbFilter='supply';loadGroupBuy()">🏪 供销社</div>
+        <div class="filter-chip ${gbFilter==='poverty'?'active':''}" onclick="gbFilter='poverty';loadGroupBuy()">🤝 扶贫机构</div>
+      </div>
+      ${rows.map(g => {
+        const progress = g.progress || 0;
+        const progColor = progress >= 100 ? '#22c55e' : progress >= 50 ? '#f59e0b' : '#3b82f6';
+        const isDone = progress >= 100;
+        const saveAmount = ((g.original_price - g.group_price) * g.current_qty);
+        return `<div style="background:#fff;margin:10px 12px;border-radius:14px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);cursor:pointer" onclick="showGroupBuyDetail(${g.id})">
+          <!-- 顶部：产品+状态 -->
+          <div style="padding:14px 14px 10px">
+            <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:6px">
+              <div style="font-size:15px;font-weight:700;flex:1;line-height:1.3">${g.product_title}</div>
+              <span style="font-size:10px;padding:2px 8px;border-radius:10px;white-space:nowrap;margin-left:8px;background:${isDone?'#d1fae5':'#fef3c7'};color:${isDone?'#059669':'#92400e'}">${isDone?'✅已成团':'🔥团购中'}</span>
+            </div>
+            <div style="font-size:12px;color:#9ca3af">${g.title.replace(g.product_title,'').replace('·','').trim() || typeMap[g.buyer_type]||''} · 📍${g.origin||'-'}</div>
+          </div>
+          
+          <!-- 中间：价格区 -->
+          <div style="padding:0 14px 10px;display:flex;align-items:baseline;gap:6px">
+            <span style="font-size:28px;font-weight:800;color:#ef4444">¥${g.group_price}</span>
+            <span style="font-size:13px;color:#d1d5db;text-decoration:line-through">¥${g.original_price}</span>
+            <span style="font-size:11px;background:#fee2e2;color:#dc2626;padding:1px 6px;border-radius:3px;font-weight:600">直降¥${g.original_price-g.group_price}</span>
+          </div>
+          
+          <!-- 进度区 -->
+          <div style="padding:0 14px 10px">
+            <div style="background:#f3f4f6;height:8px;border-radius:4px;overflow:hidden">
+              <div style="width:${progress}%;height:100%;background:${progColor};border-radius:4px"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:#9ca3af;margin-top:4px">
+              <span>📦 已团 ${g.current_qty}份（${g.participants}人）</span>
+              <span style="color:${progColor};font-weight:600">${progress}%</span>
+            </div>
+          </div>
+          
+          <!-- 标签行 -->
+          <div style="padding:0 14px 8px;display:flex;gap:4px;flex-wrap:wrap">
+            <span style="font-size:10px;background:#f3f4f6;color:#6b7280;padding:2px 8px;border-radius:3px">${typeIcon[g.buyer_type]||'👥'} ${typeMap[g.buyer_type]||g.buyer_type}</span>
+            ${g.poverty_alleviation === 1 ? '<span style="font-size:10px;background:#fee2e2;color:#dc2626;padding:2px 8px;border-radius:3px">🚜 扶贫产品</span>' : ''}
+            ${g.donation_enabled === 1 ? '<span style="font-size:10px;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:3px">❤️ 购捐'+g.donation_percent+'%</span>' : ''}
+          </div>
+          
+          <!-- 底部：采购方+截止+节省 -->
+          <div style="padding:8px 14px;background:#f9fafb;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#9ca3af">
+            <span>🏢 ${g.buyer_name||'-'}</span>
+            <span>⏰ ${g.end_date||'-'}</span>
+            <span style="color:#059669;font-weight:600">已省¥${saveAmount.toLocaleString()}</span>
+          </div>
+        </div>`;
+      }).join('') || '<div class="empty">暂无团购活动</div>'}
+      `: `
+      <div style="padding:8px 12px;font-size:12px;color:#6b7280">共 ${buyers.length} 家采购方，点击查看采购需求</div>
+      ${buyers.map(b => {
+        const bTypeMap = {welfare:'企业福利',canteen:'食堂',supply:'供销社',poverty:'扶贫机构'};
+        const bTypeIcon = {welfare:'🏢',canteen:'🍽️',supply:'🏪',poverty:'🤝'};
+        const activeBuys = rows.filter(g => g.buyer_id === b.id);
+        const gradColors = ['#3b82f6,#6366f1','#22c55e,#16a34a','#f59e0b,#f97316','#8b5cf6,#a855f7','#06b6d4,#0891b2','#ef4444,#f97316'];
+        return `<div class="client-card" onclick="showBuyerDetail(${b.id})">
+          <div class="client-banner" style="background:linear-gradient(135deg,${gradColors[b.id%6]})">
+            <div class="client-avatar">${bTypeIcon[b.type]||'🏢'}</div>
+          </div>
+          <div class="client-body">
+            <div class="client-name">${b.name}</div>
+            <div class="client-industry">${bTypeMap[b.type]||b.type} · ${b.employee_count||0}人 · ${b.contact_name||''}</div>
+            <div class="client-tags">
+              <span class="client-tag">${activeBuys.length}个团购中</span>
+              ${activeBuys.length > 0 ? '<span class="client-tag" style="background:#fef3c7;color:#92400e">采购额¥'+(activeBuys.reduce((s,g)=>s+g.current_qty*g.group_price,0)/10000).toFixed(0)+'万</span>' : ''}
+            </div>
+          </div>
+          <div class="client-footer">
+            <span style="font-size:11px;color:#6b7280">📞 ${b.contact_phone||'-'}</span>
+            <span style="font-size:12px;color:#3b82f6">查看详情 ›</span>
+          </div>
+        </div>`;
+      }).join('')}
+      `}
+    `;
+  } catch(e) {
+    el.innerHTML = '<div class="empty">加载失败</div>';
+  }
+}
+
+async function showBuyerDetail(buyerId) {
+  openDetail('采购方详情', '<div class="loading">加载中...</div>');
+  try {
+    const [buyersData, buysData] = await Promise.all([
+      api('/group-buy/buyers'),
+      api('/group-buy/buys?page=1&limit=50')
+    ]);
+    const buyer = (buyersData.list||[]).find(b => b.id === buyerId);
+    const buyerBuys = (buysData.list||[]).filter(g => g.buyer_id === buyerId);
+    const bTypeMap = {welfare:'企业福利',canteen:'食堂',supply:'供销社',poverty:'扶贫机构'};
+    if (!buyer) { $('#detailContent').innerHTML = '<div class="empty">未找到</div>'; return; }
+    
+    const totalQty = buyerBuys.reduce((s,g) => s + (g.current_qty||0), 0);
+    const totalAmount = buyerBuys.reduce((s,g) => s + (g.current_qty||0)*(g.group_price||0), 0);
+    
+    $('#detailContent').innerHTML = `
+      <div class="detail-section">
+        <h2 style="font-size:18px;margin-bottom:6px">${buyer.name}</h2>
+        <div style="font-size:13px;color:#6b7280;margin-bottom:10px">${bTypeMap[buyer.type]||buyer.type} · 员工${buyer.employee_count||0}人</div>
+        <div style="display:flex;gap:8px">
+          <div style="flex:1;background:#f9fafb;border-radius:8px;padding:10px;text-align:center"><div style="font-size:18px;font-weight:700;color:#3b82f6">${buyerBuys.length}</div><div style="font-size:10px;color:#6b7280">团购活动</div></div>
+          <div style="flex:1;background:#f9fafb;border-radius:8px;padding:10px;text-align:center"><div style="font-size:18px;font-weight:700;color:#22c55e">${totalQty}</div><div style="font-size:10px;color:#6b7280">采购总量</div></div>
+          <div style="flex:1;background:#f9fafb;border-radius:8px;padding:10px;text-align:center"><div style="font-size:18px;font-weight:700;color:#f59e0b">¥${(totalAmount/10000).toFixed(1)}万</div><div style="font-size:10px;color:#6b7280">采购总额</div></div>
+        </div>
+      </div>
+      ${buyer.description ? '<div class="detail-section"><div class="detail-section-title">机构简介</div><div class="detail-text">'+buyer.description+'</div></div>' : ''}
+      <div class="detail-section"><div class="detail-section-title">联系方式</div><div class="detail-text">联系人：'+buyer.contact_name+'<br>电话：'+buyer.contact_phone+'<br>地址：'+(buyer.address||'-')+'</div></div>
+      ${buyerBuys.length ? '<div class="detail-section"><div class="detail-section-title">团购活动（'+buyerBuys.length+'）</div>'+buyerBuys.map(g => '<div style="background:#f9fafb;border-radius:8px;padding:10px;margin-bottom:6px;cursor:pointer" onclick="closeOverlay();showGroupBuyDetail('+g.id+')"><div style="font-weight:600;font-size:13px">'+g.title+'</div><div style="font-size:12px;color:#6b7280;margin-top:3px">'+g.product_title+' · ¥'+g.group_price+' · 已团'+g.current_qty+'份</div></div>').join('')+'</div>' : '<div class="detail-section"><div class="detail-section-title">暂无团购活动</div></div>'}
+    `;
+    $('#overlayAction').style.display = 'none';
+  } catch(e) { $('#detailContent').innerHTML = '<div class="empty">加载失败</div>'; }
+}
+
+async function showGroupBuyDetail(id) {
+  openDetail('团购详情', '<div class="loading">加载中...</div>');
+  try {
+    const g = await api('/group-buy/buys/' + id);
+    const typeMap = {welfare:'企业福利',canteen:'食堂',supply:'供销社',poverty:'扶贫机构'};
+    const typeIcon = {welfare:'🏢',canteen:'🍽️',supply:'🏪',poverty:'🤝'};
+    const progress = g.progress || 0;
+    const progColor = progress >= 100 ? '#22c55e' : progress >= 50 ? '#f59e0b' : '#3b82f6';
+    const donationAmount = g.donation_enabled === 1 ? Math.round(g.group_price * (g.donation_percent || 0) / 100 * 100) / 100 : 0;
+    const savePerUnit = (g.original_price || 0) - (g.group_price || 0);
+    const totalSaved = savePerUnit * (g.current_qty || 0);
+    const totalDonation = donationAmount * (g.current_qty || 0);
+    const product = g.product;
+    
+    $('#detailContent').innerHTML = `
+      <div class="detail-section">
+        <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px">
+          <h2 style="font-size:16px;flex:1">${typeIcon[g.buyer_type]||'👥'} ${g.title}</h2>
+          ${progress >= 100 ? '<span style="background:#d1fae5;color:#059669;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:600">✅ 已成团</span>' : '<span style="background:#fef3c7;color:#92400e;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:600">🔥 团购中</span>'}
+        </div>
+        <div style="font-size:12px;color:#6b7280;margin-bottom:12px">采购方：${g.buyer_name||'-'}（${typeMap[g.buyer_type]||g.buyer_type}）· 截止 ${g.end_date||'-'}</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <span style="font-size:28px;font-weight:700;color:#ef4444">¥${g.group_price}</span>
+          <div>
+            <div style="font-size:13px;color:#9ca3af;text-decoration:line-through">原价 ¥${g.original_price}</div>
+            <div style="font-size:12px;color:#059669;font-weight:600">省${g.discount}% · 每份省¥${savePerUnit}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap">
+          ${g.origin ? '<span style="font-size:11px;background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:4px">📍 '+g.origin+'</span>' : ''}
+          ${g.poverty_alleviation === 1 ? '<span style="font-size:11px;background:#fee2e2;color:#dc2626;padding:2px 8px;border-radius:4px">🚜 扶贫产品</span>' : ''}
+          ${g.donation_enabled === 1 ? '<span style="font-size:11px;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:4px">❤️ 捐赠'+g.donation_percent+'%</span>' : ''}
+        </div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-section-title">团购进度</div>
+        <div style="background:#e5e7eb;height:12px;border-radius:6px;overflow:hidden;margin-bottom:8px"><div style="width:${progress}%;height:100%;background:${progColor};border-radius:6px;transition:width .3s"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px">
+          <span>已团 <strong style="color:${progColor}">${g.current_qty}</strong> / 最低${g.min_qty}${g.max_qty>0?' (上限'+g.max_qty+')':''}</span>
+          <span style="color:${progColor};font-weight:700">${progress}%</span>
+        </div>
+        <div style="display:flex;gap:8px;font-size:11px;color:#6b7280;flex-wrap:wrap">
+          <span>👥 ${g.participants}人参团</span>
+          <span>💰 累计¥${(g.current_qty*g.group_price).toLocaleString()}</span>
+          <span>💸 已省¥${totalSaved.toLocaleString()}</span>
+          ${totalDonation > 0 ? '<span>❤️ 捐赠¥'+Math.round(totalDonation).toLocaleString()+'</span>' : ''}
+        </div>
+      </div>
+      ${g.description ? '<div class="detail-section"><div class="detail-section-title">团购说明</div><div class="detail-text" style="white-space:pre-wrap;line-height:1.8">'+g.description+'</div></div>' : ''}
+      ${product && product.manufacturer ? '<div style="background:#f0f9ff;border-radius:12px;padding:14px;margin:12px 0"><div style="font-size:13px;font-weight:700;color:#1e40af;margin-bottom:8px">🔍 产品溯源</div><div style="font-size:12px;color:#4b5563;line-height:1.8">'+(product.manufacturer?'生产方：'+product.manufacturer+'<br>':'')+(product.manufacturer_addr?'产地：'+product.manufacturer_addr+'<br>':'')+(product.quality_cert?'认证：'+product.quality_cert+'<br>':'')+(product.logistics_company?'物流：'+product.logistics_company+'（'+(product.logistics_mode||'')+'）<br>':'')+(product.delivery_time?'发货：'+product.delivery_time+'<br>':'')+(product.shelf_life?'保质期：'+product.shelf_life:'')+'</div></div>' : ''}
+      ${g.donation_enabled === 1 ? '<div style="background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:12px;padding:14px;margin-bottom:12px"><div style="font-size:14px;font-weight:700;color:#92400e;margin-bottom:4px">❤️ 慈善捐赠</div><div style="font-size:12px;color:#92400e;line-height:1.6">每份捐赠销售额的<strong>'+g.donation_percent+'%</strong>（约¥'+donationAmount+'）给「'+g.donation_org+'」<br>参团购买自动签发电子捐赠证书</div></div>' : ''}
+      ${g.tags && g.tags.length ? '<div class="detail-section"><div class="detail-section-title">标签</div><div>'+g.tags.map(t=>'<span class="prod-tag">'+t+'</span>').join('')+'</div></div>' : ''}
+      ${g.orders && g.orders.length ? '<div class="detail-section"><div class="detail-section-title">参团记录（'+g.orders.length+'人 '+g.orders.reduce((s,o)=>s+o.quantity,0)+'份）</div>'+g.orders.map(o=>'<div style="background:#f9fafb;border-radius:8px;padding:10px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center"><div><span style="font-weight:600;font-size:13px">'+o.buyer_name+'</span><span style="font-size:11px;color:#6b7280;margin-left:8px">'+(o.buyer_org||'')+'</span></div><div style="text-align:right"><span style="font-size:13px;font-weight:600">'+o.quantity+'份</span><span style="font-size:11px;color:#6b7280;margin-left:6px">¥'+o.total_price+'</span></div></div>').join('')+'</div>' : ''}
+    `;
+    
+    if (g.status === 'open') {
+      $('#overlayAction').innerHTML = '<button class="btn-primary" onclick="joinGroupBuy('+id+')">👥 立即参团 · ¥'+g.group_price+'起</button>';
+      $('#overlayAction').style.display = 'flex';
+    } else {
+      $('#overlayAction').innerHTML = '<div style="text-align:center;color:#6b7280;font-size:13px;width:100%">团购已结束</div>';
+      $('#overlayAction').style.display = 'flex';
+    }
+  } catch(e) {
+    $('#detailContent').innerHTML = '<div class="empty">加载失败</div>';
+  }
+}
+
+function joinGroupBuy(id) {
+  openDetail('参团下单', `
+    <div style="background:#eff6ff;border-radius:8px;padding:10px;margin-bottom:14px;font-size:12px;color:#1e40af;line-height:1.6">📋 填写参团信息，提交后系统自动计算价格和捐赠金额。含捐赠产品参团成功后自动签发电子证书。</div>
+    <div class="form-group"><label class="form-label">姓名 *</label><input class="form-input" id="gb-name" placeholder="您的姓名"></div>
+    <div class="form-group"><label class="form-label">手机号 *</label><input class="form-input" id="gb-phone" type="tel" placeholder="手机号"></div>
+    <div class="form-group"><label class="form-label">单位/组织</label><input class="form-input" id="gb-org" placeholder="所在单位（选填）"></div>
+    <div class="form-group"><label class="form-label">数量 *</label><input class="form-input" id="gb-qty" type="number" value="1" min="1" onchange="calcGbPrice(${id})"></div>
+    <div class="form-group"><label class="form-label">交货备注</label><input class="form-input" id="gb-remark" placeholder="如：工作日送达、需要发票等"></div>
+    <div id="gbPriceCalc" style="background:#f9fafb;border-radius:8px;padding:12px;margin-bottom:14px;font-size:13px;color:#374151"></div>
+    <button class="btn btn-primary" onclick="submitGroupBuy(${id})">确认参团</button>
+  `);
+  $('#overlayAction').style.display = 'none';
+  calcGbPrice(id);
+}
+
+async function calcGbPrice(id) {
+  try {
+    const qty = parseInt($('#gb-qty').value) || 1;
+    const g = await api('/group-buy/buys/' + id);
+    if (!g || g.error) return;
+    const total = g.group_price * qty;
+    const save = (g.original_price - g.group_price) * qty;
+    const don = g.donation_enabled === 1 ? Math.round(total * g.donation_percent / 100 * 100) / 100 : 0;
+    $('#gbPriceCalc').innerHTML = '<div style="display:flex;justify-content:space-between;margin-bottom:4px"><span>团购价</span><span>¥'+g.group_price+' × '+qty+' = <strong>¥'+total+'</strong></span></div><div style="display:flex;justify-content:space-between;color:#059669;margin-bottom:4px"><span>团购节省</span><span>¥'+save+'</span></div>'+(don > 0 ? '<div style="display:flex;justify-content:space-between;color:#92400e"><span>慈善捐赠（'+g.donation_percent+'%）</span><span>¥'+don+' → '+g.donation_org+'</span></div>' : '');
+  } catch(e) {}
+}
+
+async function submitGroupBuy(id) {
+  const name = $('#gb-name').value.trim();
+  const phone = $('#gb-phone').value.trim();
+  if (!name || !phone) { toast('请填写姓名和手机号'); return; }
+  const body = {
+    buyer_name: name,
+    buyer_phone: phone,
+    buyer_org: $('#gb-org').value.trim(),
+    quantity: parseInt($('#gb-qty').value) || 1,
+    remark: $('#gb-remark').value.trim()
+  };
+  try {
+    const data = await api('/group-buy/buys/'+id+'/join', { method: 'POST', body: JSON.stringify(body) });
+    const cert = data.certificate;
+    if (cert) {
+      openDetail('参团成功！', `
+        <div style="text-align:center;padding:20px">
+          <div style="font-size:48px;margin-bottom:12px">🎉</div>
+          <h2 style="font-size:18px;margin-bottom:8px">参团成功！</h2>
+          <div style="font-size:14px;color:#6b7280;margin-bottom:16px">${data.order.quantity}份 · ¥${data.order.total_price}<br>当前已团${data.group_buy.current_qty}份，${data.group_buy.participants}人参团</div>
+          <div style="background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:12px;padding:16px;margin-bottom:16px">
+            <div style="font-size:14px;font-weight:700;color:#92400e;margin-bottom:6px">❤️ 慈善捐赠证书已签发</div>
+            <div style="font-size:12px;color:#92400e;line-height:1.6">证书编号：${cert.cert_no}<br>捐赠金额：¥${cert.donation_amount} → ${cert.donation_org}<br>${cert.message}</div>
+          </div>
+          <button class="btn btn-primary" onclick="window.open('${API_BASE}/charity/certificates/${cert.cert_no}/html','_blank')">📜 查看电子证书</button>
+          <button class="btn btn-outline" style="margin-top:8px" onclick="closeOverlay();loadGroupBuy()">返回团购列表</button>
+        </div>
+      `);
+    } else {
+      toast('参团成功！');
+      closeOverlay();
+      loadGroupBuy();
+    }
+  } catch(e) {
+    toast('参团失败');
+  }
+}
+
+// ==================== 公众号互粉 ====================
+async function loadWechat() {
+  const el = $('#page-wechat');
+  el.innerHTML = '<div class="loading">加载中...</div>';
+  try {
+    const data = await api('/wechat/accounts');
+    const rows = data || [];
+    const ourAccounts = rows.filter(r => r.type === 'our');
+    const clientAccounts = rows.filter(r => r.type === 'client');
+    const totalFollowers = rows.reduce((s,r) => s + (r.followers||0), 0);
+
+    el.innerHTML = `
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-num">${rows.length}</div><div class="stat-label">公众号</div></div>
+        <div class="stat-box"><div class="stat-num">${clientAccounts.length}</div><div class="stat-label">客户公众号</div></div>
+        <div class="stat-box"><div class="stat-num">${totalFollowers.toLocaleString()}</div><div class="stat-label">总粉丝</div></div>
+      </div>
+      <div style="padding:0 12px;margin-bottom:8px;font-size:14px;font-weight:600">我方公众号</div>
+      ${ourAccounts.map(a => `
+        <div class="wa-card">
+          <div class="wa-avatar">📢</div>
+          <div class="wa-info">
+            <div class="wa-name">${a.name}</div>
+            <div class="wa-meta">${a.industry||''} · ${(a.followers||0).toLocaleString()} 粉丝</div>
+          </div>
+          <button class="wa-follow followed" onclick="toggleFollow(${a.id},this)">已关注</button>
+        </div>
+      `).join('')}
+      <div style="padding:12px;margin-bottom:8px;font-size:14px;font-weight:600">客户公众号（互粉大厅）</div>
+      ${clientAccounts.map(a => `
+        <div class="wa-card">
+          <div class="wa-avatar">${(a.name||'?').charAt(0)}</div>
+          <div class="wa-info">
+            <div class="wa-name">${a.name}</div>
+            <div class="wa-meta">${a.industry||''} · ${(a.followers||0).toLocaleString()} 粉丝 · ${a.follow_status==='mutual'?'互关':a.follow_status==='oneway'?'单向':'未关联'}</div>
+          </div>
+          <button class="wa-follow ${a.follow_status==='mutual'?'followed':'not-followed'}" onclick="toggleFollow(${a.id},this)">${a.follow_status==='mutual'?'互关中':'关注'}</button>
+        </div>
+      `).join('')}
+      <div style="padding:12px;margin-top:16px">
+        <div style="background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:12px;padding:16px">
+          <div style="font-size:14px;font-weight:600;margin-bottom:6px">⭐ 互粉福利</div>
+          <div style="font-size:12px;color:#92400e;line-height:1.6">客户公众号互相关注，形成互助增长网络。平台每周评选「星级客户」做专属推荐，优质内容可一键推送到公众号做宣传。</div>
+        </div>
+      </div>
+    `;
+  } catch(e) {
+    el.innerHTML = '<div class="empty">加载失败</div>';
+  }
+}
+
+function toggleFollow(id, btn) {
+  if (btn.classList.contains('followed')) {
+    btn.classList.remove('followed');
+    btn.classList.add('not-followed');
+    btn.textContent = '关注';
+    showToast('已取消关注');
+  } else {
+    btn.classList.remove('not-followed');
+    btn.classList.add('followed');
+    btn.textContent = '已关注';
+    showToast('关注成功！');
+  }
+}
+
+// --- Business Flow ---
+function showOnboarding() {
+  openDetail('企业入驻', `
+    <div style="padding:16px">
+      <div style="background:#eff6ff;border-radius:10px;padding:14px;margin-bottom:16px">
+        <div style="font-size:14px;font-weight:700;color:#1e40af;margin-bottom:8px">入驻流程</div>
+        <div style="font-size:12px;color:#6b7280;line-height:1.8">1. 填写企业基本信息<br>2. 选择需求类型（数字化/供应链/品牌宣传）<br>3. 平台审核（1-3个工作日）<br>4. 开通企业管家服务</div>
+      </div>
+      <div class="form-group" style="margin-bottom:12px"><label style="font-size:12px;color:#6b7280;display:block;margin-bottom:4px">企业名称</label><input id="ob_name" class="form-input" placeholder="请输入企业全称" style="width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px"></div>
+      <div class="form-group" style="margin-bottom:12px"><label style="font-size:12px;color:#6b7280;display:block;margin-bottom:4px">联系人</label><input id="ob_contact" class="form-input" placeholder="联系人姓名" style="width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px"></div>
+      <div class="form-group" style="margin-bottom:12px"><label style="font-size:12px;color:#6b7280;display:block;margin-bottom:4px">联系电话</label><input id="ob_phone" class="form-input" placeholder="手机号码" style="width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px"></div>
+      <div class="form-group" style="margin-bottom:12px"><label style="font-size:12px;color:#6b7280;display:block;margin-bottom:4px">需求类型</label><select id="ob_type" style="width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px"><option value="digital">数字化转型</option><option value="supply">供应链管理</option><option value="brand">品牌宣传</option><option value="all">全部需求</option></select></div>
+      <div class="form-group" style="margin-bottom:16px"><label style="font-size:12px;color:#6b7280;display:block;margin-bottom:4px">需求描述</label><textarea id="ob_desc" placeholder="简要描述您的需求" style="width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;min-height:80px;resize:vertical"></textarea></div>
+      <button onclick="submitOnboarding()" style="width:100%;padding:14px;background:#2563eb;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer">提交入驻申请</button>
+    </div>
+  `);
+}
+async function submitOnboarding() {
+  var name = $('#ob_name').value;
+  var phone = $('#ob_phone').value;
+  if (!name || !phone) { showToast('请填写企业名称和联系电话'); return; }
+  try {
+    await api('/onboardings', { method: 'POST', body: JSON.stringify({ company_name: name, contact_name: $('#ob_contact').value, contact_phone: phone, demand_type: $('#ob_type').value, description: $('#ob_desc').value }) });
+  } catch(e) {}
+  closeDetail();
+  showToast('入驻申请已提交！平台将在1-3个工作日内审核');
+}
+function showQuickOrder() {
+  openDetail('快速下单', `
+    <div style="padding:16px">
+      <div style="background:#fff7ed;border-radius:10px;padding:14px;margin-bottom:16px">
+        <div style="font-size:14px;font-weight:700;color:#c2410c;margin-bottom:8px">下单流程</div>
+        <div style="font-size:12px;color:#6b7280;line-height:1.8">1. 选择产品<br>2. 填写收货信息<br>3. 确认订单<br>4. 在线支付</div>
+      </div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">热门产品</div>
+      <div id="qo_list" class="loading">加载中...</div>
+    </div>
+  `);
+  loadQuickOrderProducts();
+}
+async function loadQuickOrderProducts() {
+  try {
+    var data = await api('/products?page=1&limit=6');
+    var list = data.list || data || [];
+    var html = list.map(function(p) {
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid #f3f4f6">' +
+        '<div><div style="font-size:13px;font-weight:600">' + (p.title||p.name||'') + '</div><div style="font-size:11px;color:#6b7280;margin-top:2px">' + (p.summary||p.description||'').slice(0,40) + '</div></div>' +
+        '<div style="text-align:right"><div style="font-size:15px;font-weight:700;color:#d4a017">¥' + (p.price||0) + '</div><button onclick=\'quickOrderProduct(' + p.id + ',"' + (p.title||p.name||'') + '",' + (p.price||0) + ')\' style="margin-top:4px;padding:4px 12px;background:#2563eb;color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer">选购</button></div>' +
+        '</div>';
+    }).join('');
+    $('#qo_list').innerHTML = html || '<div class="empty">暂无产品</div>';
+  } catch(e) { $('#qo_list').innerHTML = '<div class="empty">加载失败</div>'; }
+}
+function quickOrderProduct(id, title, price) {
+  openDetail('确认订单', `
+    <div style="padding:16px">
+      <div style="background:#f9fafb;border-radius:10px;padding:14px;margin-bottom:16px">
+        <div style="font-size:12px;color:#6b7280;margin-bottom:4px">产品名称</div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:8px">${title}</div>
+        <div style="font-size:12px;color:#6b7280;margin-bottom:4px">单价</div>
+        <div style="font-size:20px;font-weight:700;color:#d4a017">¥${price}</div>
+      </div>
+      <div class="form-group" style="margin-bottom:12px"><label style="font-size:12px;color:#6b7280;display:block;margin-bottom:4px">收货人</label><input id="qo_buyer" placeholder="收货人姓名" style="width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px"></div>
+      <div class="form-group" style="margin-bottom:12px"><label style="font-size:12px;color:#6b7280;display:block;margin-bottom:4px">联系电话</label><input id="qo_phone" placeholder="手机号码" style="width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px"></div>
+      <div class="form-group" style="margin-bottom:12px"><label style="font-size:12px;color:#6b7280;display:block;margin-bottom:4px">收货地址</label><input id="qo_addr" placeholder="详细地址" style="width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px"></div>
+      <div class="form-group" style="margin-bottom:16px"><label style="font-size:12px;color:#6b7280;display:block;margin-bottom:4px">备注</label><input id="qo_remark" placeholder="特殊要求（选填）" style="width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px"></div>
+      <button onclick="submitQuickOrder(${id}, '${title}', ${price})" style="width:100%;padding:14px;background:#d4a017;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer">确认下单 · ¥${price}</button>
+    </div>
+  `);
+}
+async function submitQuickOrder(id, title, price) {
+  var buyer = $('#qo_buyer').value;
+  var phone = $('#qo_phone').value;
+  if (!buyer || !phone) { showToast('请填写收货人和联系电话'); return; }
+  try {
+    await api('/orders', { method: 'POST', body: JSON.stringify({ product_id: id, product_title: title, amount: price, buyer_name: buyer, buyer_phone: phone, remark: $('#qo_remark').value, quantity: 1 }) });
+  } catch(e) {}
+  closeDetail();
+  showToast('订单已提交！客服将尽快联系您确认');
+}
+
+// --- Utility ---
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.75);color:#fff;padding:8px 20px;border-radius:20px;font-size:13px;z-index:9999;pointer-events:none';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2000);
+}
+
+function contactUs(msg) {
+  showToast('已收到您的咨询需求，客服将尽快联系您');
+  try { api('/contact', { method: 'POST', body: JSON.stringify({ name: 'H5访客', phone: '00000000000', demand: msg, source: 'wechat_h5' }) }); } catch(e) {}
+}
+
+// ========== 语音助手模块 ==========
+var TTS_BASE = 'http://127.0.0.1:8912';
+var voiceAssistant = {
+  listening: false,
+  recognition: null,
+  audio: null,
+
+  // TTS 语音播报
+  speak: function(text) {
+    if (!text) return;
+    if (this.audio) { this.audio.pause(); this.audio = null; }
+    this.audio = new Audio(TTS_BASE + '/api/tts?text=' + encodeURIComponent(text.substring(0, 500)) + '&voice=female');
+    this.audio.play().catch(function(){});
+    return this.audio;
+  },
+
+  stopSpeak: function() {
+    if (this.audio) { this.audio.pause(); this.audio = null; }
+  },
+
+  // ASR 语音输入
+  startListen: function() {
+    if (this.listening) { this.stopListen(); return; }
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { showToast('请使用 Chrome 或 Edge 浏览器'); return; }
+    this.recognition = new SR();
+    this.recognition.lang = 'zh-CN';
+    this.recognition.continuous = false;
+    this.recognition.interimResults = true;
+
+    var self = this;
+    var finalText = '';
+    var fab = document.getElementById('voiceFab');
+    if (fab) { fab.classList.add('listening'); fab.innerHTML = '⏹'; }
+    this.listening = true;
+
+    this.recognition.onresult = function(e) {
+      var interim = '';
+      for (var i = e.resultIndex; i < e.results.length; i++) {
+        if (e.results[i].isFinal) finalText += e.results[i][0].transcript;
+        else interim += e.results[i][0].transcript;
+      }
+      if (interim) showToast('识别中: ' + interim);
+    };
+
+    this.recognition.onend = function() {
+      self.listening = false;
+      if (fab) { fab.classList.remove('listening'); fab.innerHTML = '🎤'; }
+      if (finalText) {
+        showToast('你说: ' + finalText);
+        self.handleCommand(finalText);
+      }
+    };
+
+    this.recognition.onerror = function() {
+      self.listening = false;
+      if (fab) { fab.classList.remove('listening'); fab.innerHTML = '🎤'; }
+      showToast('语音识别失败，请重试');
+    };
+
+    this.recognition.start();
+    showToast('正在聆听...');
+  },
+
+  stopListen: function() {
+    if (this.recognition) { this.recognition.stop(); this.recognition = null; }
+    this.listening = false;
+    var fab = document.getElementById('voiceFab');
+    if (fab) { fab.classList.remove('listening'); fab.innerHTML = '🎤'; }
+  },
+
+  // 语音命令处理
+  handleCommand: function(text) {
+    text = text.toLowerCase().replace(/\s/g, '');
+    var matched = false;
+
+    // 导航命令
+    if (text.match(/首页|主页|home/)) { loadHome(); matched = true; }
+    else if (text.match(/产品|商品/)) { loadProducts(); matched = true; }
+    else if (text.match(/文章|资讯/)) { loadArticles(); matched = true; }
+    else if (text.match(/政策/)) { loadPolicies(); matched = true; }
+    else if (text.match(/客户|企业/)) { loadClients(); matched = true; }
+    else if (text.match(/入驻/)) { showOnboarding(); matched = true; }
+    else if (text.match(/下单|购买/)) { showQuickOrder(); matched = true; }
+    else if (text.match(/诊断|评估/)) { loadAssessment(); matched = true; }
+    else if (text.match(/联系|客服/)) { contactUs('语音咨询'); matched = true; }
+
+    // 朗读命令
+    if (text.match(/朗读|播报|读一下/)) {
+      var content = document.querySelector('.h5-content') || document.querySelector('main') || document.body;
+      this.speak(content.innerText.substring(0, 500));
+      matched = true;
+    }
+
+    // 停止播报
+    if (text.match(/停止|暂停|闭嘴/)) {
+      this.stopSpeak();
+      showToast('已停止播报');
+      matched = true;
+    }
+
+    if (!matched) {
+      showToast('未识别命令，可说: 首页/产品/政策/入驻/下单/朗读');
+    }
+  }
+};
+
+
+// ========== AI 助手聊天 ==========
+var aiChat = {
+  sessionId: null,
+  isOpen: false,
+  messages: [],
+
+  toggle: function() {
+    var panel = document.getElementById('aiPanel');
+    if (!panel) { this.init(); return this.toggle(); }
+    this.isOpen = !this.isOpen;
+    panel.style.display = this.isOpen ? 'flex' : 'none';
+    if (this.isOpen && this.messages.length === 0) {
+      this.addMsg('bot', '您好！我是数造工坊AI助手，可以为您推荐产品、解答疑问、查询政策。请问有什么可以帮您？');
+      this.loadQuickQuestions();
+    }
+    if (this.isOpen) {
+      document.getElementById('aiInput') && document.getElementById('aiInput').focus();
+    }
+  },
+
+  init: function() {
+    var panel = document.createElement('div');
+    panel.id = 'aiPanel';
+    panel.style.cssText = 'position:fixed;bottom:0;left:0;right:0;height:70vh;flex-direction:column;background:#fff;z-index:99997;border-radius:16px 16px 0 0;box-shadow:0 -4px 24px rgba(0,0,0,.12);display:none';
+    panel.innerHTML = '\
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #f0f0f0;background:linear-gradient(135deg,#2563eb,#6366f1);border-radius:16px 16px 0 0">\
+        <div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">🤖</span><div><div style="color:#fff;font-weight:700;font-size:15px">AI助手</div><div style="color:rgba(255,255,255,.7);font-size:11px">智能客服 · 7×24在线</div></div></div>\
+        <span onclick="aiChat.toggle()" style="color:#fff;font-size:22px;cursor:pointer;line-height:1">✕</span>\
+      </div>\
+      <div id="aiMessages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;background:#f9fafb"></div>\
+      <div id="aiQuick" style="padding:8px 16px;display:flex;gap:8px;overflow-x:auto;background:#fff;border-top:1px solid #f0f0f0"></div>\
+      <div style="display:flex;gap:8px;padding:12px 16px;border-top:1px solid #f0f0f0;background:#fff">\
+        <input id="aiInput" type="text" placeholder="输入您的问题..." style="flex:1;padding:10px 14px;border:1px solid #e5e7eb;border-radius:22px;font-size:14px;outline:none" onkeydown="if(event.key===\'Enter\')aiChat.send()">\
+        <button onclick="aiChat.send()" style="width:40px;height:40px;border:none;border-radius:50%;background:#2563eb;color:#fff;font-size:16px;cursor:pointer;flex-shrink:0">➤</button>\
+      </div>';
+    document.body.appendChild(panel);
+  },
+
+  addMsg: function(role, text, suggestions) {
+    var container = document.getElementById('aiMessages');
+    if (!container) return;
+    var div = document.createElement('div');
+    div.style.cssText = 'display:flex;justify-content:' + (role === 'user' ? 'flex-end' : 'flex-start');
+    var bubble = document.createElement('div');
+    bubble.style.cssText = 'max-width:80%;padding:10px 14px;border-radius:' + (role === 'user' ? '18px 18px 4px 18px' : '18px 18px 18px 4px') + ';background:' + (role === 'user' ? '#2563eb' : '#fff') + ';color:' + (role === 'user' ? '#fff' : '#1f2937') + ';font-size:14px;line-height:1.6;box-shadow:0 1px 2px rgba(0,0,0,.06);white-space:pre-wrap;word-break:break-word';
+    bubble.textContent = text;
+    div.appendChild(bubble);
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+    this.messages.push({ role: role, text: text });
+
+    if (suggestions && suggestions.length) {
+      var sDiv = document.createElement('div');
+      sDiv.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;justify-content:flex-start';
+      suggestions.forEach(function(s) {
+        var btn = document.createElement('button');
+        btn.textContent = s;
+        btn.style.cssText = 'padding:4px 12px;border:1px solid #e5e7eb;border-radius:14px;background:#fff;color:#2563eb;font-size:12px;cursor:pointer';
+        btn.onclick = function() { aiChat.sendMsg(s); };
+        sDiv.appendChild(btn);
+      });
+      container.appendChild(sDiv);
+      container.scrollTop = container.scrollHeight;
+    }
+  },
+
+  loadQuickQuestions: function() {
+    var qDiv = document.getElementById('aiQuick');
+    if (!qDiv) return;
+    var qs = [
+      { text: '产品咨询', icon: '📦' },
+      { text: '价格咨询', icon: '💰' },
+      { text: '成功案例', icon: '🏆' },
+      { text: '售后服务', icon: '🛠️' },
+      { text: '联系人工', icon: '👤' }
+    ];
+    qDiv.innerHTML = '';
+    qs.forEach(function(q) {
+      var btn = document.createElement('button');
+      btn.textContent = q.icon + ' ' + q.text;
+      btn.style.cssText = 'padding:6px 12px;border:1px solid #e5e7eb;border-radius:16px;background:#fff;color:#374151;font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0';
+      btn.onclick = function() { aiChat.sendMsg(q.text); };
+      qDiv.appendChild(btn);
+    });
+  },
+
+  send: function() {
+    var input = document.getElementById('aiInput');
+    if (!input || !input.value.trim()) return;
+    this.sendMsg(input.value.trim());
+    input.value = '';
+  },
+
+  sendMsg: function(msg) {
+    this.addMsg('user', msg);
+    var container = document.getElementById('aiMessages');
+    // typing indicator
+    var typing = document.createElement('div');
+    typing.id = 'aiTyping';
+    typing.style.cssText = 'display:flex;justify-content:flex-start';
+    typing.innerHTML = '<div style="padding:10px 14px;border-radius:18px 18px 18px 4px;background:#fff;color:#9ca3af;font-size:14px;box-shadow:0 1px 2px rgba(0,0,0,.06)">AI正在思考...</div>';
+    container.appendChild(typing);
+    container.scrollTop = container.scrollHeight;
+
+    var self = this;
+    fetch('/api/chatbot/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg, session_id: self.sessionId, openid: 'h5_visitor' })
+    }).then(function(r) { return r.json(); }).then(function(d) {
+      var t = document.getElementById('aiTyping');
+      if (t) t.remove();
+      if (d.data) {
+        self.sessionId = d.data.session_id;
+        var msgData = d.data.message;
+        self.addMsg('bot', msgData.content, msgData.suggestions);
+        if (d.data.transfer_requested) {
+          self.addMsg('bot', '已为您转接人工客服，请稍候...');
+        }
+      } else if (d.error) {
+        self.addMsg('bot', '抱歉，服务暂时不可用：' + d.error);
+      }
+    }).catch(function() {
+      var t = document.getElementById('aiTyping');
+      if (t) t.remove();
+      self.addMsg('bot', '网络异常，请稍后重试');
+    });
+  }
+};
+
+// --- Init ---
+loadSiteConfig().then(() => {
+  // 应用配置到页面
+  if (SITE_CONFIG.site_name) {
+    document.getElementById('h5Logo').innerHTML = (SITE_CONFIG.site_icon||'🏭') + ' ' + SITE_CONFIG.site_name;
+  }
+  if (SITE_CONFIG.site_slogan) {
+    document.getElementById('h5Slogan').textContent = SITE_CONFIG.site_slogan;
+  }
+  if (SITE_CONFIG.h5_footer_text) {
+    document.getElementById('h5Footer').textContent = SITE_CONFIG.h5_footer_text;
+  }
+  loadHome();
+});
+</script>
+
+<button id="voiceFab" onclick="voiceAssistant.startListen()" title="语音助手">🎤</button>
+<button id="aiFab" onclick="aiChat.toggle()" style="position:fixed;bottom:140px;right:16px;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#6366f1);border:none;color:#fff;font-size:22px;cursor:pointer;z-index:9998;box-shadow:0 4px 16px rgba(37,99,235,.4);transition:all .25s" title="AI助手">🤖</button>
+</body>
+</html>

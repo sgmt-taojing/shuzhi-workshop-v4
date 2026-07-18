@@ -1,0 +1,20 @@
+{
+  "name": "dt-mall-backend",
+  "version": "1.0.0",
+  "description": "数造工坊后端API服务",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.11.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^4.21.0",
+    "express-rate-limit": "^8.5.2",
+    "helmet": "^8.2.0",
+    "uuid": "^10.0.0",
+    "wechatpay-node-v3": "^2.2.1"
+  }
+}

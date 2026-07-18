@@ -1,65 +1,61 @@
-# 数智工坊 · 企业后服务 V4.0
-
-> 文（文化宣传）· 影（短视频）· 商（甄选商城）城立品牌，撮合产业链，严选源头好货，赋能万家，让天下没有难做的生意
+# 数造工坊 V4 · 数字化转型一站式服务平台
 
 ## 快速开始
 
-### 离线版（双击即开）
-```
-v4.0-数智工坊_离线版.html (643KB)
-```
-4张图片已 base64 内联，零外部依赖。
+### 在线预览
+- 🏠 [平台首页](https://sgmt-taojing.github.io/shuzhi-workshop-v4/)
+- 📊 [V4 演示版](https://sgmt-taojing.github.io/shuzhi-workshop-v4/v4-online.html)
+- 🔧 [管理后台](https://sgmt-taojing.github.io/shuzhi-workshop-v4/admin.html)（演示模式）
+- 📱 [H5 首页](https://sgmt-taojing.github.io/shuzhi-workshop-v4/h5/index.html)
 
-### 在线版（需配合 assets/ 目录）
-```
-v4.0-数智工坊_在线版.html (55KB)
-assets/
-  ├── old-press.png        # 老式木榨机
-  ├── old-craftsman.jpg    # 匠人坚守
-  ├── old-workshop.jpeg    # 老油坊烟火
-  └── ningxia-yellow-river.jpg  # 黄河宁夏平原
+### 本地部署
+
+```bash
+cd backend
+cp .env .env  # 修改配置
+npm install
+node server.js
 ```
 
-## 四大模块
+访问 http://localhost:3004/admin/（admin / admin123）
 
-| Tab | 模块 | 核心内容 |
-|-----|------|----------|
-| 🏢 企业宣传 | 文影商城三维一体 | 品牌故事 + 短视频 + 商城转化 |
-| 🌾 源头甄选 | 五步甄选链路 | 产地→考察→检测→资质→溯源 |
-| 🤝 产业链撮合 | 上中下游全景 | 原料→生产→平台→渠道 |
-| 📦 产品推广 | 5款核心SKU | 零售/大宗/扶贫/团购/食堂/福利 |
+### Docker 部署
+
+```bash
+cd backend
+docker compose up -d
+```
+
+详见 [部署指南](backend/DEPLOY.md)
+
+## 系统组成
+
+| 模块 | 路径 | 说明 |
+|------|------|------|
+| 管理后台 | backend/admin-web/ | 60+ 功能页面，Toast通知，全局搜索 |
+| H5 移动端 | backend/wechat-h5/ | 6 个角色页面，AI助手，语音交互 |
+| V4 演示版 | v4-online.html | 4Tab 闭环模型，AI助手，语音 |
+| API 后端 | backend/routes/ | 61 个路由模块，129 张数据表 |
+| AI 客服 | /api/chatbot | 智能匹配 + FAQ + 产品推荐 |
+
+## 默认账号
+
+| 账号 | 密码 | 角色 |
+|------|------|------|
+| admin | admin123 | 超级管理员 |
+| channel_mgr | admin123 | 渠道经理 |
+| consultant1 | admin123 | 顾问 |
+| delivery1 | admin123 | 交付 |
+| ops_mgr | admin123 | 运营经理 |
+| finance1 | admin123 | 财务 |
 
 ## 技术栈
 
-- 纯原生 HTML/CSS/JS，零框架依赖
-- IIFE + addEventListener，零 event.target
-- CSS 变量驱动品牌色系统
-- 响应式 @media 断点 768px / 700px
-- 支持键盘导航（Tab/方向键切换）
-- ARIA 属性完备（aria-selected/aria-controls/aria-label）
-- SEO meta + Open Graph 标签
+- **后端**: Node.js + Express + better-sqlite3
+- **前端**: 纯 HTML/CSS/JS（无构建步骤）
+- **部署**: Docker / PM2 / 直接启动
+- **数据库**: SQLite（零配置，文件即数据库）
 
-## 部署到 GitHub Pages
+## License
 
-```bash
-# 1. 创建仓库
-git init
-git add .
-git commit -m "V4.0 数智工坊企业后服务"
-
-# 2. 推送到 GitHub
-git remote add origin https://github.com/用户名/shuzhi-workshop-v4.git
-git push -u origin main
-
-# 3. 启用 GitHub Pages
-# Settings → Pages → Source: main branch → / (root)
-# 访问: https://用户名.github.io/shuzhi-workshop-v4/
-```
-
-## 版本历史
-
-- V4.0 (2026-07-12) — 四维架构：文影商城 + 源头甄选 + 产业链撮合 + 产品推广
-- V3.1 (2026-07-12) — JS修复 + 马季品牌色 + 视觉升级
-- V3.0 (2026-07-12) — 数智工坊标准版，3Tab
-- V2.x (2026-07-03) — 全域数字产业生态平台
-- V1.x (2026-07-03) — 初版演示
+MIT

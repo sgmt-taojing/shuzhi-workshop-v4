@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="description" content="数造工坊·验收打卡 — 位置定位/拍照上传/验收留痕/进度追踪">
+<meta name="theme-color" content="#059669">
+<title>数造工坊 · 验收打卡</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#059669;--primary-light:#10b981;--primary-dark:#047857;--primary-bg:#ecfdf5;--primary-border:#a7f3d0;--bg:#f0fdf4;--card:#fff;--border:#e5e7eb;--text:#1f2937;--text2:#6b7280;--text3:#9ca3af;--shadow:0 1px 4px rgba(0,0,0,.06);--warning:#f59e0b;--warning-bg:#fef3c7;--danger:#ef4444;--info:#3b82f6;--info-bg:#dbeafe;--nav-bg:#fff;--input-bg:#fff;--header-grad:linear-gradient(135deg,#059669,#10b981)}
+[data-theme="dark"]{--primary:#10b981;--primary-light:#34d399;--primary-dark:#059669;--primary-bg:#064e3b;--primary-border:#065f46;--bg:#0f172a;--card:#1e293b;--border:#334155;--text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;--shadow:0 1px 4px rgba(0,0,0,.3);--warning:#fbbf24;--warning-bg:#422006;--danger:#f87171;--info:#60a5fa;--info-bg:#1e3a5f;--nav-bg:#1e293b;--input-bg:#0f172a;--header-grad:linear-gradient(135deg,#064e3b,#065f46)}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px;padding-bottom:80px;transition:background .3s,color .3s}
+.header{background:var(--header-grad);color:#fff;padding:48px 20px 20px;position:relative}
+.header-row{display:flex;align-items:center;justify-content:space-between}
+.header-title{font-size:20px;font-weight:700}
+.header-sub{font-size:12px;opacity:.75;margin-top:4px}
+.theme-toggle{width:36px;height:36px;border-radius:50%;border:2px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15);color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);transition:all .2s}
+.theme-toggle:active{transform:scale(.9)}
+.demo-banner{position:fixed;top:0;left:0;right:0;background:#d4a017;color:#fff;text-align:center;font-size:12px;padding:6px;z-index:99999;font-family:sans-serif}
+.demo-banner a{color:#fff;text-decoration:underline}
+
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px}
+.stat-card{background:var(--card);border-radius:12px;padding:14px 8px;text-align:center;box-shadow:var(--shadow);transition:transform .15s}
+.stat-card:active{transform:scale(.95)}
+.stat-num{font-size:22px;font-weight:700;line-height:1.2}
+.stat-label{font-size:11px;color:var(--text2);margin-top:2px}
+.stat-today .stat-num{color:var(--primary)}
+.stat-week .stat-num{color:var(--info)}
+.stat-month .stat-num{color:#8b5cf6}
+.stat-pending .stat-num{color:var(--warning)}
+
+/* Section */
+.section{margin:16px 12px 8px;font-size:15px;font-weight:700;display:flex;align-items:center;gap:6px}
+.section-icon{font-size:16px}
+.section-count{font-size:12px;color:var(--text3);font-weight:400;margin-left:auto}
+
+/* Form */
+.card{background:var(--card);margin:8px 12px;border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+.form-group{margin-bottom:14px}
+.form-label{font-size:12px;color:var(--text2);margin-bottom:5px;display:flex;align-items:center;gap:4px;font-weight:500}
+.form-label .req{color:var(--danger)}
+.form-input,.form-select,.form-textarea{width:100%;padding:11px 12px;border:1px solid var(--border);border-radius:10px;font-size:14px;background:var(--input-bg);color:var(--text);transition:border-color .2s}
+.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(5,150,105,.12)}
+.form-textarea{min-height:72px;resize:vertical;line-height:1.5}
+.form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236b7280' d='M6 8L0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+[data-theme="dark"] .form-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2394a3b8' d='M6 8L0 0h12z'/%3E%3C/svg%3E")}
+
+/* Type chips */
+.type-chips{display:flex;gap:8px;flex-wrap:wrap}
+.type-chip{padding:8px 16px;border:1.5px solid var(--border);border-radius:20px;font-size:13px;cursor:pointer;transition:all .2s;color:var(--text2);background:var(--card)}
+.type-chip.active{background:var(--primary-bg);border-color:var(--primary);color:var(--primary);font-weight:600}
+.type-chip:active{transform:scale(.95)}
+
+/* Location */
+.location-box{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid var(--border);border-radius:10px;background:var(--input-bg)}
+.location-icon{font-size:20px;flex-shrink:0}
+.location-text{flex:1;font-size:13px;color:var(--text2);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.location-btn{flex-shrink:0;padding:6px 14px;border:none;border-radius:8px;background:var(--primary);color:#fff;font-size:12px;font-weight:600;cursor:pointer}
+.location-btn:active{transform:scale(.95)}
+.location-btn.locating{opacity:.6;pointer-events:none}
+
+/* Photo upload */
+.photo-area{display:flex;gap:10px;flex-wrap:wrap}
+.photo-upload{width:80px;height:80px;border:2px dashed var(--border);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:24px;transition:all .2s;background:var(--input-bg)}
+.photo-upload:active{transform:scale(.95)}
+.photo-preview{width:80px;height:80px;border-radius:12px;object-fit:cover;position:relative}
+.photo-wrap{position:relative;width:80px;height:80px}
+.photo-remove{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;background:var(--danger);color:#fff;border:none;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;line-height:1}
+.photo-placeholder{width:80px;height:80px;border-radius:12px;background:var(--primary-bg);display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--primary)}
+
+/* Button */
+.btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:disabled{opacity:.5;pointer-events:none}
+
+/* Progress */
+.project-card{background:var(--card);margin:8px 12px;border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+.project-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.project-name{font-size:14px;font-weight:600}
+.project-client{font-size:12px;color:var(--text3);margin-top:2px}
+.project-pct{font-size:18px;font-weight:700;color:var(--primary)}
+.progress-steps{display:flex;align-items:center;justify-content:space-between;position:relative;margin:10px 0 4px}
+.progress-steps::before{content:'';position:absolute;top:14px;left:10%;right:10%;height:3px;background:var(--border);z-index:0}
+.progress-steps::after{content:'';position:absolute;top:14px;left:10%;height:3px;background:var(--primary);z-index:1;transition:width .4s ease}
+.step{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:3px;flex:1}
+.step-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;border:3px solid var(--card);transition:all .3s}
+.step-done .step-dot{background:var(--primary);color:#fff}
+.step-current .step-dot{background:var(--primary);color:#fff;box-shadow:0 0 0 4px rgba(5,150,105,.2);animation:pulse 2s infinite}
+.step-todo .step-dot{background:var(--card);color:var(--text3);border:2px solid var(--border)}
+.step-label{font-size:10px;color:var(--text3);text-align:center}
+.step-done .step-label,.step-current .step-label{color:var(--primary);font-weight:600}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(5,150,105,.2)}50%{box-shadow:0 0 0 8px rgba(5,150,105,.1)}}
+
+/* History */
+.history-card{background:var(--card);margin:8px 12px;border-radius:14px;padding:14px 16px;box-shadow:var(--shadow);display:flex;gap:12px;align-items:flex-start}
+.history-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.history-icon.quality{background:#dbeafe;color:#3b82f6}
+.history-icon.progress{background:#fef3c7;color:#f59e0b}
+.history-icon.delivery{background:var(--primary-bg);color:var(--primary)}
+[data-theme="dark"] .history-icon.quality{background:#1e3a5f;color:#60a5fa}
+[data-theme="dark"] .history-icon.progress{background:#422006;color:#fbbf24}
+.history-body{flex:1;min-width:0}
+.history-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.history-project{font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.history-time{font-size:11px;color:var(--text3);flex-shrink:0}
+.history-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.history-tag{font-size:11px;padding:2px 8px;border-radius:6px;font-weight:500}
+.history-tag.type{background:var(--primary-bg);color:var(--primary)}
+.history-tag.status-approved{background:#dbeafe;color:#3b82f6}
+.history-tag.status-pending{background:var(--warning-bg);color:var(--warning)}
+[data-theme="dark"] .history-tag.status-approved{background:#1e3a5f;color:#60a5fa}
+.history-loc{font-size:12px;color:var(--text2);margin-top:4px;display:flex;align-items:center;gap:4px}
+
+/* Toast */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.8);color:#fff;padding:10px 24px;border-radius:20px;font-size:13px;z-index:9999;animation:toastIn .3s ease}
+.toast.success{background:var(--primary)}
+.toast.error{background:var(--danger)}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* Success overlay */
+.success-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:9998;animation:fadeIn .2s}
+.success-box{background:var(--card);border-radius:20px;padding:32px 40px;text-align:center;animation:popIn .3s}
+.success-icon{width:64px;height:64px;border-radius:50%;background:var(--primary-bg);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 12px}
+.success-title{font-size:18px;font-weight:700;margin-bottom:4px}
+.success-sub{font-size:13px;color:var(--text2)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes popIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+
+/* Loading & empty */
+.loading,.empty{text-align:center;padding:40px;color:var(--text3);font-size:13px}
+.spinner{width:24px;height:24px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+<script>
+function toggleH5Theme(){var t=document.documentElement.getAttribute('data-theme');if(t==='dark'){document.documentElement.removeAttribute('data-theme');localStorage.setItem('h5_theme','light');var e=document.getElementById('h5ThemeToggle');if(e)e.textContent='🌙'}else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('h5_theme','dark');var e=document.getElementById('h5ThemeToggle');if(e)e.textContent='☀️'}}
+(function(){var t=localStorage.getItem('h5_theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');setTimeout(function(){var e=document.getElementById('h5ThemeToggle');if(e)e.textContent='☀️'},500)}})();
+</script>
+<script>
+// ========== DEMO DATA ==========
+var DEMO_DATA={
+  stats:{today:1,week:5,month:23,pending:2},
+  projects:[
+    {id:1,name:'智慧园区数字孪生平台',client:'上海张江高科',progress:75,currentStage:'验收',stages:['立项','施工','验收','交付'],stageProgress:[100,100,75,0]},
+    {id:2,name:'工业互联网数据中台',client:'海尔智家',progress:50,currentStage:'施工',stages:['立项','施工','验收','交付'],stageProgress:[100,50,0,0]},
+    {id:3,name:'AR远程协作系统',client:'国家电网',progress:90,currentStage:'交付',stages:['立项','施工','验收','交付'],stageProgress:[100,100,100,90]}
+  ],
+  deliveries:[
+    {id:1,project_name:'智慧园区数字孪生平台'},
+    {id:2,project_name:'工业互联网数据中台'},
+    {id:3,project_name:'AR远程协作系统'},
+    {id:4,project_name:'数字展厅交互系统'},
+    {id:5,project_name:'AI视觉检测平台'}
+  ],
+  checkins:[
+    {id:10,project_name:'AR远程协作系统',check_type:'交付验收',check_time:'2026-07-15 16:30',location:'国家电网总部·北京西城区',status:'approved',remark:'终验通过，客户确认签字',checker_name:'张明'},
+    {id:9,project_name:'智慧园区数字孪生平台',check_type:'质量验收',check_time:'2026-07-15 10:15',location:'张江高科园区A栋',status:'pending',remark:'初验发现问题3项，待整改',checker_name:'李婷'},
+    {id:8,project_name:'工业互联网数据中台',check_type:'进度确认',check_time:'2026-07-14 14:20',location:'海尔智家研发中心',status:'approved',remark:'数据接入进度60%，符合预期',checker_name:'王强'},
+    {id:7,project_name:'AR远程协作系统',check_type:'质量验收',check_time:'2026-07-13 09:45',location:'国家电网总部·北京西城区',status:'approved',remark:'AR标注精度达标，延迟<50ms',checker_name:'张明'},
+    {id:6,project_name:'智慧园区数字孪生平台',check_type:'进度确认',check_time:'2026-07-12 15:00',location:'张江高科园区A栋',status:'approved',remark:'三维建模完成80%',checker_name:'李婷'},
+    {id:5,project_name:'数字展厅交互系统',check_type:'交付验收',check_time:'2026-07-11 11:30',location:'深圳会展中心',status:'approved',remark:'交付完成，客户验收通过',checker_name:'陈晨'},
+    {id:4,project_name:'工业互联网数据中台',check_type:'质量验收',check_time:'2026-07-11 09:00',location:'海尔智家研发中心',status:'pending',remark:'接口联调中发现数据不一致',checker_name:'王强'},
+    {id:3,project_name:'AI视觉检测平台',check_type:'进度确认',check_time:'2026-07-10 16:00',location:'苏州工业园B区',status:'approved',remark:'模型训练进度70%',checker_name:'赵雪'},
+    {id:2,project_name:'智慧园区数字孪生平台',check_type:'质量验收',check_time:'2026-07-10 10:30',location:'张江高科园区A栋',status:'approved',remark:'园区可视化模块验收通过',checker_name:'李婷'},
+    {id:1,project_name:'AR远程协作系统',check_type:'交付验收',check_time:'2026-07-10 08:30',location:'国家电网总部·北京西城区',status:'approved',remark:'现场部署完成，联调通过',checker_name:'张明'}
+  ]
+};
+
+// ========== DEMO MODE PATCH ==========
+(function(){
+  var isLocal=location.hostname.includes('localhost')||location.hostname.includes('127.0.0.1')||location.hostname.includes('0.0.0.0');
+  if(!isLocal){
+    window.__DEMO_MODE__=true;
+    var origFetch=window.fetch;
+    window.fetch=function(url,opts){
+      if(typeof url==='string'&&(url.includes('/api/')||url.includes('/api'))){
+        var method=(opts&&opts.method)||'GET';
+        var resp;
+        if(url.includes('/delivery/checkins')&&method==='GET'){
+          resp={list:DEMO_DATA.checkins,total:DEMO_DATA.checkins.length,ok:true};
+        }else if(url.includes('/delivery')&&method==='GET'){
+          resp={list:DEMO_DATA.deliveries,total:DEMO_DATA.deliveries.length,ok:true};
+        }else if(url.includes('/checkin/stats')){
+          resp={stats:DEMO_DATA.stats,ok:true};
+        }else if(url.includes('/projects/progress')){
+          resp={list:DEMO_DATA.projects,ok:true};
+        }else if(url.includes('/delivery/checkin')&&method==='POST'){
+          resp={ok:true,id:Date.now()};
+        }else{
+          resp={list:[],data:[],items:[],total:0,ok:true,stats:{},config:{},dashboard:{}};
+        }
+        return Promise.resolve(new Response(JSON.stringify(resp),{status:200,headers:{"Content-Type":"application/json"}}));
+      }
+      return origFetch.apply(this,arguments);
+    };
+    document.addEventListener("DOMContentLoaded",function(){
+      var b=document.createElement("div");
+      b.className='demo-banner';
+      b.innerHTML='演示模式 · API数据需本地后端运行 · <a href="https://github.com/sgmt-taojing/shuzhi-workshop-v4" style="color:#fff;text-decoration:underline">GitHub</a>';
+      document.body.insertBefore(b,document.body.firstChild);
+      var h=document.createElement("style");
+      h.textContent="body{padding-top:32px!important}";
+      document.head.appendChild(h);
+    });
+  }
+})();
+</script>
+</head>
+<body>
+<div class="header">
+  <div class="header-row">
+    <div>
+      <div class="header-title">📸 验收打卡</div>
+      <div class="header-sub">现场定位 · 拍照上传 · 验收留痕</div>
+    </div>
+    <button class="theme-toggle" id="h5ThemeToggle" onclick="toggleH5Theme()">🌙</button>
+  </div>
+</div>
+<div id="app"><div class="loading"><div class="spinner"></div>加载中...</div></div>
+
+<script>
+var API=window.location.origin+'/api';
+var selectedType='质量验收';
+var photoFile=null;
+
+function toast(m,type){
+  var t=document.createElement('div');
+  t.className='toast'+(type?' '+type:'');
+  t.textContent=m;
+  document.body.appendChild(t);
+  setTimeout(function(){t.remove()},2200);
+}
+
+function apiget(p){
+  try{return fetch(API+p).then(function(r){return r.json()})}catch(e){return Promise.resolve(null)}
+}
+
+function apipost(p,body){
+  try{return fetch(API+p,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(function(r){return r.json()})}catch(e){return Promise.resolve(null)}
+}
+
+// Render stats
+function renderStats(s){
+  return '<div class="stats-grid">'+
+    '<div class="stat-card stat-today"><div class="stat-num">'+(s.today||0)+'</div><div class="stat-label">今日打卡</div></div>'+
+    '<div class="stat-card stat-week"><div class="stat-num">'+(s.week||0)+'</div><div class="stat-label">本周</div></div>'+
+    '<div class="stat-card stat-month"><div class="stat-num">'+(s.month||0)+'</div><div class="stat-label">本月</div></div>'+
+    '<div class="stat-card stat-pending"><div class="stat-num">'+(s.pending||0)+'</div><div class="stat-label">待验收</div></div>'+
+  '</div>';
+}
+
+// Render project progress
+function renderProjects(projects){
+  if(!projects||!projects.length)return '<div class="empty">暂无进行中项目</div>';
+  var typeIcon={'质量验收':'🔍','进度确认':'📊','交付验收':'📦'};
+  return projects.map(function(p){
+    var stages=p.stages||['立项','施工','验收','交付'];
+    var sp=p.stageProgress||[];
+    var currentIdx=stages.indexOf(p.currentStage);
+    if(currentIdx<0)currentIdx=0;
+    var fillPct=currentIdx/(stages.length-1)*80;
+    var stepsHtml=stages.map(function(s,i){
+      var cls='step ';
+      if(i<currentIdx)cls+='step-done';
+      else if(i===currentIdx)cls+='step-current';
+      else cls+='step-todo';
+      var icon=i<currentIdx?'✓':(i===currentIdx?'●':(i+1));
+      return '<div class="'+cls+'"><div class="step-dot">'+icon+'</div><div class="step-label">'+s+'</div></div>';
+    }).join('');
+    return '<div class="project-card">'+
+      '<div class="project-head"><div><div class="project-name">'+p.name+'</div><div class="project-client">客户：'+p.client+'</div></div><div class="project-pct">'+p.progress+'%</div></div>'+
+      '<div class="progress-steps" style="--fill:'+fillPct+'%">'+
+      '<style>.progress-steps::after{width:'+fillPct+'%!important}</style>'+
+      stepsHtml+
+      '</div></div>';
+  }).join('');
+}
+
+// Render history
+function renderHistory(checkins){
+  if(!checkins||!checkins.length)return '<div class="empty">暂无打卡记录</div>';
+  var typeIcon={'质量验收':'🔍','进度确认':'📊','交付验收':'📦'};
+  var typeClass={'质量验收':'quality','进度确认':'progress','交付验收':'delivery'};
+  return checkins.slice(0,10).map(function(c){
+    var icon=typeIcon[c.check_type]||'📝';
+    var cls=typeClass[c.check_type]||'quality';
+    var statusText=c.status==='approved'?'已通过':'待审核';
+    return '<div class="history-card">'+
+      '<div class="history-icon '+cls+'">'+icon+'</div>'+
+      '<div class="history-body">'+
+        '<div class="history-top">'+
+          '<div class="history-project">'+c.project_name+'</div>'+
+          '<div class="history-time">'+c.check_time+'</div>'+
+        '</div>'+
+        '<div class="history-meta">'+
+          '<span class="history-tag type">'+c.check_type+'</span>'+
+          '<span class="history-tag status-'+c.status+'">'+statusText+'</span>'+
+        '</div>'+
+        '<div class="history-loc">📍 '+c.location+'</div>'+
+        (c.remark?'<div class="history-loc" style="color:var(--text)">💬 '+c.remark+'</div>':'')+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+// Render form
+function renderForm(deliveries){
+  var opts=deliveries.map(function(d){return '<option value="'+d.id+'">'+d.project_name+'</option>'}).join('');
+  return '<div class="card">'+
+    '<div style="font-size:16px;font-weight:600;margin-bottom:14px">📝 新增打卡</div>'+
+    '<div class="form-group">'+
+      '<label class="form-label">选择项目 <span class="req">*</span></label>'+
+      '<select class="form-select" id="selProject"><option value="">-- 请选择项目 --</option>'+opts+'</select>'+
+    '</div>'+
+    '<div class="form-group">'+
+      '<label class="form-label">验收类型 <span class="req">*</span></label>'+
+      '<div class="type-chips">'+
+        '<div class="type-chip active" data-type="质量验收" onclick="selectType(this)">🔍 质量验收</div>'+
+        '<div class="type-chip" data-type="进度确认" onclick="selectType(this)">📊 进度确认</div>'+
+        '<div class="type-chip" data-type="交付验收" onclick="selectType(this)">📦 交付验收</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="form-group">'+
+      '<label class="form-label">打卡人 <span class="req">*</span></label>'+
+      '<input class="form-input" id="chkName" placeholder="请输入您的姓名" value="'+(window.__DEMO_MODE__?'张明':'')+'">'+
+    '</div>'+
+    '<div class="form-group">'+
+      '<label class="form-label">位置信息 <span class="req">*</span></label>'+
+      '<div class="location-box">'+
+        '<span class="location-icon">📍</span>'+
+        '<span class="location-text" id="locText">未定位</span>'+
+        '<button class="location-btn" id="locBtn" onclick="getLocation()">获取位置</button>'+
+      '</div>'+
+    '</div>'+
+    '<div class="form-group">'+
+      '<label class="form-label">现场拍照</label>'+
+      '<div class="photo-area" id="photoArea">'+
+        '<label class="photo-upload" for="photoInput">+</label>'+
+        '<input type="file" id="photoInput" accept="image/*" style="display:none" onchange="onPhotoSelect(event)">'+
+      '</div>'+
+    '</div>'+
+    '<div class="form-group">'+
+      '<label class="form-label">备注说明</label>'+
+      '<textarea class="form-textarea" id="chkRemark" placeholder="验收情况说明、发现的问题、客户反馈..."></textarea>'+
+    '</div>'+
+    '<button class="btn btn-primary" id="submitBtn" onclick="submitCheckin()">✅ 提交打卡</button>'+
+  '</div>';
+}
+
+function selectType(el){
+  document.querySelectorAll('.type-chip').forEach(function(c){c.classList.remove('active')});
+  el.classList.add('active');
+  selectedType=el.dataset.type;
+}
+
+var currentLocation='';
+
+function getLocation(){
+  var btn=document.getElementById('locBtn');
+  var txt=document.getElementById('locText');
+  btn.classList.add('locating');
+  btn.textContent='定位中...';
+  if(!navigator.geolocation){
+    if(window.__DEMO_MODE__){
+      currentLocation='上海市浦东新区张江高科路(模拟坐标: 31.2028, 121.5985)';
+      txt.textContent=currentLocation;
+      btn.textContent='已定位';
+      btn.classList.remove('locating');
+      toast('演示模式：模拟定位成功');
+    }else{
+      txt.textContent='浏览器不支持定位';
+      btn.textContent='获取位置';
+      btn.classList.remove('locating');
+      toast('浏览器不支持定位','error');
+    }
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(function(pos){
+    var lat=pos.coords.latitude.toFixed(6);
+    var lng=pos.coords.longitude.toFixed(6);
+    currentLocation='坐标：'+lat+', '+lng;
+    txt.textContent=currentLocation;
+    btn.textContent='已定位';
+    btn.classList.remove('locating');
+    toast('定位成功','success');
+  },function(){
+    if(window.__DEMO_MODE__){
+      currentLocation='上海市浦东新区张江高科路(模拟坐标: 31.2028, 121.5985)';
+      txt.textContent=currentLocation;
+      btn.textContent='已定位';
+      btn.classList.remove('locating');
+      toast('演示模式：模拟定位');
+    }else{
+      txt.textContent='定位失败，请手动输入';
+      btn.textContent='重试';
+      btn.classList.remove('locating');
+      toast('定位失败，请重试','error');
+    }
+  },{timeout:8000});
+}
+
+function onPhotoSelect(e){
+  var file=e.target.files[0];
+  if(!file)return;
+  photoFile=file;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    var area=document.getElementById('photoArea');
+    var uploadLabel=area.querySelector('.photo-upload');
+    if(uploadLabel)uploadLabel.style.display='none';
+    var wrap=document.createElement('div');
+    wrap.className='photo-wrap';
+    wrap.innerHTML='<img class="photo-preview" src="'+ev.target.result+'"><button class="photo-remove" onclick="removePhoto(event)">×</button>';
+    area.insertBefore(wrap,uploadLabel);
+  };
+  reader.readAsDataURL(file);
+}
+
+function removePhoto(e){
+  e.stopPropagation();
+  e.preventDefault();
+  photoFile=null;
+  var area=document.getElementById('photoArea');
+  var wrap=e.target.closest('.photo-wrap');
+  if(wrap)wrap.remove();
+  var input=document.getElementById('photoInput');
+  if(input)input.value='';
+  var uploadLabel=area.querySelector('.photo-upload');
+  if(uploadLabel)uploadLabel.style.display='flex';
+}
+
+function showSuccess(projectName,type){
+  var overlay=document.createElement('div');
+  overlay.className='success-overlay';
+  overlay.innerHTML='<div class="success-box">'+
+    '<div class="success-icon">✓</div>'+
+    '<div class="success-title">打卡成功</div>'+
+    '<div class="success-sub">'+projectName+' · '+type+'</div>'+
+  '</div>';
+  document.body.appendChild(overlay);
+  setTimeout(function(){
+    overlay.remove();
+    if(window.__DEMO_MODE__){
+      // Add to history list in demo mode
+      var now=new Date();
+      var timeStr=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+      DEMO_DATA.checkins.unshift({
+        id:Date.now(),
+        project_name:projectName,
+        check_type:type,
+        check_time:timeStr,
+        location:currentLocation||'未定位',
+        status:'pending',
+        remark:document.getElementById('chkRemark').value.trim()||'',
+        checker_name:document.getElementById('chkName').value.trim()
+      });
+      DEMO_DATA.stats.today++;
+      init();
+    }else{
+      location.reload();
+    }
+  },1500);
+}
+
+function submitCheckin(){
+  var pid=document.getElementById('selProject').value;
+  var pname=document.getElementById('selProject').selectedOptions[0]?document.getElementById('selProject').selectedOptions[0].text:'';
+  var name=document.getElementById('chkName').value.trim();
+  var remark=document.getElementById('chkRemark').value.trim();
+  if(!pid){toast('请选择项目','error');return}
+  if(!name){toast('请填写打卡人姓名','error');return}
+  if(!currentLocation){toast('请获取位置信息','error');return}
+  var btn=document.getElementById('submitBtn');
+  btn.disabled=true;
+  btn.textContent='提交中...';
+  var body={
+    delivery_id:parseInt(pid),
+    project_name:pname,
+    checker_name:name,
+    checker_role:'交付工程师',
+    check_type:selectedType,
+    location:currentLocation,
+    status:'pending',
+    remark:remark
+  };
+  if(window.__DEMO_MODE__){
+    setTimeout(function(){
+      btn.disabled=false;
+      btn.textContent='✅ 提交打卡';
+      showSuccess(pname,selectedType);
+    },600);
+  }else{
+    apipost('/delivery/checkin',body).then(function(r){
+      btn.disabled=false;
+      btn.textContent='✅ 提交打卡';
+      if(r&&r.ok){
+        showSuccess(pname,selectedType);
+      }else{
+        toast('打卡失败，请重试','error');
+      }
+    }).catch(function(){
+      btn.disabled=false;
+      btn.textContent='✅ 提交打卡';
+      toast('网络错误','error');
+    });
+  }
+}
+
+// Main init
+function init(){
+  var el=document.getElementById('app');
+  el.innerHTML='<div class="loading"><div class="spinner"></div>加载中...</div>';
+
+  if(window.__DEMO_MODE__){
+    el.innerHTML=
+      renderStats(DEMO_DATA.stats)+
+      '<div class="section"><span class="section-icon">📝</span> 新增打卡</div>'+
+      renderForm(DEMO_DATA.deliveries)+
+      '<div class="section"><span class="section-icon">📊</span> 项目验收进度 <span class="section-count">'+DEMO_DATA.projects.length+'个进行中</span></div>'+
+      renderProjects(DEMO_DATA.projects)+
+      '<div class="section"><span class="section-icon">📋</span> 打卡记录 <span class="section-count">最近'+DEMO_DATA.checkins.length+'条</span></div>'+
+      renderHistory(DEMO_DATA.checkins);
+    return;
+  }
+
+  Promise.all([
+    apiget('/checkin/stats'),
+    apiget('/delivery'),
+    apiget('/projects/progress'),
+    apiget('/delivery/checkins')
+  ]).then(function(results){
+    var stats=results[0]&&results[0].stats?results[0].stats:{today:0,week:0,month:0,pending:0};
+    var deliveries=results[1]&&results[1].list?results[1].list:[];
+    var projects=results[2]&&results[2].list?results[2].list:[];
+    var checkins=results[3]&&results[3].list?results[3].list:[];
+
+    el.innerHTML=
+      renderStats(stats)+
+      '<div class="section"><span class="section-icon">📝</span> 新增打卡</div>'+
+      renderForm(deliveries)+
+      '<div class="section"><span class="section-icon">📊</span> 项目验收进度 <span class="section-count">'+projects.length+'个进行中</span></div>'+
+      renderProjects(projects)+
+      '<div class="section"><span class="section-icon">📋</span> 打卡记录 <span class="section-count">最近'+Math.min(checkins.length,10)+'条</span></div>'+
+      renderHistory(checkins);
+  }).catch(function(){
+    el.innerHTML='<div class="empty">加载失败，请刷新重试</div>';
+  });
+}
+
+init();
+</script>
+
+<script>
+var ai={open:false,messages:[],
+toggle:function(){var p=document.getElementById('aiPanel');if(!p){this.init();return this.toggle()}this.open=!this.open;p.style.display=this.open?'flex':'none';if(this.open&&this.messages.length===0){this.add('bot','您好！我是验收打卡AI助手，可以指导打卡流程、查询验收标准、查看项目进度。有什么可以帮您？');this.loadQuick()}},
+init:function(){var p=document.createElement('div');p.id='aiPanel';p.style.cssText='position:fixed;bottom:0;left:0;right:0;height:65vh;flex-direction:column;background:#fff;z-index:99997;border-radius:16px 16px 0 0;box-shadow:0 -4px 24px rgba(0,0,0,.12);display:none';p.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #f0f0f0;background:linear-gradient(135deg,#059669,#047857);border-radius:16px 16px 0 0"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">🤖</span><div><div style="color:#fff;font-weight:700;font-size:15px">验收AI助手</div><div style="color:rgba(255,255,255,.8);font-size:11px">项目验收顾问</div></div></div><span onclick="ai.toggle()" style="color:#fff;font-size:22px;cursor:pointer;line-height:1">✕</span></div><div id="aiMsgs" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;background:#f9fafb"></div><div id="aiQuick" style="padding:8px 16px;display:flex;gap:8px;overflow-x:auto;background:#fff;border-top:1px solid #f0f0f0"></div><div style="display:flex;gap:8px;padding:12px 16px;border-top:1px solid #f0f0f0;background:#fff"><input id="aiInput" type="text" placeholder="输入您的问题..." style="flex:1;padding:10px 14px;border:1px solid #e5e7eb;border-radius:22px;font-size:14px;outline:none" onkeydown="if(event.key===\'Enter\')ai.send()"><button onclick="ai.send()" style="width:40px;height:40px;border:none;border-radius:50%;background:#059669;color:#fff;font-size:16px;cursor:pointer;flex-shrink:0">➤</button></div>';document.body.appendChild(p)},
+add:function(role,text,sugg){var c=document.getElementById('aiMsgs');if(!c)return;var d=document.createElement('div');d.style.cssText='display:flex;justify-content:'+(role==='user'?'flex-end':'flex-start');var b=document.createElement('div');b.style.cssText='max-width:80%;padding:10px 14px;border-radius:'+(role==='user'?'18px 18px 4px 18px':'18px 18px 18px 4px')+';background:'+(role==='user'?'#059669':'#fff')+';color:'+(role==='user'?'#fff':'#1f2937')+';font-size:14px;line-height:1.6;box-shadow:0 1px 2px rgba(0,0,0,.06);white-space:pre-wrap;word-break:break-word';b.textContent=text;d.appendChild(b);c.appendChild(d);c.scrollTop=c.scrollHeight;this.messages.push({role:role,text:text});if(sugg&&sugg.length){var s=document.createElement('div');s.style.cssText='display:flex;flex-wrap:wrap;gap:6px;margin-top:4px';sugg.forEach(function(t){var btn=document.createElement('button');btn.textContent=t;btn.style.cssText='padding:4px 12px;border:1px solid #e5e7eb;border-radius:14px;background:#fff;color:#059669;font-size:12px;cursor:pointer';btn.onclick=function(){ai.send(t)};s.appendChild(btn)});c.appendChild(s);c.scrollTop=c.scrollHeight}},
+loadQuick:function(){var q=document.getElementById('aiQuick');if(!q)return;var qs=['打卡说明', '验收标准', '项目进度', '常见问题', '联系主管'];q.innerHTML='';qs.forEach(function(t){var b=document.createElement('button');b.textContent=t;b.style.cssText='padding:6px 12px;border:1px solid #e5e7eb;border-radius:16px;background:#fff;color:#374151;font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0';b.onclick=function(){ai.send(t)};q.appendChild(b)})},
+send:function(msg){var inp=document.getElementById('aiInput');if(!msg&&inp){msg=inp.value.trim();inp.value=''}if(!msg)return;this.add('user',msg);var c=document.getElementById('aiMsgs');var tp=document.createElement('div');tp.id='aiTyping';tp.style.cssText='display:flex;justify-content:flex-start';tp.innerHTML='<div style="padding:10px 14px;border-radius:18px 18px 18px 4px;background:#fff;color:#9ca3af;font-size:14px;box-shadow:0 1px 2px rgba(0,0,0,.06)">AI正在思考...</div>';c.appendChild(tp);c.scrollTop=c.scrollHeight;var self=this;setTimeout(function(){var t=document.getElementById('aiTyping');if(t)t.remove();var r=self.reply(msg);self.add('bot',r.text,r.sugg)},600)},
+reply:function(msg){msg=msg.toLowerCase();if(msg.match(/打卡/))return{text:'打卡流程：\n\n1. 到达项目现场后点击"签到打卡"\n2. 系统自动获取GPS定位\n3. 拍摄现场照片上传\n4. 填写施工进度说明\n5. 提交完成打卡\n\n注意：需在项目地点500米范围内才能打卡。',sugg:[]};if(msg.match(/验收/))return{text:'验收标准：\n\n✅ 硬件安装完成且通电测试通过\n✅ 软件配置完成可正常登录\n✅ 数据初始化完成\n✅ 用户培训完成\n✅ 客户签字确认\n\n所有项目验收需客户签字后方可结项。',sugg:[]};if(msg.match(/进度/))return{text:'当前项目进度：\n\n📦 项目A：80%（硬件安装中）\n📦 项目B：100%（已验收✅）\n📦 项目C：45%（软件配置中）\n\n建议优先推进项目A的硬件安装。',sugg:[]};if(msg.match(/问题/))return{text:'常见问题：\n\nQ: GPS定位不准？\nA: 请开启手机高精度定位\n\nQ: 照片上传失败？\nA: 检查网络连接，照片需小于5MB\n\nQ: 不能打卡？\nA: 确认在项目地点500米范围内',sugg:[]};if(msg.match(/主管/))return{text:'联系主管：\n\n📞 项目主管：张工 138-0000-0000\n⏰ 工作时间：8:00-18:00\n\n遇到问题也可以提交工单，系统会自动通知主管。',sugg:[]};return{text:'我是验收AI助手，可以为您解答相关问题。请点击下方快捷按钮或直接提问。',sugg:['打卡说明', '验收标准', '项目进度', '常见问题', '联系主管']}}
+};
+</script>
+<button id="aiFab" onclick="ai.toggle()" style="position:fixed;bottom:24px;right:16px;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#059669,#047857);border:none;color:#fff;font-size:22px;cursor:pointer;z-index:99998;box-shadow:0 4px 16px rgba(0,0,0,.2);transition:all .25s" title="AI助手">🤖</button>
+
+</body>
+</html>
