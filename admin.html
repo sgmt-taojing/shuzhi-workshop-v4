@@ -294,6 +294,15 @@ function confirmDialog(msg, callback) {
       <a class="nav-item" data-page="partners">🤝 合作伙伴</a>
       <a class="nav-item" data-page="marketing-materials">📚 营销素材</a>
     </div>
+    <div class="nav-section-label" onclick="toggleNavGroup(this)">运营与互动<span class="nav-group-count">7</span></div><div class="nav-group">
+      <a class="nav-item" data-page="coupons">🎫 优惠券管理</a>
+      <a class="nav-item" data-page="notifications">🔔 通知中心</a>
+      <a class="nav-item" data-page="feedback">💬 反馈管理</a>
+      <a class="nav-item" data-page="group-buy">🛒 拼团管理</a>
+      <a class="nav-item" data-page="points">⭐ 积分管理</a>
+      <a class="nav-item" data-page="customer-service">🎧 客服会话</a>
+      <a class="nav-item" data-page="shares">📢 分享裂变</a>
+    </div>
     
       <a class="nav-item" onclick="window.open('/admin/screen.html','_blank')" style="color:#00d4ff">📺 运营大屏</a></div></nav>
     <a class="nav-item" onclick="doLogout()" style="border-top:1px solid rgba(255,255,255,.1)">退出登录</a>
@@ -505,6 +514,592 @@ document.querySelectorAll('.nav-item[data-page]').forEach(el => {
   });
 });
 
+
+// ==================== 优惠券管理 ====================
+async function loadCoupons() {
+  const mc = document.getElementById('mainContent');
+  let stats = {};
+  try { stats = await api('/coupons/stats'); } catch(e) {}
+  mc.innerHTML = `
+    <div class="header"><h1>🎫 优惠券管理</h1>
+      <button class="btn btn-primary" onclick="openCouponModal()">+ 新建优惠券</button>
+    </div>
+    <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+      <div class="stat-card"><div class="label">总数</div><div class="value">${stats.total||0}</div></div>
+      <div class="stat-card"><div class="label">活跃</div><div class="value" style="color:#22c55e">${stats.active||0}</div></div>
+      <div class="stat-card"><div class="label">已过期</div><div class="value" style="color:#ef4444">${stats.expired||0}</div></div>
+      <div class="stat-card"><div class="label">即将过期</div><div class="value" style="color:#f59e0b">${stats.expiringSoon||0}</div></div>
+      <div class="stat-card"><div class="label">已使用</div><div class="value">${stats.usedTotal||0}</div></div>
+    </div>
+    <div class="card"><div class="card-body" id="couponList">加载中...</div></div>
+  `;
+  try {
+    const data = await api('/coupons');
+    const rows = Array.isArray(data) ? data : (data.list || []);
+    const stMap = {active:'badge-approved', expired:'badge-rejected', disabled:'badge-default'};
+    const stLabel = {active:'活跃', expired:'已过期', disabled:'已禁用'};
+    const typeLabel = {fixed:'固定金额', percent:'百分比'};
+    document.getElementById('couponList').innerHTML = rows.length ? `
+      <table><tr><th>ID</th><th>编码</th><th>标题</th><th>类型</th><th>面值</th><th>门槛</th><th>已用/限额</th><th>状态</th><th>有效期</th><th>操作</th></tr>
+      ${rows.map(r => `<tr>
+        <td>${r.id}</td><td style="font-weight:600">${r.code||'-'}</td><td>${r.title||'-'}</td>
+        <td><span class="badge badge-info">${typeLabel[r.type]||r.type}</span></td>
+        <td style="font-weight:600;color:#d4a017">${r.type==='percent'?r.value+'%':'¥'+r.value}</td>
+        <td>${r.min_amount?'满¥'+r.min_amount:'无门槛'}</td>
+        <td>${r.used_count||0}/${r.usage_limit||'∞'}</td>
+        <td><span class="badge ${stMap[r.status]||''}">${stLabel[r.status]||r.status}</span></td>
+        <td style="font-size:12px">${r.end_time||'-'}</td>
+        <td><button class="btn btn-sm btn-outline" onclick="openCouponModal(${r.id})">编辑</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteCoupon(${r.id})">删除</button></td>
+      </tr>`).join('')}
+      </table>
+    ` : '<div class="empty">暂无优惠券</div>';
+  } catch(e) { document.getElementById('couponList').innerHTML = '<div class="empty">加载失败</div>'; }
+}
+
+function openCouponModal(id) {
+  const isEdit = !!id;
+  openModal(`
+    <h2>${isEdit?'编辑':'新建'}优惠券</h2>
+    <div style="padding:16px;display:flex;flex-direction:column;gap:12px">
+      <input id="cp_code" placeholder="优惠码 (如 NEW2026)" class="form-input" ${isEdit?'disabled':''}>
+      <input id="cp_title" placeholder="标题" class="form-input">
+      <select id="cp_type" class="form-input"><option value="fixed">固定金额</option><option value="percent">百分比</option></select>
+      <input id="cp_value" type="number" placeholder="面值" class="form-input">
+      <input id="cp_min_amount" type="number" placeholder="最低消费门槛 (0=无门槛)" class="form-input">
+      <input id="cp_usage_limit" type="number" placeholder="使用限额 (0=无限)" class="form-input">
+      <input id="cp_end_time" type="date" class="form-input">
+      <textarea id="cp_description" placeholder="描述" class="form-input" rows="2"></textarea>
+      <button class="btn btn-primary" onclick="saveCoupon(${id||0})">保存</button>
+    </div>
+  `);
+}
+
+async function saveCoupon(id) {
+  const body = {
+    code: document.getElementById('cp_code').value.trim(),
+    title: document.getElementById('cp_title').value.trim(),
+    type: document.getElementById('cp_type').value,
+    value: parseFloat(document.getElementById('cp_value').value) || 0,
+    min_amount: parseFloat(document.getElementById('cp_min_amount').value) || 0,
+    usage_limit: parseInt(document.getElementById('cp_usage_limit').value) || 0,
+    end_time: document.getElementById('cp_end_time').value,
+    description: document.getElementById('cp_description').value.trim()
+  };
+  if (!body.code || !body.title || !body.value) { alert('请填写必填字段'); return; }
+  try {
+    if (id) { await api('/coupons/'+id, 'PUT', body); } else { await api('/coupons', 'POST', body); }
+    closeModal(); loadCoupons();
+  } catch(e) { alert('保存失败: ' + e.message); }
+}
+
+async function deleteCoupon(id) {
+  if (!confirm('确认删除此优惠券?')) return;
+  try { await api('/coupons/'+id, 'DELETE'); loadCoupons(); } catch(e) { alert('删除失败'); }
+}
+
+// ==================== 通知中心 ====================
+async function loadNotifications() {
+  const mc = document.getElementById('mainContent');
+  let stats = {};
+  try { stats = await api('/notifications/stats'); } catch(e) {}
+  const typeLabel = {system:'系统', order:'订单', onboarding:'入驻', product:'产品', activity:'活动', review:'评价'};
+  let typeBadges = '';
+  if (stats.byType) {
+    typeBadges = Object.entries(stats.byType).map(([k,v]) => 
+      `<div class="stat-card"><div class="label">${typeLabel[k]||k}</div><div class="value">${v}</div></div>`
+    ).join('');
+  }
+  mc.innerHTML = `
+    <div class="header"><h1>🔔 通知中心</h1>
+      <button class="btn btn-primary" onclick="openNotificationModal()">+ 发送通知</button>
+    </div>
+    <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+      <div class="stat-card"><div class="label">总通知数</div><div class="value">${stats.total||0}</div></div>
+      <div class="stat-card"><div class="label">近7天</div><div class="value" style="color:#3b82f6">${stats.recent||0}</div></div>
+      ${typeBadges}
+    </div>
+    <div class="card"><div class="card-body" id="notifList">加载中...</div></div>
+  `;
+  try {
+    const data = await api('/notifications');
+    const rows = Array.isArray(data) ? data : (data.list || []);
+    document.getElementById('notifList').innerHTML = rows.length ? `
+      <table><tr><th>ID</th><th>类型</th><th>标题</th><th>内容</th><th>目标</th><th>图标</th><th>时间</th><th>操作</th></tr>
+      ${rows.map(r => `<tr>
+        <td>${r.id}</td>
+        <td><span class="badge badge-info">${typeLabel[r.type]||r.type}</span></td>
+        <td style="font-weight:600">${r.title||'-'}</td>
+        <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;font-size:12px">${r.content||'-'}</td>
+        <td style="font-size:12px">${(r.target_phones&&r.target_phones.length)?r.target_phones.join(','):'全员'}</td>
+        <td>${r.icon||'-'}</td>
+        <td style="font-size:12px">${r.created_at?r.created_at.slice(0,16):'-'}</td>
+        <td><button class="btn btn-sm btn-danger" onclick="deleteNotification(${r.id})">删除</button></td>
+      </tr>`).join('')}
+      </table>
+    ` : '<div class="empty">暂无通知</div>';
+  } catch(e) { document.getElementById('notifList').innerHTML = '<div class="empty">加载失败</div>'; }
+}
+
+function openNotificationModal() {
+  openModal(`
+    <h2>发送通知</h2>
+    <div style="padding:16px;display:flex;flex-direction:column;gap:12px">
+      <select id="nt_type" class="form-input">
+        <option value="system">系统公告</option><option value="order">订单</option>
+        <option value="onboarding">入驻</option><option value="product">产品</option>
+        <option value="activity">活动</option>
+      </select>
+      <input id="nt_title" placeholder="标题" class="form-input">
+      <textarea id="nt_content" placeholder="内容" class="form-input" rows="3"></textarea>
+      <input id="nt_phones" placeholder="目标手机号 (逗号分隔, 留空=全员)" class="form-input">
+      <input id="nt_icon" placeholder="图标 (如 ✅)" class="form-input">
+      <button class="btn btn-primary" onclick="sendNotification()">发送</button>
+    </div>
+  `);
+}
+
+async function sendNotification() {
+  const phones = document.getElementById('nt_phones').value.trim();
+  const body = {
+    type: document.getElementById('nt_type').value,
+    title: document.getElementById('nt_title').value.trim(),
+    content: document.getElementById('nt_content').value.trim(),
+    icon: document.getElementById('nt_icon').value.trim(),
+    target_phones: phones ? phones.split(',').map(s=>s.trim()) : []
+  };
+  if (!body.title || !body.content) { alert('请填写标题和内容'); return; }
+  try { await api('/notifications', 'POST', body); closeModal(); loadNotifications(); }
+  catch(e) { alert('发送失败: ' + e.message); }
+}
+
+async function deleteNotification(id) {
+  if (!confirm('确认删除此通知?')) return;
+  try { await api('/notifications/'+id, 'DELETE'); loadNotifications(); } catch(e) { alert('删除失败'); }
+}
+
+// ==================== 反馈管理 ====================
+async function loadFeedback() {
+  const mc = document.getElementById('mainContent');
+  let stats = {};
+  try { stats = await api('/feedback/stats'); } catch(e) {}
+  mc.innerHTML = `
+    <div class="header"><h1>💬 反馈管理</h1></div>
+    <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+      <div class="stat-card"><div class="label">总数</div><div class="value">${stats.total||0}</div></div>
+      <div class="stat-card"><div class="label">待处理</div><div class="value" style="color:#f59e0b">${stats.pending||0}</div></div>
+      <div class="stat-card"><div class="label">处理中</div><div class="value" style="color:#3b82f6">${stats.processing||0}</div></div>
+      <div class="stat-card"><div class="label">已解决</div><div class="value" style="color:#22c55e">${stats.resolved||0}</div></div>
+      <div class="stat-card"><div class="label">已关闭</div><div class="value">${stats.closed||0}</div></div>
+      <div class="stat-card"><div class="label">平均评分</div><div class="value">⭐${(stats.avg_rating||0).toFixed(1)}</div></div>
+    </div>
+    <div class="card"><div class="card-body" id="feedbackList">加载中...</div></div>
+  `;
+  try {
+    const resp = await api('/feedback');
+    const rows = resp.data || resp.list || (Array.isArray(resp) ? resp : []);
+    const stMap = {pending:'badge-pending', processing:'badge-info', resolved:'badge-approved', closed:'badge-default'};
+    const stLabel = {pending:'待处理', processing:'处理中', resolved:'已解决', closed:'已关闭'};
+    document.getElementById('feedbackList').innerHTML = rows.length ? `
+      <table><tr><th>ID</th><th>分类</th><th>内容</th><th>联系方式</th><th>评分</th><th>状态</th><th>时间</th><th>操作</th></tr>
+      ${rows.map(r => `<tr>
+        <td>${r.id}</td>
+        <td><span class="badge badge-info">${r.category_label||r.category||'-'}</span></td>
+        <td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;font-size:12px">${r.content||'-'}</td>
+        <td style="font-size:12px">${r.contact||'-'}</td>
+        <td>${'⭐'.repeat(r.rating||0)}</td>
+        <td><span class="badge ${stMap[r.status]||''}">${stLabel[r.status]||r.status}</span></td>
+        <td style="font-size:12px">${r.created_at?r.created_at.slice(0,16):'-'}</td>
+        <td><button class="btn btn-sm btn-outline" onclick="showFeedbackDetail(${r.id})">详情</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteFeedback(${r.id})">删除</button></td>
+      </tr>`).join('')}
+      </table>
+    ` : '<div class="empty">暂无反馈</div>';
+  } catch(e) { document.getElementById('feedbackList').innerHTML = '<div class="empty">加载失败</div>'; }
+}
+
+async function showFeedbackDetail(id) {
+  try {
+    const resp = await api('/feedback');
+    const rows = resp.data || resp.list || (Array.isArray(resp) ? resp : []);
+    const f = rows.find(r => r.id === id);
+    if (!f) return;
+    openModal(`
+      <h2>反馈详情 #${f.id}</h2>
+      <div style="padding:16px;display:flex;flex-direction:column;gap:10px">
+        <div><strong>分类:</strong> ${f.category_label||f.category||'-'}</div>
+        <div><strong>评分:</strong> ${'⭐'.repeat(f.rating||0)}</div>
+        <div><strong>内容:</strong> ${f.content||'-'}</div>
+        <div><strong>联系方式:</strong> ${f.contact||'-'}</div>
+        <div><strong>状态:</strong> ${f.status||'-'}</div>
+        <div><strong>时间:</strong> ${f.created_at||'-'}</div>
+        ${f.reply ? `<div style="background:#f0f9ff;padding:8px;border-radius:6px"><strong>回复:</strong> ${f.reply}</div>` : ''}
+        <hr>
+        <select id="fb_status" class="form-input">
+          <option value="pending" ${f.status==='pending'?'selected':''}>待处理</option>
+          <option value="processing" ${f.status==='processing'?'selected':''}>处理中</option>
+          <option value="resolved" ${f.status==='resolved'?'selected':''}>已解决</option>
+          <option value="closed" ${f.status==='closed'?'selected':''}>已关闭</option>
+        </select>
+        <textarea id="fb_reply" placeholder="回复内容" class="form-input" rows="3">${f.reply||''}</textarea>
+        <button class="btn btn-primary" onclick="updateFeedback(${f.id})">保存</button>
+      </div>
+    `);
+  } catch(e) { alert('加载失败'); }
+}
+
+async function updateFeedback(id) {
+  const body = {
+    status: document.getElementById('fb_status').value,
+    reply: document.getElementById('fb_reply').value.trim()
+  };
+  try { await api('/feedback/'+id, 'PUT', body); closeModal(); loadFeedback(); }
+  catch(e) { alert('保存失败: ' + e.message); }
+}
+
+async function deleteFeedback(id) {
+  if (!confirm('确认删除此反馈?')) return;
+  try { await api('/feedback/'+id, 'DELETE'); loadFeedback(); } catch(e) { alert('删除失败'); }
+}
+
+// ==================== 拼团管理 ====================
+async function loadGroupBuy() {
+  const mc = document.getElementById('mainContent');
+  let stats = {};
+  try { stats = await api('/group-buy/stats'); } catch(e) {}
+  mc.innerHTML = `
+    <div class="header"><h1>🛒 拼团管理</h1></div>
+    <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+      <div class="stat-card"><div class="label">活跃拼团</div><div class="value">${stats.activeBuys||0}</div></div>
+      <div class="stat-card"><div class="label">参与人数</div><div class="value">${stats.totalParticipants||0}</div></div>
+      <div class="stat-card"><div class="label">总数量</div><div class="value">${stats.totalQty||0}</div></div>
+      <div class="stat-card"><div class="label">总金额</div><div class="value" style="color:#22c55e">¥${(stats.totalAmount||0).toLocaleString()}</div></div>
+      <div class="stat-card"><div class="label">活跃团购方</div><div class="value">${stats.activeBuyers||0}</div></div>
+    </div>
+    <div style="display:flex;gap:8px;border-bottom:2px solid var(--border);margin-bottom:16px">
+      <button class="btn btn-sm" id="gb-tab-buys" onclick="switchGBTab('buys')" style="border:none;border-bottom:2px solid #3b82f6;margin-bottom:-2px">拼团活动</button>
+      <button class="btn btn-sm" id="gb-tab-buyers" onclick="switchGBTab('buyers')" style="border:none">团购方</button>
+    </div>
+    <div id="gbContent"></div>
+  `;
+  switchGBTab('buys');
+}
+
+async function switchGBTab(tab) {
+  ['buys','buyers'].forEach(t => {
+    const el = document.getElementById('gb-tab-'+t);
+    if (el) { el.style.borderBottom = t===tab ? '2px solid #3b82f6' : 'none'; el.style.marginBottom = t===tab ? '-2px' : '0'; }
+  });
+  const container = document.getElementById('gbContent');
+  container.innerHTML = '<div class="empty">加载中...</div>';
+  try {
+    if (tab === 'buys') {
+      const resp = await api('/group-buy/buys');
+      const rows = resp.list || [];
+      const stMap = {open:'badge-approved', closed:'badge-default', completed:'badge-info'};
+      const stLabel = {open:'进行中', closed:'已关闭', completed:'已完成'};
+      container.innerHTML = rows.length ? `
+        <table><tr><th>ID</th><th>标题</th><th>产品</th><th>原价</th><th>拼团价</th><th>当前/最低</th><th>参与方</th><th>状态</th><th>周期</th></tr>
+        ${rows.map(r => `<tr>
+          <td>${r.id}</td><td style="font-weight:600">${r.title||'-'}</td><td style="font-size:12px">${r.product_title||'-'}</td>
+          <td style="text-decoration:line-through;color:#999">¥${r.original_price||0}</td>
+          <td style="font-weight:600;color:#d4a017">¥${r.group_price||0}</td>
+          <td>${r.current_qty||0}/${r.min_qty||0}</td>
+          <td style="font-size:12px">${r.buyer_name||'-'}</td>
+          <td><span class="badge ${stMap[r.status]||''}">${stLabel[r.status]||r.status}</span></td>
+          <td style="font-size:12px">${r.start_date||''} ~ ${r.end_date||''}</td>
+        </tr>`).join('')}
+        </table>
+      ` : '<div class="empty">暂无拼团活动</div>';
+    } else {
+      const resp = await api('/group-buy/buyers');
+      const rows = resp.list || [];
+      const typeLabel = {welfare:'工会福利', canteen:'食堂', enterprise:'企业', school:'学校'};
+      container.innerHTML = rows.length ? `
+        <table><tr><th>ID</th><th>名称</th><th>类型</th><th>联系人</th><th>电话</th><th>地址</th><th>员工数</th><th>状态</th></tr>
+        ${rows.map(r => `<tr>
+          <td>${r.id}</td><td style="font-weight:600">${r.name||'-'}</td>
+          <td><span class="badge badge-info">${typeLabel[r.type]||r.type||'-'}</span></td>
+          <td>${r.contact_name||'-'}</td><td style="font-size:12px">${r.contact_phone||'-'}</td>
+          <td style="font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis">${r.address||'-'}</td>
+          <td>${r.employee_count||'-'}</td>
+          <td><span class="badge ${r.status==='active'?'badge-approved':'badge-default'}">${r.status==='active'?'活跃':'停用'}</span></td>
+        </tr>`).join('')}
+        </table>
+      ` : '<div class="empty">暂无团购方</div>';
+    }
+  } catch(e) { container.innerHTML = '<div class="empty">加载失败</div>'; }
+}
+
+// ==================== 积分管理 ====================
+async function loadPoints() {
+  const mc = document.getElementById('mainContent');
+  let stats = {};
+  try { stats = await api('/points/admin/overview'); } catch(e) {}
+  let levelHtml = '';
+  if (stats.levelDistribution) {
+    levelHtml = Object.entries(stats.levelDistribution).map(([k,v]) =>
+      `<div class="stat-card"><div class="label">${k}</div><div class="value">${v}</div></div>`
+    ).join('');
+  }
+  mc.innerHTML = `
+    <div class="header"><h1>⭐ 积分管理</h1>
+      <button class="btn btn-primary" onclick="openRewardModal()">+ 新建奖品</button>
+    </div>
+    <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+      <div class="stat-card"><div class="label">总用户</div><div class="value">${stats.totalUsers||0}</div></div>
+      <div class="stat-card"><div class="label">总发放</div><div class="value" style="color:#3b82f6">${stats.totalPointsIssued||0}</div></div>
+      <div class="stat-card"><div class="label">总兑换</div><div class="value" style="color:#f59e0b">${stats.totalRedeemed||0}</div></div>
+      ${levelHtml}
+    </div>
+    <div style="display:flex;gap:8px;border-bottom:2px solid var(--border);margin-bottom:16px">
+      <button class="btn btn-sm" id="pt-tab-records" onclick="switchPTTab('records')" style="border:none;border-bottom:2px solid #3b82f6;margin-bottom:-2px">积分记录</button>
+      <button class="btn btn-sm" id="pt-tab-rewards" onclick="switchPTTab('rewards')" style="border:none">奖品管理</button>
+      <button class="btn btn-sm" id="pt-tab-redemptions" onclick="switchPTTab('redemptions')" style="border:none">兑换记录</button>
+    </div>
+    <div id="ptContent"></div>
+  `;
+  switchPTTab('records');
+}
+
+async function switchPTTab(tab) {
+  ['records','rewards','redemptions'].forEach(t => {
+    const el = document.getElementById('pt-tab-'+t);
+    if (el) { el.style.borderBottom = t===tab ? '2px solid #3b82f6' : 'none'; el.style.marginBottom = t===tab ? '-2px' : '0'; }
+  });
+  const container = document.getElementById('ptContent');
+  container.innerHTML = '<div class="empty">加载中...</div>';
+  try {
+    if (tab === 'records') {
+      const resp = await api('/points/admin/records');
+      const rows = resp.list || [];
+      container.innerHTML = rows.length ? `
+        <table><tr><th>ID</th><th>用户</th><th>类型</th><th>动作</th><th>积分</th><th>描述</th><th>时间</th></tr>
+        ${rows.map(r => `<tr>
+          <td>${r.id}</td><td style="font-size:12px">${r.openid||r.user_id||'-'}</td>
+          <td><span class="badge badge-info">${r.type||'-'}</span></td>
+          <td>${r.action_label||r.action||'-'}</td>
+          <td style="font-weight:600;color:${r.points>0?'#22c55e':'#ef4444'}">${r.points>0?'+':''}${r.points||0}</td>
+          <td style="font-size:12px">${r.description||'-'}</td>
+          <td style="font-size:12px">${r.created_at?r.created_at.slice(0,16):'-'}</td>
+        </tr>`).join('')}
+        </table>
+      ` : '<div class="empty">暂无积分记录</div>';
+    } else if (tab === 'rewards') {
+      const resp = await api('/points/rewards');
+      const rows = resp.rewards || [];
+      container.innerHTML = rows.length ? `
+        <table><tr><th>ID</th><th>图标</th><th>标题</th><th>描述</th><th>所需积分</th><th>类型</th><th>价值</th><th>库存</th><th>状态</th><th>操作</th></tr>
+        ${rows.map(r => `<tr>
+          <td>${r.id}</td><td>${r.icon||'🎁'}</td><td style="font-weight:600">${r.title||'-'}</td>
+          <td style="font-size:12px">${r.description||'-'}</td>
+          <td style="font-weight:600;color:#d4a017">${r.points_required||0}</td>
+          <td><span class="badge badge-info">${r.type||'-'}</span></td>
+          <td>${r.value||'-'}</td><td>${r.stock!==undefined?r.stock:'-'}</td>
+          <td><span class="badge ${r.status==='active'?'badge-approved':'badge-default'}">${r.status==='active'?'上架':'下架'}</span></td>
+          <td><button class="btn btn-sm btn-outline" onclick="openRewardModal(${r.id})">编辑</button>
+              <button class="btn btn-sm btn-danger" onclick="deleteReward(${r.id})">下架</button></td>
+        </tr>`).join('')}
+        </table>
+      ` : '<div class="empty">暂无奖品</div>';
+    } else {
+      const resp = await api('/points/admin/redemptions');
+      const rows = resp.list || [];
+      const stLabel = {pending:'待处理', completed:'已完成', cancelled:'已取消'};
+      container.innerHTML = rows.length ? `
+        <table><tr><th>ID</th><th>用户</th><th>奖品</th><th>消耗积分</th><th>状态</th><th>时间</th></tr>
+        ${rows.map(r => `<tr>
+          <td>${r.id}</td><td style="font-size:12px">${r.openid||r.user_id||'-'}</td>
+          <td>${r.reward_title||'-'}</td>
+          <td style="font-weight:600;color:#f59e0b">${r.points_cost||0}</td>
+          <td><span class="badge badge-info">${stLabel[r.status]||r.status||'-'}</span></td>
+          <td style="font-size:12px">${r.created_at?r.created_at.slice(0,16):'-'}</td>
+        </tr>`).join('')}
+        </table>
+      ` : '<div class="empty">暂无兑换记录</div>';
+    }
+  } catch(e) { container.innerHTML = '<div class="empty">加载失败</div>'; }
+}
+
+function openRewardModal(id) {
+  const isEdit = !!id;
+  openModal(`
+    <h2>${isEdit?'编辑':'新建'}奖品</h2>
+    <div style="padding:16px;display:flex;flex-direction:column;gap:12px">
+      <input id="rw_title" placeholder="标题" class="form-input">
+      <textarea id="rw_description" placeholder="描述" class="form-input" rows="2"></textarea>
+      <input id="rw_icon" placeholder="图标 (如 🎫)" class="form-input" value="🎁">
+      <input id="rw_points" type="number" placeholder="所需积分" class="form-input">
+      <select id="rw_type" class="form-input"><option value="coupon">优惠券</option><option value="gift">实物</option><option value="service">服务</option></select>
+      <input id="rw_value" placeholder="价值" class="form-input">
+      <input id="rw_stock" type="number" placeholder="库存" class="form-input" value="100">
+      <button class="btn btn-primary" onclick="saveReward(${id||0})">保存</button>
+    </div>
+  `);
+  if (isEdit) {
+    api('/points/rewards').then(resp => {
+      const r = (resp.rewards||[]).find(x => x.id === id);
+      if (r) {
+        document.getElementById('rw_title').value = r.title||'';
+        document.getElementById('rw_description').value = r.description||'';
+        document.getElementById('rw_icon').value = r.icon||'🎁';
+        document.getElementById('rw_points').value = r.points_required||0;
+        document.getElementById('rw_type').value = r.type||'coupon';
+        document.getElementById('rw_value').value = r.value||'';
+        document.getElementById('rw_stock').value = r.stock||0;
+      }
+    }).catch(()=>{});
+  }
+}
+
+async function saveReward(id) {
+  const body = {
+    title: document.getElementById('rw_title').value.trim(),
+    description: document.getElementById('rw_description').value.trim(),
+    icon: document.getElementById('rw_icon').value.trim()||'🎁',
+    points_required: parseInt(document.getElementById('rw_points').value) || 0,
+    type: document.getElementById('rw_type').value,
+    value: document.getElementById('rw_value').value.trim(),
+    stock: parseInt(document.getElementById('rw_stock').value) || 0
+  };
+  if (!body.title || !body.points_required) { alert('请填写标题和所需积分'); return; }
+  try {
+    if (id) { await api('/points/admin/rewards/'+id, 'PUT', body); }
+    else { await api('/points/admin/rewards', 'POST', body); }
+    closeModal(); switchPTTab('rewards');
+  } catch(e) { alert('保存失败: ' + e.message); }
+}
+
+async function deleteReward(id) {
+  if (!confirm('确认下架此奖品?')) return;
+  try { await api('/points/admin/rewards/'+id, 'DELETE'); switchPTTab('rewards'); }
+  catch(e) { alert('操作失败'); }
+}
+
+// ==================== 客服会话 ====================
+async function loadCustomerService() {
+  const mc = document.getElementById('mainContent');
+  mc.innerHTML = `
+    <div class="header"><h1>🎧 客服会话</h1></div>
+    <div class="card"><div class="card-body" id="csList">加载中...</div></div>
+  `;
+  try {
+    const resp = await api('/customer-service/conversations');
+    const rows = resp.data || resp.list || (Array.isArray(resp) ? resp : []);
+    document.getElementById('csList').innerHTML = rows.length ? `
+      <table><tr><th>ID</th><th>用户</th><th>状态</th><th>最后消息</th><th>最后消息时间</th><th>创建时间</th><th>操作</th></tr>
+      ${rows.map(r => `<tr>
+        <td>${r.id}</td>
+        <td style="font-size:12px">${r.openid||r.user_id||'-'}</td>
+        <td><span class="badge ${r.status==='open'?'badge-approved':'badge-default'}">${r.status==='open'?'进行中':'已关闭'}</span></td>
+        <td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;font-size:12px">${r.last_message||'-'}</td>
+        <td style="font-size:12px">${r.last_message_at?r.last_message_at.slice(0,16):'-'}</td>
+        <td style="font-size:12px">${r.created_at?r.created_at.slice(0,16):'-'}</td>
+        <td><button class="btn btn-sm btn-outline" onclick="showCSMessages(${r.id})">查看</button></td>
+      </tr>`).join('')}
+      </table>
+    ` : '<div class="empty">暂无会话</div>';
+  } catch(e) { document.getElementById('csList').innerHTML = '<div class="empty">加载失败</div>'; }
+}
+
+async function showCSMessages(convId) {
+  openModal(`
+    <h2>会话 #${convId}</h2>
+    <div style="padding:16px">
+      <div id="csMsgList" style="max-height:400px;overflow-y:auto;margin-bottom:12px">加载中...</div>
+      <div style="display:flex;gap:8px">
+        <input id="cs_reply_input" placeholder="输入回复..." class="form-input" style="flex:1" onkeydown="if(event.key==='Enter')sendCSReply(${convId})">
+        <button class="btn btn-primary" onclick="sendCSReply(${convId})">发送</button>
+      </div>
+    </div>
+  `);
+  try {
+    const resp = await api('/customer-service/messages?conversation_id='+convId);
+    const rows = resp.data || resp.list || (Array.isArray(resp) ? resp : []);
+    document.getElementById('csMsgList').innerHTML = rows.length ? rows.map(m => `
+      <div style="margin-bottom:8px;padding:8px;border-radius:8px;${m.direction==='out'?'background:#e3f2fd;margin-left:40px':'background:#f5f5f5;margin-right:40px'}">
+        <div style="font-size:11px;color:#999">${m.direction==='out'?'客服':'用户'} · ${m.created_at?m.created_at.slice(0,16):'-'}</div>
+        <div>${m.content||'-'}</div>
+      </div>
+    `).join('') : '<div class="empty">暂无消息</div>';
+  } catch(e) { document.getElementById('csMsgList').innerHTML = '<div class="empty">加载失败</div>'; }
+}
+
+async function sendCSReply(convId) {
+  const msg = document.getElementById('cs_reply_input').value.trim();
+  if (!msg) return;
+  try {
+    await api('/customer-service/reply', 'POST', { conversation_id: convId, message: msg });
+    document.getElementById('cs_reply_input').value = '';
+    showCSMessages(convId);
+  } catch(e) { alert('发送失败'); }
+}
+
+// ==================== 分享裂变 ====================
+async function loadShares() {
+  const mc = document.getElementById('mainContent');
+  let stats = {};
+  try { stats = await api('/shares/admin/stats'); } catch(e) {}
+  mc.innerHTML = `
+    <div class="header"><h1>📢 分享裂变</h1></div>
+    <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+      <div class="stat-card"><div class="label">总分享</div><div class="value">${stats.totalShares||0}</div></div>
+      <div class="stat-card"><div class="label">总点击</div><div class="value" style="color:#3b82f6">${stats.totalClicks||0}</div></div>
+      <div class="stat-card"><div class="label">转化数</div><div class="value" style="color:#22c55e">${stats.converted||0}</div></div>
+      <div class="stat-card"><div class="label">转化率</div><div class="value">${stats.conversionRate||'0%'}</div></div>
+    </div>
+    <div style="display:flex;gap:8px;border-bottom:2px solid var(--border);margin-bottom:16px">
+      <button class="btn btn-sm" id="sh-tab-shares" onclick="switchSHTab('shares')" style="border:none;border-bottom:2px solid #3b82f6;margin-bottom:-2px">分享记录</button>
+      <button class="btn btn-sm" id="sh-tab-clicks" onclick="switchSHTab('clicks')" style="border:none">点击记录</button>
+    </div>
+    <div id="shContent"></div>
+  `;
+  switchSHTab('shares');
+}
+
+async function switchSHTab(tab) {
+  ['shares','clicks'].forEach(t => {
+    const el = document.getElementById('sh-tab-'+t);
+    if (el) { el.style.borderBottom = t===tab ? '2px solid #3b82f6' : 'none'; el.style.marginBottom = t===tab ? '-2px' : '0'; }
+  });
+  const container = document.getElementById('shContent');
+  container.innerHTML = '<div class="empty">加载中...</div>';
+  try {
+    if (tab === 'shares') {
+      const resp = await api('/shares/admin/list');
+      const rows = resp.list || [];
+      container.innerHTML = rows.length ? `
+        <table><tr><th>ID</th><th>分享码</th><th>用户</th><th>产品</th><th>渠道</th><th>点击数</th><th>时间</th></tr>
+        ${rows.map(r => `<tr>
+          <td>${r.id}</td>
+          <td style="font-weight:600;font-size:12px">${r.share_code||'-'}</td>
+          <td style="font-size:12px">${r.openid||r.user_id||'-'}</td>
+          <td style="font-size:12px">${r.product_title||r.product_type||'-'}</td>
+          <td><span class="badge badge-info">${r.share_channel||'-'}</span></td>
+          <td>${r.click_count||0}</td>
+          <td style="font-size:12px">${r.created_at?r.created_at.slice(0,16):'-'}</td>
+        </tr>`).join('')}
+        </table>
+      ` : '<div class="empty">暂无分享记录</div>';
+    } else {
+      const resp = await api('/shares/admin/clicks');
+      const rows = resp.list || [];
+      container.innerHTML = rows.length ? `
+        <table><tr><th>ID</th><th>分享ID</th><th>访客</th><th>IP</th><th>设备</th><th>时间</th></tr>
+        ${rows.map(r => `<tr>
+          <td>${r.id}</td><td>${r.share_id||'-'}</td>
+          <td style="font-size:12px">${r.visitor_openid||'-'}</td>
+          <td style="font-size:12px">${r.visitor_ip||'-'}</td>
+          <td style="font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis">${r.user_agent||'-'}</td>
+          <td style="font-size:12px">${r.created_at?r.created_at.slice(0,16):'-'}</td>
+        </tr>`).join('')}
+        </table>
+      ` : '<div class="empty">暂无点击记录</div>';
+    }
+  } catch(e) { container.innerHTML = '<div class="empty">加载失败</div>'; }
+}
+
+
 function loadPage(page) {
   currentPage = page;
   const loaders = {
@@ -570,7 +1165,14 @@ function loadPage(page) {
     'ops-dashboard': loadOpsDashboard,
     'sales-funnel': loadSalesFunnel,
     'client-onboarding': loadClientOnboarding,
-    'marketing-materials': loadMarketingMaterials
+    'marketing-materials': loadMarketingMaterials,
+    'coupons': loadCoupons,
+    'notifications': loadNotifications,
+    'feedback': loadFeedback,
+    'group-buy': loadGroupBuy,
+    'points': loadPoints,
+    'customer-service': loadCustomerService,
+    'shares': loadShares
   };
   if (loaders[page]) loaders[page]();
 }

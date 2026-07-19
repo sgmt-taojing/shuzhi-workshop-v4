@@ -236,4 +236,76 @@ router.get('/:share_id', (req, res) => {
   }
 });
 
+// ==================== Admin 端点 ====================
+
+/**
+ * GET /api/shares/admin/list
+ * 管理端：分享记录列表
+ */
+router.get('/admin/list', (req, res) => {
+  try {
+    const d = db.getDB();
+    let shares = d.shares || [];
+    let clicks = d.share_clicks || [];
+    const { page = 1, limit = 20 } = req.query;
+    const offset = (page - 1) * limit;
+    // 按时间倒序
+    shares = shares.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    const total = shares.length;
+    const list = shares.slice(offset, offset + parseInt(limit));
+    // 为每条分享附加点击数
+    const result = list.map(s => ({
+      ...s,
+      click_count: clicks.filter(c => c.share_id === s.id).length
+    }));
+    res.json({ list: result, total, page: parseInt(page), limit: parseInt(limit) });
+  } catch (err) {
+    console.error('[分享] Admin列表失败:', err);
+    res.status(500).json({ error: '获取列表失败' });
+  }
+});
+
+/**
+ * GET /api/shares/admin/clicks
+ * 管理端：点击记录列表
+ */
+router.get('/admin/clicks', (req, res) => {
+  try {
+    const d = db.getDB();
+    let clicks = d.share_clicks || [];
+    const { page = 1, limit = 20 } = req.query;
+    const offset = (page - 1) * limit;
+    clicks = clicks.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    const total = clicks.length;
+    const list = clicks.slice(offset, offset + parseInt(limit));
+    res.json({ list, total, page: parseInt(page), limit: parseInt(limit) });
+  } catch (err) {
+    console.error('[分享] Admin点击列表失败:', err);
+    res.status(500).json({ error: '获取列表失败' });
+  }
+});
+
+/**
+ * GET /api/shares/admin/stats
+ * 管理端：分享统计
+ */
+router.get('/admin/stats', (req, res) => {
+  try {
+    const d = db.getDB();
+    const shares = d.shares || [];
+    const clicks = d.share_clicks || [];
+    // 转化数 = 有点击且后续注册/下单的（简化为点击数>0的分享数）
+    const converted = shares.filter(s => clicks.some(c => c.share_id === s.id)).length;
+    res.json({
+      totalShares: shares.length,
+      totalClicks: clicks.length,
+      converted,
+      conversionRate: shares.length > 0 ? (converted / shares.length * 100).toFixed(1) + '%' : '0%'
+    });
+  } catch (err) {
+    console.error('[分享] Admin统计失败:', err);
+    res.status(500).json({ error: '获取统计失败' });
+  }
+});
+
 module.exports = router;

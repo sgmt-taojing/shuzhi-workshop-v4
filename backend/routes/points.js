@@ -511,6 +511,36 @@ router.delete('/admin/rewards/:id', (req, res) => {
   res.json({ success: true });
 });
 
+/**
+ * GET /api/points/admin/records
+ * 管理端：积分记录列表
+ */
+router.get('/admin/records', (req, res) => {
+  const d = getDB();
+  let records = d.point_records || [];
+  const { page = 1, limit = 20 } = req.query;
+  const offset = (page - 1) * limit;
+  records = records.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  const total = records.length;
+  const list = records.slice(offset, offset + parseInt(limit));
+  res.json({ list, total, page: parseInt(page), limit: parseInt(limit) });
+});
+
+/**
+ * GET /api/points/admin/redemptions
+ * 管理端：兑换记录列表
+ */
+router.get('/admin/redemptions', (req, res) => {
+  const d = getDB();
+  let records = d.point_redemptions || [];
+  const { page = 1, limit = 20 } = req.query;
+  const offset = (page - 1) * limit;
+  records = records.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  const total = records.length;
+  const list = records.slice(offset, offset + parseInt(limit));
+  res.json({ list, total, page: parseInt(page), limit: parseInt(limit) });
+});
+
 // 导出积分规则和等级配置供其他模块使用
 router.POINT_RULES = POINT_RULES;
 router.LEVELS = LEVELS;
