@@ -353,6 +353,49 @@ function botFeedback() {
   return feedback;
 }
 
+// 10. 售后工单
+function botTicket() {
+  const categories = [
+    { cat: 'bug', title: '系统登录异常', desc: '企业微信扫码登录提示授权失败' },
+    { cat: 'feature', title: '希望增加数据导出功能', desc: '目前只能在线查看，希望支持导出Excel' },
+    { cat: 'bug', title: '报表数据显示错乱', desc: '日期筛选后数据不刷新' },
+    { cat: 'feature', title: '希望增加批量操作', desc: '订单列表需要逐个处理，效率太低' },
+    { cat: 'bug', title: '手机端页面适配问题', desc: '订单详情页在手机上表格溢出' },
+    { cat: 'other', title: '咨询系统升级方案', desc: '想了解V3升级V4的具体方案和费用' },
+  ];
+  const tmpl = randomFrom(categories);
+  const statuses = ['open', 'open', 'in_progress', 'resolved', 'resolved'];
+  const priorities = ['low', 'medium', 'medium', 'high', 'high', 'urgent'];
+  const products = (db.products || []).map(p => p.title);
+  const ticket = {
+    ticket_no: 'TK' + Date.now() + randomInt(10, 99),
+    order_id: 0,
+    order_no: 'ORD' + randomInt(10000000, 99999999),
+    applicant_name: randomFrom(['张经理', '李总', '王主任', '赵工', '刘总']),
+    applicant_phone: '1' + randomInt(38, 87) + randomInt(10000000, 99999999).toString(),
+    applicant_openid: '',
+    title: tmpl.title,
+    description: tmpl.desc,
+    category: tmpl.cat,
+    priority: randomFrom(priorities),
+    product_title: randomFrom(products) || 'ERP系统',
+    attachments: '[]',
+    status: randomFrom(statuses),
+    assignee: randomFrom(['', '', '管理员', '客服小王']),
+    resolution: '',
+    resolved_at: '',
+    resolved_by: '',
+    closed_at: '',
+    satisfaction: 0,
+    satisfaction_comment: '',
+    created_at: randomDate(daysBack),
+    updated_at: new Date().toISOString()
+  };
+  autoInsert('tickets', ticket);
+  console.log(`[售后工单] [${tmpl.cat}] ${tmpl.title}`);
+  return ticket;
+}
+
 // ==================== 主执行 ====================
 
 const bots = [
@@ -364,6 +407,7 @@ const bots = [
   { name: '客户评价', fn: botReview, weight: 2 },
   { name: '客服会话', fn: botCSConversation, weight: 2 },
   { name: '积分记录', fn: botPointRecord, weight: 2 },
+  { name: '售后工单', fn: botTicket, weight: 1 },
   { name: '用户反馈', fn: botFeedback, weight: 1 },
 ];
 
@@ -400,4 +444,5 @@ console.log(`   评价: ${(db.reviews||[]).length}`);
 console.log(`   客服会话: ${(db.cs_conversations||[]).length}`);
 console.log(`   积分记录: ${(db.point_records||[]).length}`);
 console.log(`   反馈: ${(db.feedbacks||[]).length}`);
+console.log(`   工单: ${(db.tickets||[]).length}`);
 console.log(`   代理线索: ${(db.agent_leads||[]).length}`);
