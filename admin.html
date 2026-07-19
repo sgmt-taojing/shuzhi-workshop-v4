@@ -116,6 +116,7 @@
   @media(max-width:768px){
     .app.active{flex-direction:column}.sidebar{width:100%;height:auto;max-height:50px;overflow:hidden;position:relative;z-index:100}.sidebar.expanded{max-height:60vh;overflow-y:auto}.sidebar-brand{padding:12px 16px;font-size:16px;display:flex;justify-content:space-between;align-items:center}.sidebar-brand::after{content:'☰';font-size:18px;cursor:pointer}
       .sidebar-brand{cursor:pointer}.main{padding:12px}.header{flex-wrap:wrap;gap:8px}.header h1{font-size:16px}
+      [style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr !important}
   }
   @media(max-width:480px){
     .main{padding:8px}.header{margin-bottom:12px}
@@ -1585,62 +1586,219 @@ async function loadMonitor() {
 
 // --- Dashboard ---
 async function loadDashboard() {
-  const d = await api('/admin/dashboard');
-  // 加载最近订单
-  let recentOrdersHtml = '<tr><td colspan="6" style="text-align:center;color:#999">加载中...</td></tr>';
-  try {
-    const orders = await api('/admin/orders');
-    const st = {pending:'待支付',paid:'已支付',shipped:'已发货',completed:'已完成',cancelled:'已取消'};
-    const sc = {pending:'#fbbf24',paid:'#60a5fa',shipped:'#a78bfa',completed:'#34d399',cancelled:'#f87171'};
-    recentOrdersHtml = orders.slice(0, 5).map(o => `<tr><td style="font-size:12px">${o.order_no}</td><td>${o.product_title}</td><td>¥${o.amount}</td><td>${o.buyer_name}</td><td style="color:${sc[o.status]||''}">${st[o.status]||o.status}</td><td style="font-size:12px">${(o.created_at||'').slice(5,16)}</td></tr>`).join('') || '<tr><td colspan="6" style="text-align:center;color:#999">暂无订单</td></tr>';
-  } catch(e) { recentOrdersHtml = '<tr><td colspan="6" style="text-align:center;color:#999">加载失败</td></tr>'; }
-  // 获取微信运营数据
-  let wechatStats = { total: 0, mutual: 0, weekPushes: 0, recentPush: '-' };
-  try {
-    const accounts = await api('/wechat/accounts');
-    wechatStats.total = accounts.length;
-    wechatStats.mutual = accounts.filter(a => a.follow_status === '互关').length;
-  } catch(e) {}
-  try {
-    const phRes = await api('/wechat/push-history');
-    const ph = phRes.data || phRes.list || (Array.isArray(phRes) ? phRes : []) || [];
-    const weekAgo = Date.now() - 7*24*3600*1000;
-    wechatStats.weekPushes = ph.filter(p => new Date(p.pushed_at).getTime() > weekAgo).length;
-    if (ph.length > 0) {
-      const recent = ph.sort((a,b) => new Date(b.pushed_at) - new Date(a.pushed_at))[0];
-      wechatStats.recentPush = recent.article_title || '-';
-    }
-  } catch(e) {}
+  const mc = document.getElementById('mainContent');
+  mc.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text2)"><div style="font-size:24px">📊</div><div style="margin-top:8px">加载中...</div></div>';
 
-  const tmBadge = d.tmEnabled ? '<span style="background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:99px;font-size:11px;margin-left:6px">已启用</span>' : '<span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:99px;font-size:11px;margin-left:6px">未配置</span>';
-  document.getElementById('mainContent').innerHTML = `
-    <div class="header"><h1>仪表盘</h1><span style="color:var(--text2);font-size:13px">${new Date().toLocaleDateString('zh-CN')}</span></div>
-    <div class="stats">
-      <div class="stat-card"><div class="label">咨询总数</div><div class="value">${d.contacts}</div></div>
-      <div class="stat-card pending"><div class="label">待处理咨询</div><div class="value">${d.pendingContacts}</div></div>
-      <div class="stat-card"><div class="label">入驻申请</div><div class="value">${d.onboardings}</div></div>
-      <div class="stat-card pending"><div class="label">待审核入驻</div><div class="value">${d.pendingOnboardings}</div></div>
-      <div class="stat-card"><div class="label">产品数</div><div class="value">${d.products}</div></div>
-      <div class="stat-card"><div class="label">文章数</div><div class="value">${d.articles}</div></div>
-      <div class="stat-card"><div class="label">甲方产品</div><div class="value">${d.clientProducts}</div></div>
-      <div class="stat-card"><div class="label">甲方企业</div><div class="value">${d.clients || 0}</div></div>
-      <div class="stat-card pending"><div class="label">待处理订单</div><div class="value">${d.pendingOrders || 0}</div></div>
-    </div>
-    <div class="header" style="margin-top:32px"><h1 style="font-size:18px">📣 模板消息（线索通知）</h1>${tmBadge}</div>
-    <div class="stats">
-      <div class="stat-card info"><div class="label">发送总数</div><div class="value">${d.tmTotal || 0}</div></div>
-      <div class="stat-card"><div class="label">成功</div><div class="value" style="color:var(--success)">${d.tmSuccess || 0}</div></div>
-      <div class="stat-card"><div class="label">失败</div><div class="value" style="color:var(--danger)">${d.tmFailed || 0}</div></div>
-    </div>
-    <div class="header" style="margin-top:32px"><h1 style="font-size:18px">微信运营数据</h1></div>
-    <div class="stats">
-      <div class="stat-card info"><div class="label">公众号总数</div><div class="value">${wechatStats.total}</div></div>
-      <div class="stat-card info"><div class="label">互关公众号数</div><div class="value">${wechatStats.mutual}</div></div>
-      <div class="stat-card info"><div class="label">本周推送次数</div><div class="value">${wechatStats.weekPushes}</div></div>
-      <div class="stat-card"><div class="label">最近推送文章</div><div class="value" style="font-size:16px">${wechatStats.recentPush}</div></div>
-    </div>
-    <div class="header" style="margin-top:32px"><h1 style="font-size:18px">最近订单</h1></div>
-    <table><thead><tr><th>订单号</th><th>产品</th><th>金额</th><th>买家</th><th>状态</th><th>时间</th></tr></thead><tbody>${recentOrdersHtml}</tbody></table>`;
+  // 并行加载所有数据
+  let d = {}, orders = [], contacts = [], reviews = [], csData = {}, onboardings = [], wechatAccounts = [], pushHistory = [];
+  try { d = await api('/admin/dashboard'); } catch(e) {}
+  try { orders = await api('/admin/orders'); } catch(e) {}
+  if (!Array.isArray(orders)) orders = [];
+  try { contacts = await api('/contact'); } catch(e) {}
+  if (!Array.isArray(contacts)) contacts = [];
+  try { const r = await api('/reviews/admin/list'); reviews = r.list || r.data || (Array.isArray(r) ? r : []); } catch(e) {}
+  try { csData = await api('/customer-service/conversations'); } catch(e) {}
+  try { onboardings = await api('/onboarding'); } catch(e) {}
+  if (!Array.isArray(onboardings)) onboardings = [];
+  try { wechatAccounts = await api('/wechat/accounts'); } catch(e) {}
+  if (!Array.isArray(wechatAccounts)) wechatAccounts = [];
+
+  // 计算指标
+  const ordersTotal = d.orders?.total || orders.length;
+  const ordersRevenue = d.orders?.totalRevenue || orders.filter(o => o.status === 'completed' || o.status === 'paid').reduce((s, o) => s + (o.amount || 0), 0);
+  const pendingOrders = orders.filter(o => o.status === 'pending').length;
+  const processingOrders = orders.filter(o => o.status === 'processing').length;
+  const completedOrders = orders.filter(o => o.status === 'completed').length;
+  const pendingContacts = contacts.filter(c => c.status === 'new' || c.status === 'pending').length;
+  const pendingOnboardings = onboardings.filter(o => o.status === 'pending').length;
+  const openCS = (csData.data || []).filter(c => c.status === 'open').length;
+  const avgRating = reviews.length ? (reviews.reduce((s, r) => s + (r.rating || 0), 0) / reviews.length).toFixed(1) : '-';
+
+  // 最近7天订单趋势
+  const weekAgo = Date.now() - 7 * 24 * 3600 * 1000;
+  const recentOrders = orders.filter(o => new Date(o.created_at || 0).getTime() > weekAgo);
+  const dayMap = {};
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date(Date.now() - i * 24 * 3600 * 1000);
+    const key = date.toISOString().slice(0, 10);
+    dayMap[key] = 0;
+  }
+  recentOrders.forEach(o => { const k = (o.created_at || '').slice(0, 10); if (k in dayMap) dayMap[k]++; });
+  const maxDay = Math.max(...Object.values(dayMap), 1);
+  const trendBars = Object.entries(dayMap).map(([day, count]) => {
+    const h = Math.round(count / maxDay * 100);
+    const isToday = day === new Date().toISOString().slice(0, 10);
+    return `<div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:4px">
+      <div style="font-size:11px;color:var(--text2)">${count}</div>
+      <div style="width:80%;max-width:40px;height:${Math.max(h, 4)}px;background:${isToday ? 'var(--primary)' : '#cbd5e1'};border-radius:4px 4px 0 0;transition:height .3s"></div>
+      <div style="font-size:10px;color:var(--text2)">${day.slice(5)}</div>
+    </div>`;
+  }).join('');
+
+  // 订单状态分布
+  const statusMap = { pending: '待支付', paid: '已支付', processing: '处理中', completed: '已完成', cancelled: '已取消', refunded: '已退款' };
+  const statusColors = { pending: '#fbbf24', paid: '#60a5fa', processing: '#a78bfa', completed: '#34d399', cancelled: '#f87171', refunded: '#9ca3af' };
+  const statusStats = {};
+  orders.forEach(o => { statusStats[o.status] = (statusStats[o.status] || 0) + 1; });
+  const statusBars = Object.entries(statusStats).sort((a, b) => b[1] - a[1]).map(([status, count]) => {
+    const pct = Math.round(count / orders.length * 100);
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+      <span style="font-size:12px;color:var(--text2);width:60px">${statusMap[status] || status}</span>
+      <div style="flex:1;height:20px;background:rgba(0,0,0,.06);border-radius:10px;overflow:hidden">
+        <div style="width:${pct}%;height:100%;background:${statusColors[status] || '#94a3b8'};border-radius:10px;transition:width .3s"></div>
+      </div>
+      <span style="font-size:12px;font-weight:600;width:40px;text-align:right">${count}</span>
+      <span style="font-size:11px;color:var(--text2);width:32px">${pct}%</span>
+    </div>`;
+  }).join('');
+
+  // 最近订单表格
+  const recentOrdersHtml = orders.slice(0, 8).map(o => `<tr>
+    <td style="font-size:12px">${o.order_no || '-'}</td>
+    <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${o.product_title || '-'}</td>
+    <td style="font-weight:600">¥${(o.amount || 0).toLocaleString()}</td>
+    <td style="font-size:12px">${o.buyer_name || '-'}</td>
+    <td><span style="color:${statusColors[o.status] || ''};font-size:12px;font-weight:600">${statusMap[o.status] || o.status}</span></td>
+    <td style="font-size:12px;color:var(--text2)">${(o.created_at || '').slice(5, 16)}</td>
+  </tr>`).join('') || '<tr><td colspan="6" style="text-align:center;color:#999">暂无订单</td></tr>';
+
+  // 待处理咨询
+  const pendingContactsList = contacts.filter(c => c.status === 'new' || c.status === 'pending').slice(0, 5).map(c => {
+    const age = c.created_at ? Math.floor((Date.now() - new Date(c.created_at).getTime()) / 3600000) : 0;
+    return `<tr>
+      <td style="font-size:12px">${c.company || '-'}</td>
+      <td>${c.name || '-'}</td>
+      <td style="font-size:12px">${c.lead_source || c.source || '-'}</td>
+      <td style="font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${(c.message || c.content || '').slice(0, 40)}</td>
+      <td><span class="badge badge-pending" style="font-size:11px">${age > 24 ? age + 'h前' : '今日'}</span></td>
+      <td><button class="btn btn-sm btn-outline" onclick="loadPage('contacts')">跟进</button></td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="6" style="text-align:center;color:#999">暂无待处理</td></tr>';
+
+  // 待审核入驻
+  const pendingObList = onboardings.filter(o => o.status === 'pending').slice(0, 5).map(o => `<tr>
+    <td style="font-size:12px">${o.company_name || '-'}</td>
+    <td>${o.product_name || '-'}</td>
+    <td style="font-size:12px">${o.industry || '-'}</td>
+    <td>${o.contact_person || '-'}</td>
+    <td><button class="btn btn-sm btn-outline" onclick="loadPage('onboardings')">审核</button></td>
+  </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;color:#999">暂无待审核</td></tr>';
+
+  // 产品热度 TOP5
+  const productOrders = {};
+  orders.forEach(o => { productOrders[o.product_title] = (productOrders[o.product_title] || 0) + 1; });
+  const topProducts = Object.entries(productOrders).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([name, count]) => {
+    const pct = Math.round(count / orders.length * 100);
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+      <span style="font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name}</span>
+      <div style="width:100px;height:18px;background:rgba(0,0,0,.06);border-radius:9px;overflow:hidden">
+        <div style="width:${pct}%;height:100%;background:var(--primary);border-radius:9px"></div>
+      </div>
+      <span style="font-size:12px;font-weight:600;width:40px;text-align:right">${count}单</span>
+    </div>`;
+  }).join('') || '<div style="color:#999;text-align:center;padding:20px">暂无数据</div>';
+
+  // 微信运营
+  const wechatTotal = wechatAccounts.length;
+  const wechatMutual = wechatAccounts.filter(a => a.follow_status === '互关').length;
+
+  // 业务漏斗
+  const funnelStages = [
+    { label: '咨询线索', count: contacts.length, color: '#3b82f6' },
+    { label: '跟进中', count: contacts.filter(c => c.status === 'pending' || c.lead_stage === 'follow_up').length, color: '#8b5cf6' },
+    { label: '签约入驻', count: onboardings.filter(o => o.converted).length || d.clients, color: '#10b981' },
+    { label: '订单交付', count: completedOrders, color: '#f59e0b' },
+    { label: '客户评价', count: reviews.length, color: '#ec4899' },
+  ];
+  const maxFunnel = Math.max(...funnelStages.map(s => s.count), 1);
+  const funnelHtml = funnelStages.map((s, i) => {
+    const w = Math.round(s.count / maxFunnel * 100);
+    const conv = i > 0 && funnelStages[i-1].count > 0 ? Math.round(s.count / funnelStages[i-1].count * 100) : 100;
+    return `<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+      <span style="font-size:13px;width:80px;text-align:right;color:var(--text2)">${s.label}</span>
+      <div style="flex:1;position:relative">
+        <div style="width:${w}%;height:32px;background:${s.color};border-radius:6px;display:flex;align-items:center;padding:0 12px;transition:width .3s">
+          <span style="color:#fff;font-size:13px;font-weight:600">${s.count}</span>
+          ${i > 0 ? `<span style="color:rgba(255,255,255,.8);font-size:11px;margin-left:8px">${conv}%</span>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const tmBadge = d.tmEnabled ? '<span style="background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:99px;font-size:11px">已启用</span>' : '<span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:99px;font-size:11px">未配置</span>';
+  const today = new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
+
+  mc.innerHTML = `
+  <div class="header"><h1>仪表盘</h1><span style="color:var(--text2);font-size:13px">${today}</span></div>
+
+  <!-- 核心KPI -->
+  <div class="stats">
+    <div class="stat-card" style="border-left:3px solid var(--primary)"><div class="label">总营收</div><div class="value" style="color:var(--primary)">¥${(ordersRevenue || 0).toLocaleString()}</div></div>
+    <div class="stat-card"><div class="label">订单总数</div><div class="value">${ordersTotal}</div></div>
+    <div class="stat-card"><div class="label">甲方企业</div><div class="value">${d.clients || 0}</div></div>
+    <div class="stat-card"><div class="label">产品总数</div><div class="value">${d.products || 0}</div></div>
+  </div>
+  <div class="stats" style="margin-top:8px">
+    <div class="stat-card pending"><div class="label">待处理咨询</div><div class="value">${pendingContacts}</div></div>
+    <div class="stat-card pending"><div class="label">待审核入驻</div><div class="value">${pendingOnboardings}</div></div>
+    <div class="stat-card pending"><div class="label">待处理订单</div><div class="value">${pendingOrders}</div></div>
+    <div class="stat-card pending"><div class="label">处理中订单</div><div class="value">${processingOrders}</div></div>
+    <div class="stat-card"><div class="label">客户评价</div><div class="value">${reviews.length} <span style="font-size:14px;color:var(--warning)">★${avgRating}</span></div></div>
+    <div class="stat-card"><div class="label">客服会话</div><div class="value">${openCS} <span style="font-size:12px;color:var(--text2)">/ ${csData.total || 0}</span></div></div>
+    <div class="stat-card"><div class="label">文章数</div><div class="value">${d.articles || 0}</div></div>
+    <div class="stat-card"><div class="label">甲方产品</div><div class="value">${d.clientProducts || 0}</div></div>
+  </div>
+
+  <!-- 业务漏斗 -->
+  <div class="header" style="margin-top:24px"><h1 style="font-size:18px">🔄 业务漏斗</h1></div>
+  <div class="card"><div class="card-body" style="padding:16px">${funnelHtml}</div></div>
+
+  <!-- 两列布局 -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px">
+    <!-- 订单趋势 -->
+    <div class="card"><div class="card-body" style="padding:16px">
+      <div style="font-size:15px;font-weight:600;margin-bottom:12px">📈 最近7天订单趋势</div>
+      <div style="display:flex;align-items:flex-end;height:120px;gap:4px">${trendBars}</div>
+      <div style="margin-top:8px;font-size:12px;color:var(--text2)">本周共 ${recentOrders.length} 笔订单</div>
+    </div></div>
+    <!-- 订单状态分布 -->
+    <div class="card"><div class="card-body" style="padding:16px">
+      <div style="font-size:15px;font-weight:600;margin-bottom:12px">📊 订单状态分布</div>
+      ${statusBars || '<div style="color:#999;text-align:center;padding:20px">暂无数据</div>'}
+    </div></div>
+  </div>
+
+  <!-- 两列布局 -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+    <!-- 产品热度 -->
+    <div class="card"><div class="card-body" style="padding:16px">
+      <div style="font-size:15px;font-weight:600;margin-bottom:12px">🔥 产品热度 TOP5</div>
+      ${topProducts}
+    </div></div>
+    <!-- 微信运营 -->
+    <div class="card"><div class="card-body" style="padding:16px">
+      <div style="font-size:15px;font-weight:600;margin-bottom:12px">💬 微信运营 ${tmBadge}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div><div style="font-size:11px;color:var(--text2)">公众号总数</div><div style="font-size:20px;font-weight:700">${wechatTotal}</div></div>
+        <div><div style="font-size:11px;color:var(--text2)">互关公众号</div><div style="font-size:20px;font-weight:700;color:var(--success)">${wechatMutual}</div></div>
+        <div><div style="font-size:11px;color:var(--text2)">模板消息</div><div style="font-size:20px;font-weight:700">${d.tmTotal || 0}</div></div>
+        <div><div style="font-size:11px;color:var(--text2)">模板成功</div><div style="font-size:20px;font-weight:700;color:var(--success)">${d.tmSuccess || 0}</div></div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- 待处理咨询 -->
+  <div class="header" style="margin-top:24px"><h1 style="font-size:18px">📞 待处理咨询</h1></div>
+  <table><thead><tr><th>企业</th><th>联系人</th><th>来源</th><th>需求</th><th>时间</th><th>操作</th></tr></thead><tbody>${pendingContactsList}</tbody></table>
+
+  <!-- 待审核入驻 -->
+  <div class="header" style="margin-top:24px"><h1 style="font-size:18px">🤝 待审核入驻</h1></div>
+  <table><thead><tr><th>企业名称</th><th>需求产品</th><th>行业</th><th>联系人</th><th>操作</th></tr></thead><tbody>${pendingObList}</tbody></table>
+
+  <!-- 最近订单 -->
+  <div class="header" style="margin-top:24px"><h1 style="font-size:18px">🛒 最近订单</h1></div>
+  <table><thead><tr><th>订单号</th><th>产品</th><th>金额</th><th>买家</th><th>状态</th><th>时间</th></tr></thead><tbody>${recentOrdersHtml}</tbody></table>
+  `;
 }
 
 // --- Analytics Dashboard ---
