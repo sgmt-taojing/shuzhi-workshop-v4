@@ -338,11 +338,11 @@ async function doLogin() {
       userInfo = { username: d.username, display_name: d.display_name, role_name: d.role_name, department: d.department };
       showApp();
     } else {
-      errEl.textContent = d.error || '登录失败，请重试';
+      errEl.textContent = d.error || '登录失败，请检查用户名和密码';
       errEl.style.display = 'block';
     }
   } catch (e) {
-    errEl.textContent = '无法连接服务器，请检查后端是否运行 (localhost:3004)';
+    errEl.textContent = '无法连接服务器 (localhost:3004)，请检查后端是否运行';
     errEl.style.display = 'block';
   }
 }
@@ -432,7 +432,12 @@ async function api(path, opts = {}) {
   const headers = { 'Content-Type': 'application/json' };
   if (token) headers['Authorization'] = 'Bearer ' + token;
   const r = await fetch(API + path, { ...opts, headers: { ...headers, ...(opts.headers || {}) } });
-  // 401 时自动清除 token 并显示登录页
+  // 登录接口的 401 表示用户名/密码错误，不要清除 token
+  if (r.status === 401 && path.includes('/login')) {
+    const data = await r.json().catch(() => ({}));
+    return { error: true, ...data };
+  }
+  // 其他 401 表示登录过期，清除 token 并显示登录页
   if (r.status === 401) {
     token = '';
     userPermissions = [];
@@ -449,7 +454,8 @@ async function api(path, opts = {}) {
   // 404/500 等错误返回空数据不崩溃
   if (!r.ok) {
     console.warn('API error:', r.status, path);
-    return { list: [], data: [], items: [], total: 0, error: true };
+    const errData = await r.json().catch(() => ({}));
+    return { list: [], data: [], items: [], total: 0, error: true, ...errData };
   }
   return r.json();
 }
