@@ -490,7 +490,15 @@ function applyPermissions() {
   }
 }
 
-async function api(path, opts = {}) {
+async function api(path, opts = {}, body) {
+  // 兼容三参数模式: api(path, 'POST', bodyObject)
+  if (typeof opts === 'string') {
+    body = body || opts;
+    opts = { method: opts };
+  }
+  if (body && typeof body === 'object' && !opts.body) {
+    opts.body = JSON.stringify(body);
+  }
   const headers = { 'Content-Type': 'application/json' };
   if (token) headers['Authorization'] = 'Bearer ' + token;
   const r = await fetch(API + path, { ...opts, headers: { ...headers, ...(opts.headers || {}) } });
