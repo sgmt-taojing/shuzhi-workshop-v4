@@ -1,5 +1,5 @@
 const express = require('express');
-const { getDB, nextId, save, syncRow } = require('../models/db');
+const { getDB, getRawDB, nextId, save, syncRow } = require('../models/db');
 const { sendTemplateMessage } = require('./template-msg');
 
 const router = express.Router();
@@ -10,13 +10,19 @@ const router = express.Router();
 
 // ===== 中间件：简单鉴权（管理后台用） =====
 function authCheck(req, res, next) {
-  const token = req.headers.authorization?.replace('Bearer ', '');
-  const db = getDB();
-  const admin = db.admins?.find(a => a.password === token || a.username === 'admin');
-  if (!admin && token !== 'admin123') {
-    return res.status(401).json({ error: '未授权' });
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith("Bearer ")) return res.status(401).json({ error: "未授权" });
+  const token = auth.slice(7);
+  try {
+    const db = getRawDB();
+    if (!db) return res.status(401).json({ error: "数据库未初始化" });
+    const session = db.prepare("SELECT * FROM admin_sessions WHERE token = ? AND expires_at > datetime('now')").get(token);
+    if (!session) return res.status(401).json({ error: "登录已过期，请重新登录" });
+    req.adminUser = { id: session.admin_id, username: session.username, role_id: session.role_id, role_name: session.role_name };
+    next();
+  } catch(e) {
+    return res.status(401).json({ error: "认证失败" });
   }
-  next();
 }
 
 // ===== 小程序端：发送消息（用户 → 客服） =====
@@ -298,6 +304,35 @@ router.get('/unread', (req, res) => {
   const db = getDB();
   const unread = (db.cs_messages || []).filter(m => m.openid === openid && m.direction === 'out' && !m.is_read).length;
   res.json({ unread });
+});
+
+/**
+ * Admin: 按会话ID查消息
+ * GET /api/customer-service/admin/messages?conversation_id=1
+ */
+router.get('/admin/messages', (req, res) => {
+  const { conversation_id, page = 1, limit = 50 } = req.query;
+  if (!conversation_id) return res.status(400).json({ error: '缺少 conversation_id' });
+  const db = getDB();
+  const messages = (db.cs_messages || [])
+    .filter(m => m.conversation_id === parseInt(conversation_id))
+    .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+  const start = (page - 1) * limit;
+  const pageMessages = messages.slice(start, start + parseInt(limit));
+  res.json({ data: pageMessages, total: messages.length, page: parseInt(page), limit: parseInt(limit) });
+});
+
+/**
+ * Admin: 关闭会话
+ * PUT /api/customer-service/admin/close/:id
+ */
+router.put('/admin/close/:id', (req, res) => {
+  const db = getDB();
+  const conv = (db.cs_conversations || []).find(c => c.id === parseInt(req.params.id));
+  if (!conv) return res.status(404).json({ error: '会话不存在' });
+  conv.status = 'closed';
+  syncRow('cs_conversations', conv);
+  res.json({ success: true });
 });
 
 module.exports = router;
