@@ -639,16 +639,16 @@ async function saveCoupon(id) {
     end_time: document.getElementById('cp_end_time').value,
     description: document.getElementById('cp_description').value.trim()
   };
-  if (!body.code || !body.title || !body.value) { alert('请填写必填字段'); return; }
+  if (!body.code || !body.title || !body.value) { toast('请填写必填字段', 'error'); return; }
   try {
     if (id) { await api('/coupons/'+id, 'PUT', body); } else { await api('/coupons', 'POST', body); }
     closeModal(); loadCoupons();
-  } catch(e) { alert('保存失败: ' + e.message); }
+  } catch(e) { toast('保存失败: ' + e.message, 'error'); }
 }
 
 async function deleteCoupon(id) {
   if (!confirm('确认删除此优惠券?')) return;
-  try { await api('/coupons/'+id, 'DELETE'); loadCoupons(); } catch(e) { alert('删除失败'); }
+  try { await api('/coupons/'+id, 'DELETE'); loadCoupons(); } catch(e) { toast('删除失败', 'error'); }
 }
 
 // ==================== 通知中心 ====================
@@ -721,14 +721,14 @@ async function sendNotification() {
     icon: document.getElementById('nt_icon').value.trim(),
     target_phones: phones ? phones.split(',').map(s=>s.trim()) : []
   };
-  if (!body.title || !body.content) { alert('请填写标题和内容'); return; }
+  if (!body.title || !body.content) { toast('请填写标题和内容', 'error'); return; }
   try { await api('/notifications', 'POST', body); closeModal(); loadNotifications(); }
-  catch(e) { alert('发送失败: ' + e.message); }
+  catch(e) { toast('发送失败: ' + e.message, 'error'); }
 }
 
 async function deleteNotification(id) {
   if (!confirm('确认删除此通知?')) return;
-  try { await api('/notifications/'+id, 'DELETE'); loadNotifications(); } catch(e) { alert('删除失败'); }
+  try { await api('/notifications/'+id, 'DELETE'); loadNotifications(); } catch(e) { toast('删除失败', 'error'); }
 }
 
 // ==================== 反馈管理 ====================
@@ -798,7 +798,7 @@ async function showFeedbackDetail(id) {
         <button class="btn btn-primary" onclick="updateFeedback(${f.id})">保存</button>
       </div>
     `);
-  } catch(e) { alert('加载失败'); }
+  } catch(e) { toast('加载失败', 'error'); }
 }
 
 async function updateFeedback(id) {
@@ -807,12 +807,12 @@ async function updateFeedback(id) {
     reply: document.getElementById('fb_reply').value.trim()
   };
   try { await api('/feedback/'+id, 'PUT', body); closeModal(); loadFeedback(); }
-  catch(e) { alert('保存失败: ' + e.message); }
+  catch(e) { toast('保存失败: ' + e.message, 'error'); }
 }
 
 async function deleteFeedback(id) {
   if (!confirm('确认删除此反馈?')) return;
-  try { await api('/feedback/'+id, 'DELETE'); loadFeedback(); } catch(e) { alert('删除失败'); }
+  try { await api('/feedback/'+id, 'DELETE'); loadFeedback(); } catch(e) { toast('删除失败', 'error'); }
 }
 
 // ==================== 拼团管理 ====================
@@ -1015,18 +1015,18 @@ async function saveReward(id) {
     value: document.getElementById('rw_value').value.trim(),
     stock: parseInt(document.getElementById('rw_stock').value) || 0
   };
-  if (!body.title || !body.points_required) { alert('请填写标题和所需积分'); return; }
+  if (!body.title || !body.points_required) { toast('请填写标题和所需积分', 'error'); return; }
   try {
     if (id) { await api('/points/admin/rewards/'+id, 'PUT', body); }
     else { await api('/points/admin/rewards', 'POST', body); }
     closeModal(); switchPTTab('rewards');
-  } catch(e) { alert('保存失败: ' + e.message); }
+  } catch(e) { toast('保存失败: ' + e.message, 'error'); }
 }
 
 async function deleteReward(id) {
   if (!confirm('确认下架此奖品?')) return;
   try { await api('/points/admin/rewards/'+id, 'DELETE'); switchPTTab('rewards'); }
-  catch(e) { alert('操作失败'); }
+  catch(e) { toast('操作失败', 'error'); }
 }
 
 // ==================== 客服会话 ====================
@@ -1085,7 +1085,7 @@ async function sendCSReply(convId) {
     await api('/customer-service/reply', 'POST', { conversation_id: convId, content: msg });
     document.getElementById('cs_reply_input').value = '';
     showCSMessages(convId);
-  } catch(e) { alert('发送失败'); }
+  } catch(e) { toast('发送失败', 'error'); }
 }
 
 // ==================== 分享裂变 ====================
