@@ -703,11 +703,11 @@ async function loadMonitor() {
 
     // 角色使用表
     const roleRows = (ru.roles || []).length ? ru.roles.map(r => `
-      <tr><td style="font-size:12px;font-weight:600">${r.name}</td>
-      <td style="font-size:12px">${r.users}</td>
-      <td style="font-size:12px;color:var(--primary)">${r.operations}</td>
-      <td style="font-size:12px;color:var(--text2)">${r.avgOpsPerUser}</td>
-      <td style="font-size:11px;color:var(--text2)">${(r.members||[]).join(', ')}</td></tr>`
+      <tr><td style="font-size:12px;font-weight:600">${r.name||'-'}</td>
+      <td style="font-size:12px">${r.users||0}</td>
+      <td style="font-size:12px;color:var(--primary)">${r.operations||0}</td>
+      <td style="font-size:12px;color:var(--text2)">${r.avgOpsPerUser||0}</td>
+      <td style="font-size:11px;color:var(--text2)">${(r.members||[]).join(', ')||'-'}</td></tr>`
     ).join('') : '<tr><td colspan="5" style="text-align:center;color:#999;padding:12px">暂无角色操作数据</td></tr>';
 
     // 24h 活动柱状图
@@ -765,12 +765,12 @@ async function loadMonitor() {
 
       <!-- 第二行 KPI -->
       <div class="mon-kpi">
-        <div class="mon-kpi-card"><div class="v" style="color:#60a5fa">${cs.total||0}</div><div class="l">CRM客户</div></div>
+        <div class="mon-kpi-card"><div class="v" style="color:#60a5fa">${cs.clients||0}</div><div class="l">甲方企业</div></div>
         <div class="mon-kpi-card"><div class="v" style="color:#60a5fa">${cs.wechatUsers||0}</div><div class="l">微信用户</div></div>
         <div class="mon-kpi-card"><div class="v" style="color:#a78bfa">${ag.total||0}</div><div class="l">活跃代理</div></div>
         <div class="mon-kpi-card"><div class="v" style="color:#a78bfa">${ag.totalLeads||0}</div><div class="l">代理线索</div></div>
         <div class="mon-kpi-card"><div class="v" style="color:#34d399">${mk.activeCampaigns||0}</div><div class="l">活跃营销</div></div>
-        <div class="mon-kpi-card"><div class="v" style="color:#60a5fa">${ai.chatbotMessages||0}</div><div class="l">AI消息数</div></div>
+        <div class="mon-kpi-card"><div class="v" style="color:#60a5fa">${ai.chatbotMessages||0}</div><div class="l">AI消息</div></div>
       </div>
 
       <!-- 交易监控 + 流程监控 -->
@@ -3679,8 +3679,7 @@ async function loadAuditList() {
   const params = new URLSearchParams({ page: auditCurrentPage, limit: 20 });
   Object.entries(auditFilters).forEach(([k, v]) => { if (v) params.set(k, v); });
   try {
-    const resp = await api('/audit-logs?' + params);
-    const data = await resp.json();
+    const data = await api('/audit-logs?' + params);
     const body = document.getElementById('audit-list-body');
     if (!data.data || data.data.length === 0) {
       body.innerHTML = '<div class="empty">📭 暂无审计日志记录</div>';
@@ -3736,8 +3735,7 @@ function auditGoPage(p) {
 
 async function showAuditDetail(id) {
   try {
-    const resp = await api('/audit-logs?page=1&limit=1&keyword=' + id);
-    const data = await resp.json();
+    const data = await api('/audit-logs?page=1&limit=1&keyword=' + id);
     const r = data.data && data.data[0];
     if (!r) { toast('未找到记录', 'info'); return; }
     const meta = typeof r.metadata === 'object' ? r.metadata : {};
@@ -3777,8 +3775,7 @@ function closeAuditDetail() {
 
 async function loadAuditStats() {
   try {
-    const resp = await api('/audit-logs/stats?days=7');
-    const data = await resp.json();
+    const data = await api('/audit-logs/stats?days=7');
     const section = document.getElementById('audit-stats-section');
     if (!data || data.total === 0) { section.innerHTML = ''; return; }
     section.innerHTML = `
@@ -3846,8 +3843,7 @@ async function loadQuotes() {
     <div id="quotes-list">加载中...</div>
   `;
   try {
-    const resp = await api('/quotes?page=1&pageSize=50');
-    const data = await resp.json();
+    const data = await api('/quotes?page=1&pageSize=50');
     const items = data.items || [];
     if (items.length === 0) {
       document.getElementById('quotes-list').innerHTML = '<div class="empty">📭 暂无报价记录</div>';
@@ -5563,7 +5559,8 @@ async function loadPartnerList() {
   if (status) url += `&status=${status}`;
   if (keyword) url += `&keyword=${encodeURIComponent(keyword)}`;
   try {
-    const d = await api(url);
+    const resp = await api(url);
+    const d = resp.data || resp;
     const stats = d.stats || {};
     let html = `<div class="stats-grid">
       <div class="stat-card"><div class="stat-num">${stats.total||0}</div><div class="stat-label">总伙伴</div></div>
@@ -5631,7 +5628,8 @@ async function loadPartnerReferrals() {
   if (status) url += `&status=${status}`;
   if (keyword) url += `&keyword=${encodeURIComponent(keyword)}`;
   try {
-    const d = await api(url);
+    const resp = await api(url);
+    const d = resp.data || resp;
     const statusLabels = {pending:'待联系',contacted:'已联系',qualified:'意向确认',converted:'已成交',lost:'已流失'};
     const statusColors = {pending:'#f59e0b',contacted:'#3b82f6',qualified:'#a78bfa',converted:'#10b981',lost:'#ef4444'};
     let html = '<table class="table"><thead><tr><th>编号</th><th>推荐人</th><th>线索信息</th><th>公司</th><th>产品</th><th>状态</th><th>订单金额</th><th>佣金</th><th>时间</th><th>操作</th></tr></thead><tbody>';
@@ -5654,7 +5652,8 @@ async function loadPartnerCommissions() {
   const status = document.getElementById('comm-status-filter')?.value || '';
   if (status) url += `&status=${status}`;
   try {
-    const d = await api(url);
+    const resp = await api(url);
+    const d = resp.data || resp;
     const statusLabels = {estimated:'预估中',confirmed:'已确认',paid:'已提现',cancelled:'已取消'};
     const statusColors = {estimated:'#f59e0b',confirmed:'#3b82f6',paid:'#10b981',cancelled:'#ef4444'};
     let html = '<table class="table"><thead><tr><th>推荐编号</th><th>伙伴</th><th>订单号</th><th>订单金额</th><th>比例</th><th>佣金</th><th>状态</th><th>时间</th><th>操作</th></tr></thead><tbody>';
@@ -5673,7 +5672,8 @@ function loadPartnerWithdrawalsHTML() {
 }
 async function loadPartnerWithdrawals() {
   try {
-    const d = await api('/partners/admin/withdrawals?page=1&page_size=50');
+    const resp = await api('/partners/admin/withdrawals?page=1&page_size=50');
+    const d = resp.data || resp;
     const statusLabels = {pending:'待审核',approved:'审核通过',rejected:'已拒绝',paid:'已打款',failed:'打款失败'};
     const statusColors = {pending:'#f59e0b',approved:'#3b82f6',rejected:'#ef4444',paid:'#10b981',failed:'#ef4444'};
     let html = '<table class="table"><thead><tr><th>编号</th><th>伙伴</th><th>金额</th><th>手续费</th><th>实到</th><th>方式</th><th>状态</th><th>时间</th><th>操作</th></tr></thead><tbody>';
@@ -5689,7 +5689,8 @@ async function loadPartnerWithdrawals() {
 }
 async function loadPartnerStats() {
   try {
-    const d = await api('/partners/admin/stats');
+    const resp = await api('/partners/admin/stats');
+    const d = resp.data || resp;
     const o = d.overview || {};
     const f = d.funnel || {};
     let html = `<div class="stats-grid">
