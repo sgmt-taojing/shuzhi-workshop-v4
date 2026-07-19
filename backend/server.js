@@ -50,7 +50,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/', auditMiddleware);
 
 // 静态文件（管理后台 + 图片资源 + 上传文件）
-app.use('/admin', express.static(path.join(__dirname, 'admin-web')));
+app.use('/admin', express.static(path.join(__dirname, 'admin-web'), {
+  etag: false,
+  lastModified: false,
+  setHeaders: (res) => {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+  }
+}));
 app.use('/screen', express.static(path.join(__dirname, 'admin-web/screen.html')));
 app.use('/mobile', express.static(path.join(__dirname, '../mobile-portal')));
 app.use('/h5', express.static(path.join(__dirname, 'wechat-h5')));
@@ -84,6 +92,7 @@ app.use('/api/search', require('./routes/search'));
 app.use('/api/analytics', require('./routes/analytics'));
 app.use('/api/coupons', require('./routes/coupons'));
 app.use('/api/reviews', require('./routes/reviews'));
+app.use('/api/monitor', require('./routes/monitor'));
 app.use('/api/upload', require('./routes/upload'));
 app.use('/api/export', require('./routes/export'));
 app.use('/api/shares', require('./routes/shares'));
