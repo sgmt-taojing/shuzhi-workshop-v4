@@ -932,7 +932,8 @@ async function loadDashboard() {
     wechatStats.mutual = accounts.filter(a => a.follow_status === '互关').length;
   } catch(e) {}
   try {
-    const ph = await api('/wechat/push-history');
+    const phRes = await api('/wechat/push-history');
+    const ph = phRes.data || phRes.list || (Array.isArray(phRes) ? phRes : []) || [];
     const weekAgo = Date.now() - 7*24*3600*1000;
     wechatStats.weekPushes = ph.filter(p => new Date(p.pushed_at).getTime() > weekAgo).length;
     if (ph.length > 0) {
