@@ -1621,8 +1621,10 @@ async function uploadProductImage(input) {
   formData.append('file', file);
   formData.append('type', 'client-products');
   try {
-    const r = await api('/upload', {method: 'POST'});
-    const data = await r.json();
+    const fdHeaders = {};
+    if (token) fdHeaders['Authorization'] = 'Bearer ' + token;
+    const uploadRes = await fetch(API + '/upload', {method: 'POST', headers: fdHeaders, body: formData});
+    const data = await uploadRes.json();
     if (data.url) {
       document.getElementById('cp_image').value = data.url;
       document.getElementById('cp_image_preview').innerHTML = '<img src="'+data.url+'" style="width:80px;height:80px;border-radius:8px;object-fit:cover">';
