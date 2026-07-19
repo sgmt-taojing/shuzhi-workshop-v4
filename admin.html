@@ -519,7 +519,10 @@ async function api(path, opts = {}) {
     const errData = await r.json().catch(() => ({}));
     return { list: [], data: [], items: [], total: 0, error: true, ...errData };
   }
-  return r.json();
+  // 安全解析 JSON，对非 JSON 响应返回空对象
+  const text = await r.text();
+  try { return JSON.parse(text); }
+  catch(e) { return { ok: r.ok, raw: text.slice(0,200) }; }
 }
 
 function escapeHtml(str) {
